@@ -1,0 +1,813 @@
+/* Modern Revisions Styling - Attractive White Theme */
+
+/* Main Container */
+.revisions-container {
+  padding: 0;
+  margin: 0;
+}
+
+/* Revision Cards */
+.revision-card {
+  background: #ffffff;
+  border: 2px solid #00d4aa;
+  border-radius: 16px;
+  box-shadow: 
+    0 3px 16px rgba(0, 212, 170, 0.15),
+    0 1px 3px rgba(0, 212, 170, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  margin-bottom: 1.2rem;
+  position: relative;
+}
+
+.revision-card::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  height: 5px;
+  background: linear-gradient(90deg, #00d4aa, #00b894, #00a085);
+  border-radius: 16px 16px 0 0;
+}
+
+.revision-card:hover {
+  box-shadow: 
+    0 8px 30px rgba(0, 212, 170, 0.2),
+    0 2px 6px rgba(0, 212, 170, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Card Headers */
+.revision-card-header {
+  background: linear-gradient(135deg, #00d4aa, #1e3a8a);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 1.2rem 1.5rem;
+  border-radius: 16px 16px 0 0;
+  position: relative;
+  overflow: hidden;
+  /* Subtle inner glow effect */
+  background-image: 
+    linear-gradient(135deg, #00d4aa, #1e3a8a),
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+}
+
+.revision-card-header h4 {
+  color: #ffffff;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1.1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.revision-card-header h5 {
+  color: #ffffff;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1.05rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.revision-card-header i {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.3rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Card Body */
+.revision-card-body {
+  padding: 1.5rem;
+}
+
+/* Tabs Styling */
+.revision-tabs {
+  border: none;
+  margin-bottom: 1.2rem;
+}
+
+.revision-tabs .nav-link {
+  border: none;
+  border-radius: 12px;
+  padding: 0.7rem 1.4rem;
+  margin-right: 0.6rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  color: #64748b;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  font-size: 0.85rem;
+}
+
+.revision-tabs .nav-link:hover {
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+  color: #475569;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.revision-tabs .nav-link.active {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+  transform: translateY(-1px);
+}
+
+.badge-count {
+  font-size: 0.75rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 12px;
+  font-weight: 700;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Revision Items */
+.revision-list {
+  border-radius: 14px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #00d4aa;
+  box-shadow: 0 2px 8px rgba(0, 212, 170, 0.1);
+}
+
+.revision-item {
+  padding: 1.3rem;
+  margin: 0;
+  border: none;
+  border-bottom: 1px solid #f1f5f9;
+  background: #ffffff;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.revision-item:last-child {
+  border-bottom: none;
+}
+
+.revision-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  background: linear-gradient(135deg, #00d4aa, #00b894);
+  transition: width 0.3s ease;
+}
+
+.revision-item:hover {
+  background: linear-gradient(135deg, #f0fdfa 0%, #ecfdf5 100%);
+  transform: translateX(6px);
+  box-shadow: 
+    0 4px 20px rgba(0, 212, 170, 0.08),
+    0 1px 3px rgba(0, 212, 170, 0.05);
+}
+
+.revision-item:hover::before {
+  width: 4px;
+}
+
+.revision-item h6 {
+  color: #1e293b;
+  font-weight: 700;
+  margin-bottom: 0.7rem;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+}
+
+/* Badge Styling */
+.revision-item .badge {
+  font-size: 0.75rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-weight: 600;
+  margin-right: 0.6rem;
+  letter-spacing: 0.02em;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.badge.bg-info {
+  background: linear-gradient(135deg, #06b6d4, #0891b2) !important;
+  color: white;
+  box-shadow: 0 3px 10px rgba(6, 182, 212, 0.3);
+}
+
+.badge.bg-warning {
+  background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+  color: white;
+  box-shadow: 0 3px 10px rgba(245, 158, 11, 0.3);
+}
+
+.badge.bg-danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+  color: white;
+  box-shadow: 0 3px 10px rgba(239, 68, 68, 0.3);
+}
+
+.badge.bg-secondary {
+  background: linear-gradient(135deg, #6b7280, #4b5563) !important;
+  color: white;
+  box-shadow: 0 3px 10px rgba(107, 114, 128, 0.3);
+}
+
+/* Button Styling - Modern Pill-Shaped Design */
+.complete-btn {
+  background: #10B981;
+  border: none;
+  border-radius: 20px;
+  padding: 0 16px;
+  font-weight: 500;
+  color: white;
+  transition: all 0.2s ease;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.08);
+  font-size: 14px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-right: 10px;
+  min-width: 90px;
+}
+
+.complete-btn:hover {
+  background: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
+  color: white;
+}
+
+.complete-btn:focus {
+  outline: none;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+.complete-btn:disabled {
+  background: #9CA3AF;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.postpone-btn {
+  background: #F59E0B;
+  border: none;
+  border-radius: 20px;
+  padding: 0 16px;
+  font-weight: 500;
+  color: white;
+  transition: all 0.2s ease;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.08);
+  font-size: 14px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 90px;
+}
+
+.postpone-btn:hover {
+  background: #D97706;
+  transform: translateY(-1px);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
+  color: white;
+}
+
+.postpone-btn:focus {
+  outline: none;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(245, 158, 11, 0.2);
+}
+
+.postpone-btn:disabled {
+  background: #9CA3AF;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Icon styling for action buttons */
+.complete-btn i,
+.postpone-btn i {
+  font-size: 12px;
+  margin-right: 4px;
+}
+
+.complete-btn .spinner-border,
+.postpone-btn .spinner-border {
+  width: 12px;
+  height: 12px;
+  border-width: 2px;
+  margin-right: 4px;
+}
+
+/* Action button container */
+.revision-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Ensure consistent button group spacing */
+.d-flex.gap-2 {
+  gap: 12px !important;
+}
+
+/* Override Bootstrap button variants for revision components */
+.revision-item .btn-success,
+.revision-item .btn.btn-success {
+  background: #10B981 !important;
+  border-color: #10B981 !important;
+  border-radius: 20px !important;
+  padding: 0 16px !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  height: 32px !important;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.08) !important;
+  transition: all 0.2s ease !important;
+}
+
+.revision-item .btn-success:hover,
+.revision-item .btn.btn-success:hover {
+  background: #059669 !important;
+  border-color: #059669 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12) !important;
+}
+
+.revision-item .btn-warning,
+.revision-item .btn.btn-warning {
+  background: #F59E0B !important;
+  border-color: #F59E0B !important;
+  border-radius: 20px !important;
+  padding: 0 16px !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  height: 32px !important;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.08) !important;
+  transition: all 0.2s ease !important;
+}
+
+.revision-item .btn-warning:hover,
+.revision-item .btn.btn-warning:hover {
+  background: #D97706 !important;
+  border-color: #D97706 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12) !important;
+}
+
+.revision-item .btn-success:disabled,
+.revision-item .btn.btn-success:disabled,
+.revision-item .btn-warning:disabled,
+.revision-item .btn.btn-warning:disabled {
+  background: #9CA3AF !important;
+  border-color: #9CA3AF !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Icon sizing for Bootstrap buttons */
+.revision-item .btn i {
+  font-size: 12px !important;
+  margin-right: 4px !important;
+}
+
+.revision-item .btn .spinner-border {
+  width: 12px !important;
+  height: 12px !important;
+  border-width: 2px !important;
+  margin-right: 4px !important;
+}
+
+/* General revision actions styling for all revision components */
+.revision-actions .btn-success,
+.revision-actions .btn.btn-success,
+.missed-revisions-card .btn-success,
+.missed-revisions-card .btn.btn-success {
+  background: #10B981 !important;
+  border-color: #10B981 !important;
+  border-radius: 20px !important;
+  padding: 0 16px !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  height: 32px !important;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.08) !important;
+  transition: all 0.2s ease !important;
+  margin-right: 12px !important;
+}
+
+.revision-actions .btn-success:hover,
+.revision-actions .btn.btn-success:hover,
+.missed-revisions-card .btn-success:hover,
+.missed-revisions-card .btn.btn-success:hover {
+  background: #059669 !important;
+  border-color: #059669 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12) !important;
+}
+
+.revision-actions .btn-warning,
+.revision-actions .btn.btn-warning,
+.missed-revisions-card .btn-warning,
+.missed-revisions-card .btn.btn-warning {
+  background: #F59E0B !important;
+  border-color: #F59E0B !important;
+  border-radius: 20px !important;
+  padding: 0 16px !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  height: 32px !important;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.08) !important;
+  transition: all 0.2s ease !important;
+}
+
+.revision-actions .btn-warning:hover,
+.revision-actions .btn.btn-warning:hover,
+.missed-revisions-card .btn-warning:hover,
+.missed-revisions-card .btn.btn-warning:hover {
+  background: #D97706 !important;
+  border-color: #D97706 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12) !important;
+}
+
+.revision-actions .btn i,
+.missed-revisions-card .btn i {
+  font-size: 12px !important;
+  margin-right: 4px !important;
+}
+
+.revision-actions .btn .spinner-border,
+.missed-revisions-card .btn .spinner-border {
+  width: 12px !important;
+  height: 12px !important;
+  border-width: 2px !important;
+  margin-right: 4px !important;
+}
+
+/* Missed Revisions Card */
+.missed-card {
+  border-left: 4px solid #ef4444;
+}
+
+.missed-card::before {
+  background: linear-gradient(90deg, #ef4444, #f97316, #f59e0b);
+}
+
+.missed-header {
+  background: linear-gradient(135deg, #00d4aa, #1e3a8a);
+  padding: 1.2rem 1.5rem;
+  border-radius: 16px 16px 0 0;
+  position: relative;
+  overflow: hidden;
+  /* Subtle inner glow effect */
+  background-image: 
+    linear-gradient(135deg, #00d4aa, #1e3a8a),
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+}
+
+.missed-header h4,
+.missed-header h5,
+.missed-header .text-danger {
+  color: #ffffff !important;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1.05rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.missed-header i {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.3rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.missed-item {
+  border-left: 3px solid #ef4444;
+}
+
+.missed-item::before {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.missed-item:hover {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  box-shadow: 
+    0 4px 20px rgba(239, 68, 68, 0.1),
+    0 1px 3px rgba(239, 68, 68, 0.05);
+}
+
+/* Postponed Items */
+.postponed-today-item {
+  border-left: 3px solid #f59e0b;
+}
+
+.postponed-today-item::before {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.postponed-today-item:hover {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  box-shadow: 
+    0 4px 20px rgba(245, 158, 11, 0.1),
+    0 1px 3px rgba(245, 158, 11, 0.05);
+}
+
+/* Alert Styling */
+.alert-animated {
+  border: none;
+  border-radius: 18px;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  animation: slideInDown 0.5s ease-out;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+}
+
+.alert-animated::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 18px 18px 0 0;
+}
+
+.alert-info {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: #1e40af;
+  border-left: 4px solid #3b82f6;
+}
+
+.alert-info::before {
+  background: linear-gradient(90deg, #3b82f6, #06b6d4);
+}
+
+.alert-success {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  color: #166534;
+  border-left: 4px solid #10b981;
+}
+
+.alert-success::before {
+  background: linear-gradient(90deg, #10b981, #059669);
+}
+
+.alert-danger {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #b91c1c;
+  border-left: 4px solid #ef4444;
+}
+
+.alert-danger::before {
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+/* Loading States */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 18px;
+  margin: 1rem 0;
+}
+
+.loading-container .spinner-border {
+  width: 3rem;
+  height: 3rem;
+  border-width: 0.3em;
+}
+
+.loading-container p {
+  margin-top: 1rem;
+  color: #64748b;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+/* Animations */
+.item-completing {
+  animation: completeSlide 0.6s ease-out forwards;
+}
+
+.item-postponing {
+  animation: postponeSlide 0.6s ease-out forwards;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes completeSlide {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(20px) scale(1.02);
+    background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes postponeSlide {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(-20px) scale(1.02);
+    background: linear-gradient(135deg, #fffbeb, #fef3c7);
+  }
+  100% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+/* Scrollable List */
+.scrollable-list {
+  max-height: 450px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f8fafc;
+}
+
+.scrollable-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollable-list::-webkit-scrollbar-track {
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  border-radius: 4px;
+}
+
+.scrollable-list::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #cbd5e1, #94a3b8);
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+.scrollable-list::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #94a3b8, #64748b);
+}
+
+/* Button Group Enhancements */
+.btn-group {
+  gap: 12px;
+}
+
+.btn-group .btn {
+  border: none;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  height: 36px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  border-radius: 6px;
+  padding: 8px 16px;
+}
+
+.btn-group .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-group .btn:focus {
+  outline: none;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* Small Text Enhancements */
+.text-muted {
+  color: #64748b !important;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* Icon Enhancements */
+.bi {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .revision-card-header {
+    padding: 1.25rem 1.5rem;
+  }
+  
+  .revision-card-body {
+    padding: 1.5rem;
+  }
+  
+  .revision-item {
+    padding: 1.25rem;
+  }
+  
+  .revision-tabs .nav-link {
+    padding: 0.7rem 1.2rem;
+    margin-right: 0.5rem;
+    font-size: 0.9rem;
+  }
+  
+  .btn-group {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .complete-btn,
+  .postpone-btn {
+    width: 100%;
+    margin: 0;
+    padding: 8px 16px;
+    height: 36px;
+    min-width: auto;
+  }
+  
+  .revision-actions {
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+  
+  .revision-actions .btn-success,
+  .revision-actions .btn.btn-success {
+    margin-right: 0 !important;
+    margin-bottom: 8px !important;
+  }
+  
+  .revision-item h6 {
+    font-size: 1.05rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .revision-card {
+    border-radius: 16px;
+    margin-bottom: 1rem;
+  }
+  
+  .revision-card-header {
+    padding: 1rem 1.25rem;
+  }
+  
+  .revision-card-body {
+    padding: 1.25rem;
+  }
+  
+  .revision-item {
+    padding: 1rem;
+  }
+  
+  .revision-item h6 {
+    font-size: 1rem;
+  }
+  
+  .badge {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.6rem;
+  }
+  
+  .alert-animated {
+    padding: 1.25rem 1.5rem;
+  }
+  
+  .revision-tabs .nav-link {
+    padding: 0.6rem 1rem;
+    margin-right: 0.25rem;
+    font-size: 0.85rem;
+  }
+} 

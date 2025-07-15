@@ -1,0 +1,307 @@
+/* Celebration Animation Styles */
+.celebration-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Congratulatory Message */
+.celebration-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 10000;
+  animation: messageAppear 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.great-job-text {
+  font-size: 4rem;
+  font-weight: 900;
+  color: #FF6B9D;
+  text-shadow: 
+    0 0 20px rgba(255, 107, 157, 0.5),
+    0 0 40px rgba(255, 107, 157, 0.3),
+    0 4px 8px rgba(0, 0, 0, 0.3);
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  animation: textGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes messageAppear {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5) rotate(-10deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  }
+}
+
+@keyframes textGlow {
+  0% {
+    text-shadow: 
+      0 0 20px rgba(255, 107, 157, 0.5),
+      0 0 40px rgba(255, 107, 157, 0.3),
+      0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+  100% {
+    text-shadow: 
+      0 0 30px rgba(255, 107, 157, 0.8),
+      0 0 60px rgba(255, 107, 157, 0.5),
+      0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Celebration Sparkles */
+.celebration-sparkles {
+  position: relative;
+  margin-top: 1rem;
+}
+
+.sparkle {
+  position: absolute;
+  font-size: 2rem;
+  animation: sparkleFloat 3s ease-in-out infinite;
+}
+
+.sparkle-1 {
+  left: -60px;
+  top: -20px;
+  animation-delay: 0s;
+}
+
+.sparkle-2 {
+  right: -60px;
+  top: -20px;
+  animation-delay: 0.5s;
+}
+
+.sparkle-3 {
+  left: -40px;
+  bottom: -30px;
+  animation-delay: 1s;
+}
+
+.sparkle-4 {
+  right: -40px;
+  bottom: -30px;
+  animation-delay: 1.5s;
+}
+
+.sparkle-5 {
+  left: 50%;
+  top: -40px;
+  transform: translateX(-50%);
+  animation-delay: 0.3s;
+}
+
+.sparkle-6 {
+  left: 50%;
+  bottom: -40px;
+  transform: translateX(-50%);
+  animation-delay: 0.8s;
+}
+
+.sparkle-7 {
+  left: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  animation-delay: 0.2s;
+}
+
+.sparkle-8 {
+  right: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  animation-delay: 0.7s;
+}
+
+@keyframes sparkleFloat {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+    opacity: 0.7;
+  }
+  25% {
+    transform: translateY(-10px) rotate(90deg) scale(1.2);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-15px) rotate(180deg) scale(0.8);
+    opacity: 0.8;
+  }
+  75% {
+    transform: translateY(-5px) rotate(270deg) scale(1.1);
+    opacity: 1;
+  }
+}
+
+/* Flower Cracker Animation */
+.flower-crackers {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.cracker-blast {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Cracker Source */
+.cracker-source {
+  position: absolute;
+  left: 50%;
+  top: 20%;
+  transform: translateX(-50%);
+  z-index: 9998;
+}
+
+.cracker-body {
+  width: 20px;
+  height: 60px;
+  background: linear-gradient(45deg, #FFD700, #FFA500);
+  border-radius: 10px;
+  position: relative;
+  animation: crackerShake 0.3s ease-in-out;
+}
+
+.cracker-explosion {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  background: radial-gradient(circle, #FFD700, #FF6347, transparent);
+  border-radius: 50%;
+  animation: explosionFlash 0.5s ease-out;
+}
+
+@keyframes crackerShake {
+  0%, 100% { transform: translateX(-50%) rotate(0deg); }
+  25% { transform: translateX(-50%) rotate(-5deg); }
+  75% { transform: translateX(-50%) rotate(5deg); }
+}
+
+@keyframes explosionFlash {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.5);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) scale(2);
+  }
+}
+
+/* Flower Petals */
+.flower-petal {
+  position: absolute;
+  width: var(--size);
+  height: var(--size);
+  background: var(--color);
+  border-radius: 50% 10% 50% 10%;
+  transform-origin: center;
+  animation: petalFall var(--duration) ease-out var(--delay) forwards;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.flower-petal::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60%;
+  height: 60%;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50% 10% 50% 10%;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+@keyframes petalFall {
+  0% {
+    opacity: 1;
+    transform: 
+      translate(-50%, -50%) 
+      rotate(0deg) 
+      scale(0);
+  }
+  5% {
+    opacity: 1;
+    transform: 
+      translate(-50%, -50%) 
+      rotate(calc(var(--angle) * 0.05)) 
+      scale(1.2);
+  }
+  15% {
+    opacity: 1;
+    transform: 
+      translate(
+        calc(-50% + cos(var(--angle)) * var(--distance) * 0.3), 
+        calc(-50% + sin(var(--angle)) * var(--distance) * 0.3)
+      ) 
+      rotate(calc(var(--angle) * 0.3 + 180deg)) 
+      scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: 
+      translate(
+        calc(-50% + cos(var(--angle)) * var(--distance)), 
+        calc(-50% + sin(var(--angle)) * var(--distance) + 120vh)
+      ) 
+      rotate(calc(var(--angle) + 1080deg)) 
+      scale(0.3);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .great-job-text {
+    font-size: 3rem;
+  }
+  
+  .sparkle {
+    font-size: 1.5rem;
+  }
+  
+  .sparkle-1, .sparkle-2 {
+    left: -40px;
+    right: -40px;
+  }
+  
+  .sparkle-3, .sparkle-4 {
+    left: -30px;
+    right: -30px;
+  }
+}
+
+@media (max-width: 576px) {
+  .great-job-text {
+    font-size: 2.5rem;
+  }
+  
+  .sparkle {
+    font-size: 1.2rem;
+  }
+  
+  .sparkle-1, .sparkle-2 {
+    left: -30px;
+    right: -30px;
+  }
+} 

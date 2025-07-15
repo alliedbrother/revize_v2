@@ -1,0 +1,75 @@
+/* Wave Bottom Component Styles */
+
+.wave-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 30px;
+  overflow: hidden;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.wave-svg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.wave-path {
+  transition: fill var(--theme-transition);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .wave-bottom {
+    height: 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  .wave-bottom {
+    height: 15px;
+  }
+}
+
+/* Animation for subtle wave movement (optional) */
+.wave-bottom.animated .wave-svg {
+  animation: waveFlow 8s ease-in-out infinite;
+}
+
+@keyframes waveFlow {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-10px);
+  }
+}
+
+/* Theme-aware wave colors */
+.wave-bottom.light-theme .wave-path {
+  fill: var(--tab-bg);
+}
+
+.wave-bottom.dark-theme .wave-path {
+  fill: var(--tab-bg);
+}
+
+/* Wave variants for different sections */
+.wave-bottom.header-wave .wave-path {
+  fill: var(--header-gradient-start);
+}
+
+.wave-bottom.content-wave .wave-path {
+  fill: var(--main-bg);
+}
+
+/* Smooth wave transition on theme change */
+.wave-bottom .wave-path {
+  transition: fill 0.3s ease;
+} 

@@ -1,0 +1,140 @@
+body.dark-theme .revision-schedule-card,
+body.dark-theme .revision-schedule-filters,
+body.dark-theme .revision-schedule-list,
+body.dark-theme .card {
+  background-color: #334155 !important;
+  color: #fff !important;
+}
+body.dark-theme .revision-schedule-card .badge,
+body.dark-theme .revision-schedule-list .badge {
+  color: #fff !important;
+}
+body.dark-theme .revision-schedule-card .badge-success {
+  background-color: #10b981 !important;
+}
+body.dark-theme .revision-schedule-card .badge-warning {
+  background-color: #f59e0b !important;
+}
+body.dark-theme .revision-schedule-card .badge-danger {
+  background-color: #ef4444 !important;
+}
+body.dark-theme .revision-schedule-list .btn-success {
+  background-color: #10b981 !important;
+  color: #fff !important;
+}
+body.dark-theme .revision-schedule-list .btn-warning {
+  background-color: #f59e0b !important;
+  color: #fff !important;
+}
+body.dark-theme .revision-schedule-list .revision-item,
+body.dark-theme .revision-schedule-list .revision-item *,
+body.dark-theme .revision-schedule-list .revision-item-content,
+body.dark-theme .revision-schedule-list .revision-item-content * {
+  color: #fff !important;
+}
+body.dark-theme .revision-schedule-list .revision-title,
+body.dark-theme .revision-schedule-list .revision-status,
+body.dark-theme .revision-schedule-list .revision-actions {
+  color: #fff !important;
+}
+body.dark-theme .revision-schedule-list .list-group-item {
+  background-color: #334155 !important;
+  color: #fff !important;
+}
+body.dark-theme .revision-schedule-filters .form-label,
+body.dark-theme .revision-schedule-filters .form-control,
+body.dark-theme .revision-schedule-filters .form-input {
+  color: #fff !important;
+  background-color: #1e293b !important;
+}
+body.dark-theme .revision-schedule-filters .form-control::placeholder,
+body.dark-theme .revision-schedule-filters .form-input::placeholder {
+  color: #cbd5e1 !important;
+}
+body.dark-theme .revision-schedule-list .revision-item .fw-bold,
+body.dark-theme .revision-schedule-list .revision-item .mb-1 {
+  color: #fff !important;
+}
+body.dark-theme .revision-card-header,
+body.dark-theme .revision-card-header h4,
+body.dark-theme .filter-card h5,
+body.dark-theme .revision-item h6,
+body.dark-theme .revision-item .text-muted,
+body.dark-theme .revision-item small,
+body.dark-theme .revision-list .text-muted {
+  color: #fff !important;
+}
+body.dark-theme .filter-card .form-label {
+  color: #fff !important;
+}
+body.dark-theme .filter-card .form-select,
+body.dark-theme .filter-card .form-control {
+  background-color: #1e293b !important;
+  color: #fff !important;
+  border-color: #475569 !important;
+}
+body.dark-theme .filter-card .form-select option {
+  background-color: #1e293b !important;
+  color: #fff !important;
+}
+body.dark-theme .alert {
+  color: #fff !important;
+}
+body.dark-theme .alert-info {
+  background-color: #1e40af !important;
+  border-color: #3b82f6 !important;
+}
+body.dark-theme .alert-info strong {
+  color: #fff !important;
+}
+body.dark-theme .revision-item .mb-1.fw-bold,
+body.dark-theme .revision-item h6.mb-1.fw-bold,
+body.dark-theme .revision-item .d-flex .text-muted,
+body.dark-theme .revision-item .d-flex small,
+body.dark-theme .revision-item .d-flex small.text-muted,
+body.dark-theme .revision-item .align-items-center .text-muted,
+body.dark-theme .revision-item .flex-wrap .text-muted {
+  color: #fff !important;
+}
+body.dark-theme .revision-item > div > div {
+  color: #fff !important;
+}
+body.dark-theme .revision-item > div > div > * {
+  color: #fff !important;
+}
+body.dark-theme .revision-list {
+  background-color: #1e293b !important;
+  border-color: #475569 !important;
+}
+body.dark-theme .revision-item {
+  background-color: #334155 !important;
+  color: #fff !important;
+  border-bottom: 1px solid #475569 !important;
+  box-shadow: none !important;
+}
+body.dark-theme .revision-item:hover {
+  background-color: #3b4f6b !important;
+  background-image: none !important;
+  transform: none !important;
+}
+body.dark-theme .revision-item::before,
+body.dark-theme .revision-item:hover::before {
+  background: #00d4aa !important;
+}
+body.dark-theme .revision-item h6 {
+  color: #fff !important;
+}
+body.dark-theme .revision-item small,
+body.dark-theme .revision-item .text-muted {
+  color: #cbd5e1 !important;
+}
+/* Adjust badge gradients for dark theme to solid colors for readability */
+body.dark-theme .badge.bg-info {
+  background-color: #06b6d4 !important;
+}
+body.dark-theme .badge.bg-warning {
+  background-color: #f59e0b !important;
+}
+body.dark-theme .badge.bg-danger {
+  background-color: #ef4444 !important;
+} 

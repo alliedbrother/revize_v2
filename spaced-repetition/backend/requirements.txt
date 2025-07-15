@@ -1,0 +1,36 @@
+# Django and Core dependencies
+Django==5.1.7
+djangorestframework==3.16.0
+django-cors-headers==4.7.0
+asgiref==3.8.1
+sqlparse==0.5.3
+pytz==2025.2
+
+# Database dependencies
+psycopg2-binary==2.9.9  # PostgreSQL adapter
+djongo==1.2.31
+pymongo==4.11.3
+dnspython==2.7.0
+dataclasses==0.6
+
+# Production dependencies
+gunicorn==21.2.0  # WSGI HTTP Server
+whitenoise==6.6.0  # Static file serving
+dj-database-url==2.1.0  # Database URL configuration
+
+# AWS specific
+boto3==1.33.0  # For AWS S3 integration
+django-storages==1.14.2  # Storage backends
+
+# Security
+django-environ==0.11.2  # Environment variable handling
+
+# Social Authentication
+django-allauth==0.57.0  # Social authentication
+
+# Optional for improved performance
+uvicorn==0.27.1  # ASGI server (alternative to gunicorn)
+
+# Additional production dependencies
+requests==2.32.4  # HTTP library
+certifi==2025.7.14  # SSL certificates

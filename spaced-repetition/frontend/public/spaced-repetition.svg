@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="400" cy="300" r="250" fill="#E3F2FD" />
+  
+  <!-- Cards -->
+  <g transform="translate(250,200)">
+    <!-- Card 1 -->
+    <rect x="0" y="0" width="120" height="160" rx="10" fill="#FFFFFF" stroke="#2196F3" stroke-width="2"/>
+    <text x="60" y="80" text-anchor="middle" fill="#2196F3" font-size="24" font-family="Arial">1</text>
+  </g>
+  
+  <g transform="translate(350,180)">
+    <!-- Card 2 -->
+    <rect x="0" y="0" width="120" height="160" rx="10" fill="#FFFFFF" stroke="#2196F3" stroke-width="2"/>
+    <text x="60" y="80" text-anchor="middle" fill="#2196F3" font-size="24" font-family="Arial">2</text>
+  </g>
+  
+  <g transform="translate(450,200)">
+    <!-- Card 3 -->
+    <rect x="0" y="0" width="120" height="160" rx="10" fill="#FFFFFF" stroke="#2196F3" stroke-width="2"/>
+    <text x="60" y="80" text-anchor="middle" fill="#2196F3" font-size="24" font-family="Arial">3</text>
+  </g>
+  
+  <!-- Arrows -->
+  <path d="M 320 280 C 350 320, 450 320, 480 280" stroke="#2196F3" stroke-width="3" fill="none"/>
+  <path d="M 480 280 L 470 270" stroke="#2196F3" stroke-width="3"/>
+  <path d="M 480 280 L 470 290" stroke="#2196F3" stroke-width="3"/>
+</svg> 

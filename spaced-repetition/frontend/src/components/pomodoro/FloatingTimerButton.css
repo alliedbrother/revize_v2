@@ -1,0 +1,177 @@
+/* Floating Timer Button - Modern FAB Design */
+.floating-timer-button {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #00d4aa, #1e3a8a);
+  color: #ffffff;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 8px 24px rgba(0, 212, 170, 0.3),
+    0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+  
+  /* Subtle inner glow effect */
+  background-image: 
+    linear-gradient(135deg, #00d4aa, #1e3a8a),
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
+  
+  /* Ensure button doesn't interfere with content */
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.floating-timer-button:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 
+    0 12px 32px rgba(0, 212, 170, 0.4),
+    0 8px 16px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(135deg, #00e6c0, #2347a8);
+}
+
+.floating-timer-button:active {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 
+    0 6px 20px rgba(0, 212, 170, 0.35),
+    0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.floating-timer-button:focus {
+  outline: none;
+  box-shadow: 
+    0 8px 24px rgba(0, 212, 170, 0.3),
+    0 4px 12px rgba(0, 0, 0, 0.15),
+    0 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
+.floating-timer-button i {
+  transition: transform 0.3s ease;
+}
+
+.floating-timer-button:hover i {
+  transform: scale(1.1);
+}
+
+/* Pulse animation for attention */
+.floating-timer-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00d4aa, #1e3a8a);
+  opacity: 0;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .floating-timer-button {
+    width: 56px;
+    height: 56px;
+    font-size: 22px;
+    bottom: 20px;
+    right: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .floating-timer-button {
+    width: 52px;
+    height: 52px;
+    font-size: 20px;
+    bottom: 16px;
+    right: 16px;
+  }
+}
+
+/* Ensure button is always accessible */
+@media (max-height: 600px) {
+  .floating-timer-button {
+    bottom: 16px;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .floating-timer-button {
+    border: 2px solid #ffffff;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .floating-timer-button {
+    transition: none;
+  }
+  
+  .floating-timer-button::before {
+    animation: none;
+  }
+  
+  .floating-timer-button:hover {
+    transform: none;
+  }
+  
+  .floating-timer-button:active {
+    transform: none;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .floating-timer-button {
+    box-shadow: 
+      0 8px 24px rgba(0, 212, 170, 0.4),
+      0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  .floating-timer-button:hover {
+    box-shadow: 
+      0 12px 32px rgba(0, 212, 170, 0.5),
+      0 8px 16px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* Smooth entrance animation */
+.floating-timer-button {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+} 

@@ -1,0 +1,558 @@
+/* Professional Education Application Theme */
+
+/* Light Theme (Default) - Professional Color Scheme */
+body {
+  /* Main content colors - Light gray background */
+  --main-bg: #f8fafc;
+  --main-text-primary: #1e293b;
+  --main-text-secondary: #64748b;
+  
+  /* Header colors - Cyan to Blue gradient */
+  --header-gradient-start: #00d4aa;
+  --header-gradient-end: #1e3a8a;
+  --header-text: #ffffff;
+  
+  /* Card colors - White with professional shadows */
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  /* Tab colors - White background with cyan active state */
+  --tab-bg: #ffffff;
+  --tab-text: #64748b;
+  --tab-active-bg: #00d4aa;
+  --tab-active-text: #ffffff;
+  --tab-hover-bg: #f1f5f9;
+  
+  /* Button colors - Professional action colors */
+  --btn-primary: #00d4aa;
+  --btn-primary-hover: #00b894;
+  --btn-success: #10b981;
+  --btn-success-hover: #059669;
+  --btn-warning: #f59e0b;
+  --btn-warning-hover: #d97706;
+  --btn-danger: #ef4444;
+  --btn-danger-hover: #dc2626;
+  
+  /* Input colors - Clean and accessible */
+  --input-bg: #ffffff;
+  --input-border: #d1d5db;
+  --input-text: #1e293b;
+  --input-placeholder: #9ca3af;
+  --input-focus-border: #00d4aa;
+  --input-focus-shadow: 0 0 0 3px rgba(0, 212, 170, 0.1);
+  
+  /* Timer section colors - Cyan to Blue gradient theme */
+  --timer-bg-start: #00d4aa;
+  --timer-bg-end: #1e3a8a;
+  --timer-circle-bg: #ffffff;
+  --timer-text: #ffffff;
+  --timer-button-bg: #ffffff;
+  --timer-button-text: #00d4aa;
+  --timer-button-hover: #f8fafc;
+  
+  /* Sidebar colors (always dark for contrast) */
+  --sidebar-bg: #1e293b;
+  --sidebar-text: #ffffff;
+  --sidebar-text-secondary: #94a3b8;
+  --sidebar-active: #00d4aa;
+  --sidebar-hover: #334155;
+  
+  /* Professional spacing and borders */
+  --spacing-xs: 8px;
+  --spacing-sm: 16px;
+  --spacing-md: 24px;
+  --spacing-lg: 32px;
+  --spacing-xl: 40px;
+  --border-radius: 8px;
+  --border-radius-sm: 6px;
+  --border-radius-lg: 12px;
+  
+  /* Transition timing */
+  --theme-transition: all 0.2s ease;
+  --hover-transition: all 0.2s ease;
+  
+  /* Gradient variables */
+  --gradient-cyan: #00d4aa;
+  --gradient-navy: #1e3a8a;
+  --main-gradient: linear-gradient(135deg, var(--gradient-cyan), var(--gradient-navy));
+}
+
+/* Dark Theme - Sidebar Color Background */
+body.dark-theme {
+  /* Main content colors - Use sidebar background color */
+  --main-bg: #1e293b;
+  --main-text-primary: #ffffff;
+  --main-text-secondary: #94a3b8;
+  
+  /* Header colors - Keep cyan to blue gradient */
+  --header-gradient-start: #00d4aa;
+  --header-gradient-end: #1e3a8a;
+  --header-text: #ffffff;
+  
+  /* Card colors - Slightly lighter than main background */
+  --card-bg: #334155;
+  --card-border: #475569;
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  
+  /* Tab colors - Keep light background for contrast */
+  --tab-bg: #ffffff;
+  --tab-text: #64748b;
+  --tab-active-bg: #00d4aa;
+  --tab-active-text: #ffffff;
+  --tab-hover-bg: #f1f5f9;
+  
+  /* Button colors - Keep existing colors */
+  --btn-primary: #00d4aa;
+  --btn-primary-hover: #00b894;
+  --btn-success: #10b981;
+  --btn-success-hover: #059669;
+  --btn-warning: #f59e0b;
+  --btn-warning-hover: #d97706;
+  --btn-danger: #ef4444;
+  --btn-danger-hover: #dc2626;
+  
+  /* Input colors - Dark but readable */
+  --input-bg: #334155;
+  --input-border: #475569;
+  --input-text: #ffffff;
+  --input-placeholder: #94a3b8;
+  --input-focus-border: #00d4aa;
+  --input-focus-shadow: 0 0 0 3px rgba(0, 212, 170, 0.1);
+  
+  /* Timer section colors - Keep cyan to blue gradient */
+  --timer-bg-start: #00d4aa;
+  --timer-bg-end: #1e3a8a;
+  --timer-circle-bg: #ffffff;
+  --timer-text: #ffffff;
+  --timer-button-bg: #ffffff;
+  --timer-button-text: #00d4aa;
+  --timer-button-hover: #f8fafc;
+  
+  /* Sidebar colors (same as main background) */
+  --sidebar-bg: #1e293b;
+  --sidebar-text: #ffffff;
+  --sidebar-text-secondary: #94a3b8;
+  --sidebar-active: #00d4aa;
+  --sidebar-hover: #334155;
+  
+  /* Gradient variables */
+  --gradient-cyan: #00d4aa;
+  --gradient-navy: #1e3a8a;
+  --main-gradient: linear-gradient(135deg, var(--gradient-cyan), var(--gradient-navy));
+}
+
+/* Apply theme transitions to all elements */
+* {
+  transition: var(--theme-transition);
+}
+
+/* Main Layout */
+.main-layout {
+  background-color: var(--main-bg);
+  color: var(--main-text-primary);
+}
+
+.main-content {
+  background-color: var(--main-bg);
+  color: var(--main-text-primary);
+}
+
+/* Mobile Header */
+.mobile-header {
+  background: linear-gradient(135deg, var(--header-gradient-start), var(--header-gradient-end));
+  color: var(--header-text);
+}
+
+.mobile-menu-toggle {
+  color: var(--header-text);
+}
+
+.mobile-menu-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.mobile-brand .brand-text {
+  color: var(--header-text);
+}
+
+/* Dashboard Wrapper */
+.dashboard-wrapper {
+  background-color: var(--main-bg);
+  color: var(--main-text-primary);
+}
+
+/* Welcome Header */
+.welcome-header {
+  background: linear-gradient(135deg, var(--header-gradient-start), var(--header-gradient-end));
+  color: var(--header-text);
+}
+
+.welcome-header::after {
+  background: linear-gradient(135deg, var(--header-gradient-start), var(--header-gradient-end));
+}
+
+.welcome-title {
+  color: var(--header-text);
+}
+
+.welcome-text {
+  color: var(--header-text);
+}
+
+/* Dashboard Tabs */
+.dashboard-tabs {
+  background-color: var(--tab-bg);
+  box-shadow: var(--card-shadow);
+}
+
+.dashboard-tab {
+  color: var(--tab-text);
+  background-color: transparent;
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  transition: var(--hover-transition);
+}
+
+.dashboard-tab:hover:not(.active) {
+  background-color: var(--tab-hover-bg);
+  color: var(--main-text-primary);
+  transform: translateY(-1px);
+}
+
+.dashboard-tab.active {
+  background-color: var(--tab-active-bg);
+  color: var(--tab-active-text);
+  box-shadow: var(--card-shadow);
+}
+
+/* Professional Card Styling */
+.card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+  color: var(--main-text-primary);
+  border-radius: var(--border-radius);
+  transition: var(--hover-transition);
+}
+
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.card-header {
+  background-color: var(--card-bg);
+  border-bottom: 1px solid var(--card-border);
+  color: var(--main-text-primary);
+  font-weight: 600;
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+/* Profile Container */
+.profile-container {
+  background-color: var(--main-bg);
+  color: var(--main-text-primary);
+}
+
+.profile-header {
+  background: linear-gradient(135deg, var(--header-gradient-start), var(--header-gradient-end));
+  color: var(--header-text);
+}
+
+.profile-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+  border-radius: var(--border-radius);
+}
+
+.profile-nav {
+  background-color: var(--card-bg);
+  border-bottom: 1px solid var(--card-border);
+}
+
+.profile-nav .nav-link {
+  color: var(--tab-text);
+  transition: var(--hover-transition);
+}
+
+.profile-nav .nav-link.active {
+  color: var(--tab-active-bg);
+  border-bottom: 2px solid var(--tab-active-bg);
+  background-color: transparent;
+}
+
+/* Professional Form Controls */
+.form-control {
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--input-text);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-sm);
+  transition: var(--hover-transition);
+}
+
+.form-control::placeholder {
+  color: var(--input-placeholder);
+}
+
+.form-control:focus {
+  border-color: var(--input-focus-border);
+  box-shadow: var(--input-focus-shadow);
+  outline: none;
+}
+
+.form-label {
+  color: var(--main-text-primary);
+  font-weight: 500;
+  margin-bottom: var(--spacing-xs);
+}
+
+/* Professional Button Styling */
+.btn-primary {
+  background-color: var(--btn-primary);
+  border-color: var(--btn-primary);
+  color: #ffffff;
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-weight: 500;
+  transition: var(--hover-transition);
+}
+
+.btn-primary:hover {
+  background-color: var(--btn-primary-hover);
+  border-color: var(--btn-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--card-shadow);
+}
+
+.btn-success {
+  background-color: var(--btn-success);
+  border-color: var(--btn-success);
+  color: #ffffff;
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-weight: 500;
+  transition: var(--hover-transition);
+}
+
+.btn-success:hover {
+  background-color: var(--btn-success-hover);
+  border-color: var(--btn-success-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--card-shadow);
+}
+
+.btn-warning {
+  background-color: var(--btn-warning);
+  border-color: var(--btn-warning);
+  color: #ffffff;
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-weight: 500;
+  transition: var(--hover-transition);
+}
+
+.btn-warning:hover {
+  background-color: var(--btn-warning-hover);
+  border-color: var(--btn-warning-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--card-shadow);
+}
+
+.btn-danger {
+  background-color: var(--btn-danger);
+  border-color: var(--btn-danger);
+  color: #ffffff;
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-weight: 500;
+  transition: var(--hover-transition);
+}
+
+.btn-danger:hover {
+  background-color: var(--btn-danger-hover);
+  border-color: var(--btn-danger-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--card-shadow);
+}
+
+/* Timer Section - Removed, now using single pomodoro card */
+
+/* Progress Section */
+.progress-section {
+  background-color: var(--main-bg);
+  color: var(--main-text-primary);
+  padding: var(--spacing-md);
+}
+
+/* Sidebar Styling */
+.sidebar {
+  background-color: var(--sidebar-bg);
+  color: var(--sidebar-text);
+}
+
+.sidebar .nav-item {
+  color: var(--sidebar-text-secondary);
+  transition: var(--hover-transition);
+  border-radius: var(--border-radius-sm);
+  margin: var(--spacing-xs) 0;
+}
+
+.sidebar .nav-item:hover {
+  background-color: var(--sidebar-hover) !important;
+  color: var(--sidebar-text) !important;
+}
+
+.sidebar .nav-item.active {
+  background-color: var(--sidebar-active) !important;
+  color: var(--sidebar-text) !important;
+}
+
+/* Wave Bottom component theming */
+.wave-bottom .wave-path {
+  transition: fill var(--theme-transition);
+}
+
+.wave-bottom.light-theme .wave-path {
+  fill: var(--tab-bg);
+}
+
+.wave-bottom.dark-theme .wave-path {
+  fill: var(--tab-bg);
+}
+
+/* Navigation wave specific styling */
+.dashboard-nav .wave-bottom .wave-path {
+  fill: var(--tab-bg);
+}
+
+/* Header wave variant */
+.wave-bottom.header-wave .wave-path {
+  fill: var(--header-gradient-start);
+}
+
+/* Content wave variant */
+.wave-bottom.content-wave .wave-path {
+  fill: var(--main-bg);
+}
+
+/* Dark mode specific overrides for sidebar color background */
+body.dark-theme .dashboard-wrapper {
+  background-color: #1e293b;
+}
+
+body.dark-theme .dashboard-content {
+  background-color: #1e293b;
+}
+
+body.dark-theme .tab-content {
+  background-color: #1e293b;
+}
+
+body.dark-theme .left-section,
+body.dark-theme .right-section {
+  background-color: #1e293b;
+}
+
+body.dark-theme .progress-section {
+  background-color: #1e293b;
+}
+
+/* Ensure cards have proper contrast on sidebar background */
+body.dark-theme .card {
+  background-color: #334155;
+  border-color: #475569;
+}
+
+body.dark-theme .card-body {
+  background-color: #334155;
+}
+
+/* Today's Learning sections - sidebar background */
+body.dark-theme .todays-learning-content {
+  background-color: #1e293b;
+}
+
+body.dark-theme .learning-section {
+  background-color: #1e293b;
+}
+
+body.dark-theme .section-wrapper {
+  background-color: #1e293b;
+}
+
+/* Navigation tabs container - Fix white background in dark mode */
+body.dark-theme .dashboard-nav {
+  background: #1e293b !important;
+  border-bottom-color: #475569;
+}
+
+body.dark-theme .navigation-tabs-container {
+  background: #1e293b !important;
+}
+
+body.dark-theme .nav-tabs-section {
+  background: #1e293b !important;
+}
+
+body.dark-theme .tabs-wrapper {
+  background: #1e293b !important;
+}
+
+/* Ensure all text is white in dark mode */
+body.dark-theme,
+body.dark-theme * {
+  color: #ffffff !important;
+}
+
+/* Preserve special colors for buttons and interactive elements */
+body.dark-theme .btn-primary,
+body.dark-theme .btn-success,
+body.dark-theme .btn-warning,
+body.dark-theme .btn-danger,
+body.dark-theme .nav-tab.active,
+body.dark-theme .add-topic-button,
+body.dark-theme .pomodoro-btn,
+body.dark-theme .logout-btn {
+  color: #ffffff !important;
+}
+
+/* Preserve button text colors */
+body.dark-theme .btn-primary,
+body.dark-theme .btn-success,
+body.dark-theme .btn-warning,
+body.dark-theme .btn-danger {
+  color: #ffffff !important;
+}
+
+/* Preserve tab active colors - white background with dark text */
+body.dark-theme .nav-tab.active {
+  color: #1e293b !important;
+  background-color: #ffffff !important;
+  border-bottom: 3px solid #00d4aa !important;
+}
+
+/* Dashboard main area */
+body.dark-theme .dashboard-main {
+  background-color: #1e293b !important;
+  color: #ffffff !important;
+}
+
+/* Ensure form inputs have proper colors */
+body.dark-theme .form-input,
+body.dark-theme .form-textarea,
+body.dark-theme select,
+body.dark-theme input {
+  background-color: #334155 !important;
+  color: #ffffff !important;
+  border-color: #475569 !important;
+}
+
+/* Placeholder text should be lighter */
+body.dark-theme .form-input::placeholder,
+body.dark-theme .form-textarea::placeholder,
+body.dark-theme input::placeholder {
+  color: #94a3b8 !important;
+}

@@ -1,0 +1,135 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap');
+
+:root {
+  /* Main Application Gradient Colors - Teal to Navy */
+  --gradient-teal: #00d4aa;
+  --gradient-cyan: #00bcd4;
+  --gradient-blue: #0096c7;
+  --gradient-dark-blue: #0077b6;
+  --gradient-navy: #023e8a;
+  --gradient-deep-navy: #03045e;
+  
+  /* Main Gradient */
+  --main-gradient: linear-gradient(135deg, #00d4aa 0%, #00bcd4 20%, #0096c7 40%, #0077b6 60%, #023e8a 80%, #03045e 100%);
+  --main-gradient-hover: linear-gradient(135deg, #00c49a 0%, #00acc4 20%, #0086b7 40%, #0067a6 60%, #022e7a 80%, #02034e 100%);
+  
+  /* Accent Colors */
+  --accent-teal: #00d4aa;
+  --accent-navy: #03045e;
+  
+  /* Modern Color Palette */
+  --navy-blue: #103766;
+  --soft-blue: #0096c7;
+  --light-blue: #00bcd4;
+  --teal-accent: #00d4aa;
+  --deep-green: #1e7e34;
+  --crisp-white: #FFFFFF;
+  --soft-gray: #f8f9fc;
+  --light-gray: #e9ecef;
+  --medium-gray: #6c757d;
+  --dark-gray: #495057;
+  
+  /* Legacy Bootstrap Colors */
+  --primary-color: #0d6efd;
+  --secondary-color: #6c757d;
+  --success-color: #198754;
+  --info-color: #0dcaf0;
+  --warning-color: #ffc107;
+  --danger-color: #dc3545;
+  --light-color: #f8f9fa;
+  --dark-color: #212529;
+  
+  /* Modern Design System */
+  --border-radius: 12px;
+  --border-radius-sm: 8px;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --shadow-gradient: 0 8px 32px rgba(0, 212, 170, 0.3);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Typography */
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-secondary: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--main-text-primary);
+  line-height: 1.6;
+  background-color: var(--main-bg);
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-bottom: 1rem;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.2;
+  font-family: var(--font-primary);
+}
+
+p {
+  margin-bottom: 1rem;
+}
+
+a {
+  color: var(--gradient-blue);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+a:hover {
+  color: var(--gradient-dark-blue);
+  text-decoration: none;
+}
+
+/* Modern scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--light-gray);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--main-gradient);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--main-gradient-hover);
+}
+
+/* Focus styles for accessibility */
+*:focus {
+  outline: 2px solid var(--gradient-teal);
+  outline-offset: 2px;
+}
+
+/* Selection styling */
+::selection {
+  background: #00d4aa; /* Use a solid color for selection background */
+  color: var(--crisp-white);
+}
+
+

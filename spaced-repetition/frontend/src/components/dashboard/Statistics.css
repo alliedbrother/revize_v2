@@ -1,0 +1,24 @@
+body.dark-theme .statistics-dashboard,
+body.dark-theme .statistics-card,
+body.dark-theme .statistics-section,
+body.dark-theme .card {
+  background-color: #334155 !important;
+  color: #fff !important;
+}
+body.dark-theme .statistics-dashboard .stat-title,
+body.dark-theme .statistics-dashboard .stat-value,
+body.dark-theme .statistics-dashboard .stat-label {
+  color: #fff !important;
+}
+body.dark-theme .statistics-dashboard .badge-primary {
+  background-color: #00d4aa !important;
+  color: #fff !important;
+}
+body.dark-theme .statistics-dashboard .badge-success {
+  background-color: #10b981 !important;
+  color: #fff !important;
+}
+body.dark-theme .statistics-dashboard .badge-warning {
+  background-color: #f59e0b !important;
+  color: #fff !important;
+} 

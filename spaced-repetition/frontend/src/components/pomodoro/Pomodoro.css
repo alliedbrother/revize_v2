@@ -1,0 +1,442 @@
+/* Pomodoro Timer for Modern Dashboard */
+.pomodoro-main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  background: none;
+  padding: 0;
+  margin: 0;
+}
+
+.pomodoro-card {
+  background: linear-gradient(135deg, var(--gradient-cyan), var(--gradient-navy));
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border: none;
+  /* Subtle inner glow effect */
+  background-image: 
+    linear-gradient(135deg, var(--gradient-cyan), var(--gradient-navy)),
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+}
+
+.pomodoro-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-align: center;
+  margin: 0 0 1.5rem 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.pomodoro-session-tabs {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.pomodoro-tab {
+  background: var(--card-bg);
+  color: var(--gradient-navy);
+  border: none;
+  border-radius: 18px;
+  padding: 0.8rem 1.6rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 100px;
+  text-align: center;
+}
+
+.pomodoro-tab.active, .pomodoro-tab:active {
+  background: var(--main-gradient);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+.pomodoro-tab:hover:not(.active) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+}
+
+.pomodoro-timer-visual {
+  position: relative;
+  width: 320px;
+  height: 320px;
+  margin: 2rem auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Ensure perfect centering */
+  align-self: center;
+  justify-self: center;
+  /* Add subtle border-radius to the container for modern look */
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+  box-shadow: 
+    inset 0 0 30px rgba(255, 255, 255, 0.1),
+    0 0 50px rgba(0, 0, 0, 0.1);
+}
+
+.pomodoro-timer-visual svg {
+  position: absolute;
+  top: 0; 
+  left: 0;
+  width: 320px;
+  height: 320px;
+  transform: rotate(-90deg); /* Start from top */
+  /* Smooth rendering for curved edges */
+  shape-rendering: geometricPrecision;
+  border-radius: 50%;
+  overflow: visible;
+}
+
+/* Background circle with subtle gradient stroke - White Donut Effect */
+.timer-bg-circle {
+  stroke: rgba(255, 255, 255, 0.6);
+  stroke-width: 12;
+  fill: none;
+  opacity: 1;
+  stroke-linecap: round;
+  /* Smooth curved edges */
+  stroke-linejoin: round;
+}
+
+/* Progress circle with smooth gradient and curved edges */
+.timer-progress-circle {
+  stroke: url(#progressGradient);
+  stroke-width: 12;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+  /* Enhanced curved appearance */
+  stroke-dasharray: inherit;
+  transform-origin: center;
+  /* Subtle rotation animation when active */
+  animation: subtleRotate 60s linear infinite;
+}
+
+@keyframes subtleRotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Pause animation when timer is not running */
+.timer-paused .timer-progress-circle {
+  animation-play-state: paused;
+}
+
+/* Responsive stroke widths with maintained curves */
+@media (max-width: 1200px) {
+  .timer-bg-circle,
+  .timer-progress-circle {
+    stroke-width: 10;
+  }
+  
+  .pomodoro-timer-visual {
+    width: 280px;
+    height: 280px;
+    box-shadow: 
+      inset 0 0 25px rgba(255, 255, 255, 0.1),
+      0 0 40px rgba(0, 0, 0, 0.1);
+  }
+  
+  .pomodoro-timer-visual svg {
+    width: 280px;
+    height: 280px;
+  }
+}
+
+@media (max-width: 768px) {
+  .timer-bg-circle,
+  .timer-progress-circle {
+    stroke-width: 9;
+  }
+  
+  .pomodoro-timer-visual {
+    width: 240px;
+    height: 240px;
+    box-shadow: 
+      inset 0 0 20px rgba(255, 255, 255, 0.1),
+      0 0 30px rgba(0, 0, 0, 0.1);
+  }
+  
+  .pomodoro-timer-visual svg {
+    width: 240px;
+    height: 240px;
+  }
+}
+
+@media (max-width: 576px) {
+  .timer-bg-circle,
+  .timer-progress-circle {
+    stroke-width: 8;
+  }
+  
+  .pomodoro-timer-visual {
+    width: 200px;
+    height: 200px;
+    box-shadow: 
+      inset 0 0 15px rgba(255, 255, 255, 0.1),
+      0 0 25px rgba(0, 0, 0, 0.1);
+  }
+  
+  .pomodoro-timer-visual svg {
+    width: 200px;
+    height: 200px;
+  }
+}
+
+.pomodoro-timer-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 4.2rem;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 
+    0 0 20px rgba(255, 255, 255, 0.8),
+    0 0 40px rgba(255, 255, 255, 0.4),
+    0 0 60px rgba(255, 255, 255, 0.2),
+    2px 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.05em;
+  font-family: 'Courier New', monospace;
+  z-index: 10;
+  user-select: none;
+  animation: timerGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes timerGlow {
+  from {
+    text-shadow: 
+      0 0 20px rgba(255, 255, 255, 0.8),
+      0 0 40px rgba(255, 255, 255, 0.4),
+      0 0 60px rgba(255, 255, 255, 0.2),
+      2px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  to {
+    text-shadow: 
+      0 0 25px rgba(255, 255, 255, 0.9),
+      0 0 50px rgba(255, 255, 255, 0.5),
+      0 0 75px rgba(255, 255, 255, 0.3),
+      2px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.pomodoro-controls {
+  display: flex;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.pomodoro-btn {
+  background: var(--card-bg);
+  color: var(--gradient-navy);
+  border: none;
+  border-radius: 12px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  min-width: 120px;
+  justify-content: center;
+}
+
+.pomodoro-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+.pomodoro-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.pomodoro-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pomodoro-quote {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--gradient-navy);
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  font-style: italic;
+  font-size: 1rem;
+  text-align: center;
+  margin: 1rem 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+  max-width: 100%;
+}
+
+.pomodoro-soundscape {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pomodoro-soundscape label {
+  color: #fff;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.pomodoro-soundscape select {
+  background: var(--card-bg);
+  color: var(--gradient-navy);
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.pomodoro-soundscape .pomodoro-btn.sound {
+  min-width: 50px;
+  padding: 0.5rem;
+  font-size: 1.2rem;
+  border-radius: 8px;
+}
+
+.pomodoro-soundscape input[type="range"] {
+  width: 100px;
+  accent-color: #fff;
+}
+
+.pomodoro-session-info {
+  color: #fff;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .pomodoro-card {
+    padding: 1.5rem;
+  }
+  
+  .pomodoro-title {
+    font-size: 1.3rem;
+  }
+  
+  .pomodoro-timer-text {
+    font-size: 3.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .pomodoro-card {
+    padding: 1rem;
+  }
+  
+  .pomodoro-timer-text {
+    font-size: 2.8rem;
+  }
+  
+  .pomodoro-session-tabs {
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .pomodoro-tab {
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+  }
+  
+  .pomodoro-controls {
+    gap: 0.8rem;
+  }
+  
+  .pomodoro-btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    min-width: 100px;
+  }
+  
+  .pomodoro-soundscape {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .pomodoro-card {
+    padding: 1rem;
+  }
+  
+  .pomodoro-timer-text {
+    font-size: 2.2rem;
+  }
+  
+  .pomodoro-session-tabs {
+    gap: 0.8rem;
+  }
+  
+  .pomodoro-tab {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    min-width: 80px;
+  }
+  
+  .pomodoro-controls {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .pomodoro-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+    min-width: 100px;
+  }
+}
+
+/* CSS Variables for gradients */
+:root {
+  --gradient-cyan: #00d4aa;
+  --gradient-navy: #1e3a8a;
+  --main-gradient: linear-gradient(135deg, var(--gradient-cyan), var(--gradient-navy));
+} 

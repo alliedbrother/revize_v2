@@ -1,0 +1,291 @@
+/* Modern Professional Navbar Styling */
+
+.modern-navbar {
+  background: var(--main-gradient) !important;
+  box-shadow: var(--shadow-gradient);
+  border: none !important;
+  padding: 0 !important;
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.navbar-container {
+  padding: 1rem 2rem;
+  max-width: none;
+}
+
+/* Brand Styling */
+.modern-brand {
+  color: var(--crisp-white) !important;
+  text-decoration: none !important;
+  font-weight: var(--font-weight-bold);
+  font-size: 1.75rem;
+  font-family: var(--font-primary);
+  letter-spacing: -0.02em;
+  transition: var(--transition);
+}
+
+.modern-brand:hover,
+.modern-brand:focus {
+  color: var(--crisp-white) !important;
+  transform: translateY(-1px);
+  text-shadow: 0 4px 8px rgba(255, 255, 255, 0.15);
+}
+
+.brand-content {
+  display: flex;
+  align-items: center;
+}
+
+.brand-text {
+  position: relative;
+}
+
+.brand-text::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--crisp-white);
+  transition: width 0.3s ease;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.modern-brand:hover .brand-text::after {
+  width: 100%;
+}
+
+/* Navigation Links */
+.navbar-nav-modern {
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-link-modern {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-weight: var(--font-weight-medium);
+  font-size: 0.95rem;
+  padding: 0.75rem 1.25rem !important;
+  border-radius: var(--border-radius-sm);
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-link-modern::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.nav-link-modern:hover::before {
+  left: 100%;
+}
+
+.nav-link-modern:hover,
+.nav-link-modern:focus {
+  color: var(--crisp-white) !important;
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Dashboard Link Special Styling */
+.dashboard-link {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--crisp-white) !important;
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--border-radius-sm);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.dashboard-link:hover,
+.dashboard-link:focus {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* CTA Button */
+.cta-button {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--crisp-white) !important;
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--border-radius-sm);
+  margin-left: 0.5rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.cta-button:hover,
+.cta-button:focus {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* User Dropdown */
+.user-dropdown-modern .dropdown-toggle {
+  color: var(--crisp-white) !important;
+  font-weight: var(--font-weight-medium);
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--border-radius-sm);
+  padding: 0.75rem 1.25rem;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  backdrop-filter: blur(10px);
+}
+
+.user-dropdown-modern .dropdown-toggle:hover,
+.user-dropdown-modern .dropdown-toggle:focus {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.user-dropdown-modern .dropdown-toggle::after {
+  margin-left: 0.5rem;
+}
+
+.user-dropdown-title {
+  display: flex;
+  align-items: center;
+}
+
+/* Dropdown Menu */
+.user-dropdown-modern .dropdown-menu {
+  background: var(--crisp-white);
+  border: none;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-lg);
+  padding: 0.5rem 0;
+  margin-top: 0.5rem;
+  min-width: 200px;
+  animation: dropdownFadeIn 0.2s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-item-modern {
+  padding: 0.75rem 1.25rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--dark-gray);
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  border: none;
+  background: none;
+}
+
+.dropdown-item-modern:hover,
+.dropdown-item-modern:focus {
+  background: linear-gradient(135deg, rgba(0, 212, 170, 0.1), rgba(3, 4, 94, 0.1));
+  color: var(--gradient-navy);
+  transform: translateX(4px);
+}
+
+.dropdown-item-modern i {
+  width: 16px;
+  opacity: 0.7;
+}
+
+.logout-item:hover,
+.logout-item:focus {
+  background: rgba(220, 53, 69, 0.1);
+  color: var(--danger-color);
+}
+
+.dropdown-divider-modern {
+  margin: 0.5rem 0;
+  border-color: var(--light-gray);
+  opacity: 0.5;
+}
+
+/* Mobile Toggle Button */
+.modern-toggler {
+  border: none !important;
+  padding: 0.5rem;
+  border-radius: var(--border-radius-sm);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+}
+
+.modern-toggler:focus {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+.modern-toggler .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.9%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Responsive Design */
+@media (max-width: 991.98px) {
+  .navbar-container {
+    padding: 1rem 1.5rem;
+  }
+  
+  .modern-brand {
+    font-size: 1.5rem;
+  }
+  
+  .navbar-nav-modern {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .nav-link-modern {
+    padding: 0.75rem 0 !important;
+    margin: 0.25rem 0;
+    border-radius: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .cta-button {
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+  
+  .user-dropdown-modern .dropdown-toggle {
+    background: transparent;
+    border: none;
+    padding: 0.75rem 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .navbar-container {
+    padding: 1rem;
+  }
+  
+  .modern-brand {
+    font-size: 1.25rem;
+  }
+} 

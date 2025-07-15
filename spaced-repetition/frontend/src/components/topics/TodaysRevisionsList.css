@@ -1,0 +1,37 @@
+/* TodaysRevisionsList - Dark Theme Fixes */
+body.dark-theme .todays-revisions-list .card-header,
+body.dark-theme .todays-revisions-list h5,
+body.dark-theme .todays-revisions-list h6 {
+  color: #fff !important;
+}
+
+body.dark-theme .todays-revisions-list .badge-primary,
+body.dark-theme .todays-revisions-list .badge.bg-primary {
+  background-color: #00d4aa !important;
+  color: #fff !important;
+}
+
+body.dark-theme .todays-revisions-list .badge-danger,
+body.dark-theme .todays-revisions-list .badge.bg-danger {
+  background-color: #ef4444 !important;
+  color: #fff !important;
+}
+
+body.dark-theme .todays-revisions-list .text-muted,
+body.dark-theme .todays-revisions-list small.text-muted {
+  color: #cbd5e1 !important;
+}
+
+body.dark-theme .todays-revisions-list .text-danger {
+  color: #ff6b6b !important;
+}
+
+body.dark-theme .todays-revisions-list .card {
+  background-color: #334155 !important;
+  color: #fff;
+}
+
+body.dark-theme .todays-revisions-list .list-group-item {
+  background-color: transparent;
+  color: #fff;
+} 

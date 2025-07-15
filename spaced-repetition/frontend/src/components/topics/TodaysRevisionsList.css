@@ -34,4 +34,28 @@ body.dark-theme .todays-revisions-list .card {
 body.dark-theme .todays-revisions-list .list-group-item {
   background-color: transparent;
   color: #fff;
+}
+
+/* Clickable topic titles */
+.clickable-topic {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  color: #007bff;
+}
+
+.clickable-topic:hover {
+  color: #0056b3;
+  text-decoration: underline;
+  transform: translateY(-1px);
+}
+
+/* Dark theme clickable topics */
+body.dark-theme .clickable-topic {
+  color: #00d4aa !important;
+}
+
+body.dark-theme .clickable-topic:hover {
+  color: #00b894 !important;
 } 

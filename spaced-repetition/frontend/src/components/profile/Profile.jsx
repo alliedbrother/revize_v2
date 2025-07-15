@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, Form, Button, Alert, Container, Row, Col, Badge, Modal } from 'react-bootstrap';
 import { useAuth } from '../../context/AuthContext';
+import { getStatistics } from '../../services/api';
 import './Profile.css';
 
 const Profile = () => {
@@ -14,6 +15,8 @@ const Profile = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const [stats, setStats] = useState(null);
+  const [statsLoading, setStatsLoading] = useState(true);
 
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
@@ -100,6 +103,26 @@ const Profile = () => {
     return 'U';
   };
 
+  // Fetch statistics on component mount
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        setStatsLoading(true);
+        const data = await getStatistics();
+        setStats(data);
+      } catch (err) {
+        console.error('Error fetching statistics:', err);
+        setStats(null);
+      } finally {
+        setStatsLoading(false);
+      }
+    };
+
+    if (user) {
+      fetchStats();
+    }
+  }, [user]);
+
   // Calculate days since joining (placeholder)
   const getDaysSinceJoined = () => {
     return Math.floor(Math.random() * 100) + 30; // Placeholder calculation
@@ -147,33 +170,43 @@ const Profile = () => {
                 </h5>
               </Card.Header>
               <Card.Body className="stats-body">
-                <div className="stat-item">
-                  <div className="stat-icon topics-icon">
-                    <i className="bi bi-book"></i>
+                {statsLoading ? (
+                  <div className="text-center py-4">
+                    <div className="spinner-border" role="status">
+                      <span className="visually-hidden">Loading...</span>
+                    </div>
                   </div>
-                  <div className="stat-details">
-                    <div className="stat-number">24</div>
-                    <div className="stat-label">Topics Learned</div>
-                  </div>
-                </div>
-                <div className="stat-item">
-                  <div className="stat-icon revisions-icon">
-                    <i className="bi bi-arrow-repeat"></i>
-                  </div>
-                  <div className="stat-details">
-                    <div className="stat-number">156</div>
-                    <div className="stat-label">Revisions Done</div>
-                  </div>
-                </div>
-                <div className="stat-item">
-                  <div className="stat-icon streak-icon">
-                    <i className="bi bi-fire"></i>
-                  </div>
-                  <div className="stat-details">
-                    <div className="stat-number">12</div>
-                    <div className="stat-label">Day Streak</div>
-                  </div>
-                </div>
+                ) : (
+                  <>
+                    <div className="stat-item">
+                      <div className="stat-icon topics-icon">
+                        <i className="bi bi-book"></i>
+                      </div>
+                      <div className="stat-details">
+                        <div className="stat-number">{stats?.total_topics || 0}</div>
+                        <div className="stat-label">Topics Created</div>
+                      </div>
+                    </div>
+                    <div className="stat-item">
+                      <div className="stat-icon revisions-icon">
+                        <i className="bi bi-arrow-repeat"></i>
+                      </div>
+                      <div className="stat-details">
+                        <div className="stat-number">{stats?.completed_revisions || 0}</div>
+                        <div className="stat-label">Revisions Done</div>
+                      </div>
+                    </div>
+                    <div className="stat-item">
+                      <div className="stat-icon streak-icon">
+                        <i className="bi bi-fire"></i>
+                      </div>
+                      <div className="stat-details">
+                        <div className="stat-number">{stats?.topics_this_week || 0}</div>
+                        <div className="stat-label">Topics This Week</div>
+                      </div>
+                    </div>
+                  </>
+                )}
               </Card.Body>
             </Card>
 

@@ -3,6 +3,7 @@ import { Card, Badge, Alert, Form, Row, Col, Button, ListGroup, Spinner } from '
 import { useAuth } from '../../context/AuthContext';
 import { getRevisionSchedule, completeRevision, postponeRevision } from '../../services/api';
 import { RefreshContext } from '../dashboard/ModernDashboard';
+import { formatDate, parseDate } from '../../utils/dateUtils';
 import './Revisions.css';
 import './RevisionSchedule.css';
 
@@ -126,13 +127,13 @@ const RevisionSchedule = () => {
     
     // Filter by date range
     if (filters.startDate) {
-      const startDate = new Date(filters.startDate);
-      result = result.filter(item => new Date(item.scheduled_date) >= startDate);
+      const startDate = parseDate(filters.startDate);
+      result = result.filter(item => parseDate(item.scheduled_date) >= startDate);
     }
     
     if (filters.endDate) {
-      const endDate = new Date(filters.endDate);
-      result = result.filter(item => new Date(item.scheduled_date) <= endDate);
+      const endDate = parseDate(filters.endDate);
+      result = result.filter(item => parseDate(item.scheduled_date) <= endDate);
     }
     
     // Filter by status
@@ -283,7 +284,7 @@ const RevisionSchedule = () => {
                         {revision.completed ? 'Completed' : revision.postponed ? 'Postponed' : 'Pending'}
                       </Badge>
                       <small className="text-muted">
-                        Scheduled: {new Date(revision.scheduled_date).toLocaleDateString()}
+                        Scheduled: {formatDate(revision.scheduled_date)}
                       </small>
                     </div>
                   </div>

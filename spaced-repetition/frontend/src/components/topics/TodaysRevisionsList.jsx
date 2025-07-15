@@ -3,6 +3,8 @@ import { Card, ListGroup, Badge, Spinner, Alert, Button } from 'react-bootstrap'
 import { useAuth } from '../../context/AuthContext';
 import { getTodaysRevisions, getMissedRevisions, completeRevision, postponeRevision } from '../../services/api';
 import { RefreshContext } from '../dashboard/ModernDashboard';
+import { formatDate } from '../../utils/dateUtils';
+import TopicDetailCard from './TopicDetailCard';
 import './TodaysRevisionsList.css';
 
 const TodaysRevisionsList = () => {
@@ -13,6 +15,8 @@ const TodaysRevisionsList = () => {
   const [error, setError] = useState('');
   const [missedError, setMissedError] = useState('');
   const [processingId, setProcessingId] = useState(null);
+  const [showTopicDetail, setShowTopicDetail] = useState(false);
+  const [selectedTopicId, setSelectedTopicId] = useState(null);
   const { user } = useAuth();
   const { refreshTrigger, triggerRefresh } = useContext(RefreshContext);
 
@@ -77,12 +81,18 @@ const TodaysRevisionsList = () => {
     }
   };
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
+  const formatRevisionDate = (dateString) => {
+    return formatDate(dateString);
+  };
+
+  const handleTopicClick = (topicId) => {
+    setSelectedTopicId(topicId);
+    setShowTopicDetail(true);
+  };
+
+  const handleCloseTopicDetail = () => {
+    setShowTopicDetail(false);
+    setSelectedTopicId(null);
   };
 
   return (
@@ -122,9 +132,11 @@ const TodaysRevisionsList = () => {
                 <ListGroup.Item key={rev.id} className="border-0">
                   <div className="d-flex justify-content-between align-items-start">
                     <div className="flex-grow-1">
-                      <h6 className="mb-1 fw-semibold">{rev.topic?.title || 'Untitled Topic'}</h6>
+                      <h6 className="mb-1 fw-semibold clickable-topic" onClick={() => handleTopicClick(rev.topic?.id)}>
+                        {rev.topic?.title || 'Untitled Topic'}
+                      </h6>
                       <p className="mb-1 text-muted small">
-                        Revision scheduled: {formatDate(rev.scheduled_date)}
+                        Revision scheduled: {formatRevisionDate(rev.scheduled_date)}
                       </p>
                     </div>
                     <div className="d-flex gap-2">
@@ -190,9 +202,11 @@ const TodaysRevisionsList = () => {
                 <ListGroup.Item key={rev.id} className="border-0">
                   <div className="d-flex justify-content-between align-items-start">
                     <div className="flex-grow-1">
-                      <h6 className="mb-1 fw-semibold">{rev.topic?.title || 'Untitled Topic'}</h6>
+                      <h6 className="mb-1 fw-semibold clickable-topic" onClick={() => handleTopicClick(rev.topic?.id)}>
+                        {rev.topic?.title || 'Untitled Topic'}
+                      </h6>
                       <p className="mb-1 text-muted small">
-                        Missed revision scheduled: {formatDate(rev.scheduled_date)}
+                        Missed revision: {formatRevisionDate(rev.scheduled_date)}
                       </p>
                     </div>
                     <div className="d-flex gap-2">
@@ -222,6 +236,13 @@ const TodaysRevisionsList = () => {
           )}
         </Card.Body>
       </Card>
+
+      {/* Topic Detail Modal */}
+      <TopicDetailCard
+        show={showTopicDetail}
+        onHide={handleCloseTopicDetail}
+        topicId={selectedTopicId}
+      />
     </div>
   );
 };

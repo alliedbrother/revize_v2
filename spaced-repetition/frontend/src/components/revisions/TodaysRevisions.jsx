@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, ListGroup, Button, Alert, Badge, Spinner, Tabs, Tab } from 'react-bootstrap';
 import { useAuth } from '../../context/AuthContext';
+import { formatDate, formatDateLong } from '../../utils/dateUtils';
 
 // Fallback API functions for when backend is not available
 const fallbackAPI = {
@@ -212,13 +213,7 @@ const TodaysRevisions = () => {
   };
 
   const formatServerDate = (dateStr) => {
-    if (!dateStr) return '';
-    const date = new Date(dateStr);
-    return date.toLocaleDateString(undefined, { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric'
-    });
+    return formatDateLong(dateStr);
   };
 
   // Separate regular and postponed revisions
@@ -272,7 +267,7 @@ const TodaysRevisions = () => {
                             Revision #{revision.revision_number}
                           </Badge>
                           <small className="text-muted">
-                            Due: {new Date(revision.scheduled_date).toLocaleDateString()}
+                            Due: {formatDate(revision.scheduled_date)}
                           </small>
                         </div>
                       </div>
@@ -343,7 +338,7 @@ const TodaysRevisions = () => {
                               Revision #{revision.revision_number}
                             </Badge>
                             <small className="text-muted">
-                              Postponed from: {new Date(revision.scheduled_date).toLocaleDateString()}
+                              Postponed from: {formatDate(revision.scheduled_date)}
                             </small>
                           </div>
                         </div>
@@ -419,7 +414,7 @@ const TodaysRevisions = () => {
                         Revision #{revision.revision_number}
                       </Badge>
                       <small className="text-muted">
-                        Missed: {new Date(revision.scheduled_date).toLocaleDateString()}
+                        Missed: {formatDate(revision.scheduled_date)}
                       </small>
                     </div>
                   </div>

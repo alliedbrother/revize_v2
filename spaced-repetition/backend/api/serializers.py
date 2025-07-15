@@ -63,14 +63,33 @@ class RevisionSerializer(serializers.ModelSerializer):
         )
         read_only_fields = ('date_created', 'date_modified')
 
+class RevisionScheduleSimpleSerializer(serializers.ModelSerializer):
+    day_number = serializers.SerializerMethodField()
+
+    class Meta:
+        model = RevisionSchedule
+        fields = ['id', 'scheduled_date', 'completed', 'postponed', 'day_number']
+        read_only_fields = ['completed', 'postponed']
+
+    def get_day_number(self, obj):
+        # Get all revisions for this topic, ordered by scheduled date
+        revisions = RevisionSchedule.objects.filter(
+            topic=obj.topic
+        ).order_by('scheduled_date')
+        # Find the position of the current revision in the ordered list
+        for i, revision in enumerate(revisions):
+            if revision.id == obj.id:
+                return i + 1  # Add 1 to make it 1-indexed instead of 0-indexed
+        return None
+
 class TopicSerializer(serializers.ModelSerializer):
-    revisions = RevisionSerializer(many=True, read_only=True)
+    revisions = RevisionScheduleSimpleSerializer(many=True, read_only=True)
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Topic
         fields = (
-            'id', 'title', 'content', 'user', 
+            'id', 'title', 'content', 'resource_url', 'user', 
             'revisions', 'created_at', 'updated_at'
         )
         read_only_fields = ('created_at', 'updated_at')
@@ -81,7 +100,7 @@ class TopicCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Topic
-        fields = ('id', 'title', 'content', 'user', 'initial_revision_date')
+        fields = ('id', 'title', 'content', 'resource_url', 'user', 'initial_revision_date')
 
     def create(self, validated_data):
         # Extract initial_revision_date from validated_data if provided

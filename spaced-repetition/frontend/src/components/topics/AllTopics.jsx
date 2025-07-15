@@ -3,6 +3,8 @@ import { Card, Button, Modal, Form, Alert, Badge, Spinner, ListGroup } from 'rea
 import { useAuth } from '../../context/AuthContext';
 import { getAllTopics, createTopic, deleteTopic, updateTopic } from '../../services/api';
 import { RefreshContext } from '../dashboard/ModernDashboard';
+import { formatDateTime, formatDateFromTimestamp } from '../../utils/dateUtils';
+import TopicDetailCard from './TopicDetailCard';
 import './Topics.css';
 import './AllTopics.css';
 
@@ -19,6 +21,8 @@ const AllTopics = () => {
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [showTopicDetail, setShowTopicDetail] = useState(false);
+  const [selectedTopicId, setSelectedTopicId] = useState(null);
   const { user } = useAuth();
   const { refreshTrigger, triggerRefresh } = useContext(RefreshContext);
 
@@ -140,6 +144,16 @@ const AllTopics = () => {
     }
   };
 
+  const handleTopicClick = (topicId) => {
+    setSelectedTopicId(topicId);
+    setShowTopicDetail(true);
+  };
+
+  const handleCloseTopicDetail = () => {
+    setShowTopicDetail(false);
+    setSelectedTopicId(null);
+  };
+
   return (
     <div className="all-topics-list">
       <Card className="topics-card shadow-sm">
@@ -192,7 +206,7 @@ const AllTopics = () => {
                   className="topic-item"
                 >
                   <div className="topic-content">
-                    <h5 className="topic-title">
+                    <h5 className="topic-title clickable" onClick={() => handleTopicClick(topic.id)}>
                       {topic.title}
                     </h5>
                     <p className="topic-description">
@@ -202,10 +216,14 @@ const AllTopics = () => {
                     </p>
                   </div>
                   <div className="topic-meta-center">
-                    <Badge bg="light" text="dark" className="date-badge">
+                    <Badge bg="light" text="dark" className="date-badge" title={`Created: ${formatDateTime(topic.created_at)}`}>
                       <i className="bi bi-calendar me-1"></i>
-                      {new Date(topic.created_at).toLocaleDateString()}
+                      {formatDateFromTimestamp(topic.created_at)}
                     </Badge>
+                    <div className="text-muted small mt-1">
+                      <i className="bi bi-clock me-1"></i>
+                      {formatDateTime(topic.created_at)}
+                    </div>
                   </div>
                   <div className="topic-actions">
                     <Button
@@ -376,6 +394,13 @@ const AllTopics = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+
+      {/* Topic Detail Modal */}
+      <TopicDetailCard
+        show={showTopicDetail}
+        onHide={handleCloseTopicDetail}
+        topicId={selectedTopicId}
+      />
     </div>
   );
 };

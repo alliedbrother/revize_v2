@@ -2,6 +2,7 @@ import { useState, useContext } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { createTopic } from '../../services/api';
 import { RefreshContext } from '../dashboard/ModernDashboard';
+import { getCurrentDateString } from '../../utils/dateUtils';
 import './AddTopicCard.css';
 
 const AddTopicCard = () => {
@@ -9,7 +10,7 @@ const AddTopicCard = () => {
     title: '',
     content: '',
     resourceUrl: '',
-    studyDate: new Date().toISOString().split('T')[0]
+    studyDate: getCurrentDateString()
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -87,7 +88,7 @@ const AddTopicCard = () => {
         title: '',
         content: '',
         resourceUrl: '',
-        studyDate: new Date().toISOString().split('T')[0]
+        studyDate: getCurrentDateString()
       });
       
       // Trigger refresh in other components

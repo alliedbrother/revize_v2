@@ -9,6 +9,7 @@ class Topic(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     content = models.TextField(default="")
+    resource_url = models.URLField(max_length=500, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -16,7 +17,7 @@ class Topic(models.Model):
         return self.title
 
 class RevisionSchedule(models.Model):
-    topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE, related_name='revisions')
     scheduled_date = models.DateField()
     completed = models.BooleanField(default=False)
     postponed = models.BooleanField(default=False)
@@ -71,7 +72,7 @@ class Revision(models.Model):
         ('postponed', 'Postponed'),
     )
 
-    topic = models.ForeignKey(Topic, on_delete=models.CASCADE, related_name='revisions')
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE, related_name='legacy_revisions')
     scheduled_date = models.DateField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     completion_date = models.DateField(null=True, blank=True)

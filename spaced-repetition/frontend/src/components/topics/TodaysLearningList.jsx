@@ -3,6 +3,7 @@ import { Card, ListGroup, Badge, Spinner, Alert } from 'react-bootstrap';
 import { useAuth } from '../../context/AuthContext';
 import { getTodaysRevisions } from '../../services/api';
 import { RefreshContext } from '../dashboard/ModernDashboard';
+import { formatDate } from '../../utils/dateUtils';
 
 const TodaysRevisionsList = () => {
   const [revisions, setRevisions] = useState([]);
@@ -31,12 +32,8 @@ const TodaysRevisionsList = () => {
     }
   };
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
+  const formatRevisionDate = (dateString) => {
+    return formatDate(dateString);
   };
 
   if (loading) {
@@ -89,7 +86,7 @@ const TodaysRevisionsList = () => {
                   <div className="flex-grow-1">
                     <h6 className="mb-1 fw-semibold">{rev.topic?.title || 'Untitled Topic'}</h6>
                     <p className="mb-1 text-muted small">
-                      Revision scheduled: {formatDate(rev.scheduled_date)}
+                      Revision scheduled: {formatRevisionDate(rev.scheduled_date)}
                     </p>
                   </div>
                   <Badge bg="success" className="ms-2">

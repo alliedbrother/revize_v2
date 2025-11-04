@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
-from .models import Topic, Revision, RevisionSchedule
+from .models import Topic, RevisionSchedule, FlashCard, FlashCardRevisionSchedule
 
 class TokenInline(admin.TabularInline):
     model = Token
@@ -33,8 +33,8 @@ admin.site.register(User, CustomUserAdmin)
 
 @admin.register(Topic)
 class TopicAdmin(admin.ModelAdmin):
-    list_display = ('title', 'user', 'created_at')
-    list_filter = ('created_at',)
+    list_display = ('title', 'user', 'source_type', 'created_at')
+    list_filter = ('created_at', 'source_type')
     search_fields = ('title', 'content')
     readonly_fields = ('created_at',)
 
@@ -45,13 +45,17 @@ class RevisionScheduleAdmin(admin.ModelAdmin):
     search_fields = ('topic__title',)
     readonly_fields = ('created_at',)
 
-@admin.register(Revision)
-class RevisionAdmin(admin.ModelAdmin):
-    list_display = ('get_topic_title', 'scheduled_date', 'status', 'interval')
-    list_filter = ('status', 'scheduled_date')
-    search_fields = ('topic__title',)
-    
-    def get_topic_title(self, obj):
-        return obj.topic.title
-    get_topic_title.short_description = 'Topic'
-    get_topic_title.admin_order_field = 'topic__title'
+@admin.register(FlashCard)
+class FlashCardAdmin(admin.ModelAdmin):
+    list_display = ('title', 'topic', 'order', 'created_at')
+    list_filter = ('created_at', 'topic')
+    search_fields = ('title', 'content', 'topic__title')
+    readonly_fields = ('created_at', 'updated_at')
+    ordering = ('topic', 'order')
+
+@admin.register(FlashCardRevisionSchedule)
+class FlashCardRevisionScheduleAdmin(admin.ModelAdmin):
+    list_display = ('flashcard', 'scheduled_date', 'completed', 'postponed')
+    list_filter = ('scheduled_date', 'completed', 'postponed')
+    search_fields = ('flashcard__title', 'flashcard__topic__title')
+    readonly_fields = ('created_at', 'updated_at')

@@ -5,8 +5,13 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from django.contrib.auth.models import User
-from .models import Topic, Revision, RevisionSchedule
-from .serializers import TopicSerializer, TopicCreateSerializer, RevisionSerializer, UserSerializer, RevisionScheduleSerializer
+from .models import Topic, RevisionSchedule, FlashCard, FlashCardRevisionSchedule
+from .serializers import (
+    TopicSerializer, TopicCreateSerializer, UserSerializer,
+    RevisionScheduleSerializer, DocumentUploadSerializer,
+    TopicWithFlashcardsSerializer, FlashCardSerializer,
+    FlashCardRevisionScheduleSerializer, ImageUploadSerializer
+)
 from django.utils import timezone
 import datetime
 from django.contrib.auth import authenticate
@@ -14,6 +19,11 @@ from rest_framework.decorators import api_view, permission_classes, action
 from datetime import timedelta
 from django.urls import path
 import requests
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+import os
+from .flashcard_generator import generate_flashcards_from_document
+from .image_flashcard_generator import generate_flashcards_from_images
 
 # Create your views here.
 
@@ -42,84 +52,176 @@ class TopicDetail(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         return Topic.objects.filter(user=self.request.user)
 
-class RevisionListCreate(generics.ListCreateAPIView):
-    """
-    API endpoint that allows revisions to be viewed or created.
-    """
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = RevisionSerializer
-
-    def get_queryset(self):
-        queryset = Revision.objects.filter(topic__user=self.request.user)
-        
-        # Filter by date if provided
-        date_filter = self.request.query_params.get('date', None)
-        if date_filter:
-            try:
-                filter_date = datetime.datetime.strptime(date_filter, '%Y-%m-%d').date()
-                queryset = queryset.filter(scheduled_date=filter_date)
-            except ValueError:
-                pass  # Invalid date format
-        
-        # Filter by status if provided
-        status_filter = self.request.query_params.get('status', None)
-        if status_filter:
-            queryset = queryset.filter(status=status_filter)
-        
-        return queryset
-
-class RevisionDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    API endpoint that allows a revision to be viewed, updated, or deleted.
-    """
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = RevisionSerializer
-
-    def get_queryset(self):
-        return Revision.objects.filter(topic__user=self.request.user)
-    
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        
-        # Handle specific action parameters
-        action = request.data.get('action', None)
-        if action == 'complete':
-            instance.mark_completed()
-            return Response(self.get_serializer(instance).data)
-        elif action == 'postpone':
-            days = request.data.get('days', 1)
-            try:
-                days = int(days)
-            except (ValueError, TypeError):
-                days = 1
-            instance.postpone(days=days)
-            return Response(self.get_serializer(instance).data)
-        
-        # Default update behavior
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        return Response(serializer.data)
-
 class TodayRevisions(APIView):
     """
     API endpoint that returns revisions scheduled for today.
-    This includes both regular and postponed revisions.
+    This includes both topic revisions and flashcard revisions (grouped by topic).
+    Supports timezone-aware date calculation.
     """
     permission_classes = [permissions.IsAuthenticated]
-    
+
     def get(self, request):
-        today = timezone.now().date()
-        # Get all revisions for today that aren't completed, including postponed ones
-        revisions = RevisionSchedule.objects.filter(
+        # Get user's timezone from query parameter or header
+        # Frontend should send timezone name like 'America/New_York' or 'Asia/Kolkata'
+        user_timezone_name = request.GET.get('timezone') or request.headers.get('X-Timezone')
+
+        if user_timezone_name:
+            try:
+                import pytz
+                user_tz = pytz.timezone(user_timezone_name)
+                # Get current time in user's timezone
+                user_now = timezone.now().astimezone(user_tz)
+                today = user_now.date()
+                print(f"Using user timezone: {user_timezone_name}, Today: {today}")
+            except Exception as e:
+                print(f"Invalid timezone {user_timezone_name}: {e}, using server time")
+                today = timezone.now().date()
+        else:
+            # Fallback to server timezone
+            today = timezone.now().date()
+
+        # Get topic revisions for today
+        topic_revisions = RevisionSchedule.objects.filter(
             topic__user=request.user,
             scheduled_date=today,
             completed=False
         )
+
+        # Get flashcard revisions for today
+        flashcard_revisions = FlashCardRevisionSchedule.objects.filter(
+            flashcard__topic__user=request.user,
+            scheduled_date=today,
+            completed=False
+        ).select_related('flashcard__topic')
+
+        # Group flashcard revisions by topic
+        from collections import defaultdict
+        flashcards_by_topic = defaultdict(list)
+
+        for fc_rev in flashcard_revisions:
+            topic = fc_rev.flashcard.topic
+            flashcards_by_topic[topic.id].append({
+                'id': fc_rev.id,
+                'flashcard': {
+                    'id': fc_rev.flashcard.id,
+                    'title': fc_rev.flashcard.title,
+                    'content': fc_rev.flashcard.content,
+                    'order': fc_rev.flashcard.order,
+                    'topic': {
+                        'id': topic.id,
+                        'title': topic.title
+                    }
+                },
+                'scheduled_date': fc_rev.scheduled_date,
+                'day_number': self._get_day_number(fc_rev)
+            })
+
+        # Create grouped flashcard topic data
+        flashcard_topics = []
+        for topic_id, flashcard_list in flashcards_by_topic.items():
+            topic = Topic.objects.get(id=topic_id)
+            flashcard_topics.append({
+                'topic': TopicSerializer(topic).data,
+                'flashcard_count': len(flashcard_list),
+                'flashcards': flashcard_list,
+                'revision_type': 'flashcard_group'
+            })
+
+        # Exclude ALL topics that have ANY flashcards (not just today's flashcards)
+        # This ensures topics with flashcards are ONLY reviewed through flashcards
+        topics_with_any_flashcards = set(
+            FlashCard.objects.filter(topic__user=request.user).values_list('topic_id', flat=True)
+        )
+        topic_revisions = topic_revisions.exclude(topic_id__in=topics_with_any_flashcards)
+
+        # Serialize topic revisions
         from .serializers import RevisionScheduleSerializer
-        serializer = RevisionScheduleSerializer(revisions, many=True)
-        return Response(serializer.data)
+        topic_data = RevisionScheduleSerializer(topic_revisions, many=True).data
+
+        # Combine and return
+        return Response({
+            'topic_revisions': topic_data,
+            'flashcard_topics': flashcard_topics,
+            'total_count': len(topic_data) + len(flashcard_topics)
+        })
+
+    def _get_day_number(self, fc_revision):
+        """Get the day number for a flashcard revision"""
+        revisions = FlashCardRevisionSchedule.objects.filter(
+            flashcard=fc_revision.flashcard
+        ).order_by('scheduled_date')
+        for i, rev in enumerate(revisions):
+            if rev.id == fc_revision.id:
+                return i + 1
+        return None
+
+class CompletedTodayRevisions(APIView):
+    """
+    API endpoint that returns flashcards completed today for practice mode.
+    This allows users to review completed flashcards without affecting their completion status.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        # Get user's timezone from query parameter or header
+        user_timezone_name = request.GET.get('timezone') or request.headers.get('X-Timezone')
+
+        if user_timezone_name:
+            try:
+                import pytz
+                user_tz = pytz.timezone(user_timezone_name)
+                user_now = timezone.now().astimezone(user_tz)
+                today = user_now.date()
+            except Exception as e:
+                print(f"Invalid timezone {user_timezone_name}: {e}, using server time")
+                today = timezone.now().date()
+        else:
+            today = timezone.now().date()
+
+        # Get flashcard revisions completed today
+        flashcard_revisions = FlashCardRevisionSchedule.objects.filter(
+            flashcard__topic__user=request.user,
+            scheduled_date=today,
+            completed=True
+        ).select_related('flashcard__topic')
+
+        # Group flashcard revisions by topic
+        from collections import defaultdict
+        flashcards_by_topic = defaultdict(list)
+
+        for fc_rev in flashcard_revisions:
+            topic = fc_rev.flashcard.topic
+            flashcards_by_topic[topic.id].append({
+                'id': fc_rev.id,
+                'flashcard': {
+                    'id': fc_rev.flashcard.id,
+                    'title': fc_rev.flashcard.title,
+                    'content': fc_rev.flashcard.content,
+                    'order': fc_rev.flashcard.order,
+                    'topic': {
+                        'id': topic.id,
+                        'title': topic.title
+                    }
+                },
+                'scheduled_date': fc_rev.scheduled_date,
+                'completed': fc_rev.completed
+            })
+
+        # Create grouped flashcard topic data
+        flashcard_topics = []
+        for topic_id, flashcard_list in flashcards_by_topic.items():
+            topic = Topic.objects.get(id=topic_id)
+            flashcard_topics.append({
+                'topic': TopicSerializer(topic).data,
+                'flashcard_count': len(flashcard_list),
+                'flashcards': flashcard_list,
+                'revision_type': 'flashcard_group'
+            })
+
+        return Response({
+            'flashcard_topics': flashcard_topics,
+            'total_count': len(flashcard_topics)
+        })
 
 class ServerTime(APIView):
     """
@@ -140,19 +242,103 @@ class ServerTime(APIView):
 class MissedRevisions(APIView):
     """
     API endpoint that returns revisions scheduled for before today that haven't been completed.
-    This includes both regular and postponed revisions.
+    This includes both topic revisions and flashcard revisions (grouped by topic).
+    Supports timezone-aware date calculation.
     """
     permission_classes = [permissions.IsAuthenticated]
-    
+
     def get(self, request):
-        today = timezone.now().date()
-        revisions = RevisionSchedule.objects.filter(
+        # Get user's timezone from query parameter or header
+        user_timezone_name = request.GET.get('timezone') or request.headers.get('X-Timezone')
+
+        if user_timezone_name:
+            try:
+                import pytz
+                user_tz = pytz.timezone(user_timezone_name)
+                # Get current time in user's timezone
+                user_now = timezone.now().astimezone(user_tz)
+                today = user_now.date()
+                print(f"Using user timezone: {user_timezone_name}, Today: {today}")
+            except Exception as e:
+                print(f"Invalid timezone {user_timezone_name}: {e}, using server time")
+                today = timezone.now().date()
+        else:
+            # Fallback to server timezone
+            today = timezone.now().date()
+
+        # Get missed topic revisions
+        topic_revisions = RevisionSchedule.objects.filter(
             topic__user=request.user,
             scheduled_date__lt=today,
             completed=False
         )
-        serializer = RevisionScheduleSerializer(revisions, many=True)
-        return Response(serializer.data)
+
+        # Get missed flashcard revisions
+        flashcard_revisions = FlashCardRevisionSchedule.objects.filter(
+            flashcard__topic__user=request.user,
+            scheduled_date__lt=today,
+            completed=False
+        ).select_related('flashcard__topic')
+
+        # Group flashcard revisions by topic
+        from collections import defaultdict
+        flashcards_by_topic = defaultdict(list)
+
+        for fc_rev in flashcard_revisions:
+            topic = fc_rev.flashcard.topic
+            flashcards_by_topic[topic.id].append({
+                'id': fc_rev.id,
+                'flashcard': {
+                    'id': fc_rev.flashcard.id,
+                    'title': fc_rev.flashcard.title,
+                    'content': fc_rev.flashcard.content,
+                    'order': fc_rev.flashcard.order,
+                    'topic': {
+                        'id': topic.id,
+                        'title': topic.title
+                    }
+                },
+                'scheduled_date': fc_rev.scheduled_date,
+                'day_number': self._get_day_number(fc_rev)
+            })
+
+        # Create grouped flashcard topic data
+        flashcard_topics = []
+        for topic_id, flashcard_list in flashcards_by_topic.items():
+            topic = Topic.objects.get(id=topic_id)
+            flashcard_topics.append({
+                'topic': TopicSerializer(topic).data,
+                'flashcard_count': len(flashcard_list),
+                'flashcards': flashcard_list,
+                'revision_type': 'flashcard_group'
+            })
+
+        # Exclude ALL topics that have ANY flashcards (not just overdue flashcards)
+        # This ensures topics with flashcards are ONLY reviewed through flashcards
+        topics_with_any_flashcards = set(
+            FlashCard.objects.filter(topic__user=request.user).values_list('topic_id', flat=True)
+        )
+        topic_revisions = topic_revisions.exclude(topic_id__in=topics_with_any_flashcards)
+
+        # Serialize topic revisions
+        topic_data = RevisionScheduleSerializer(topic_revisions, many=True).data
+
+        # Combine and return
+        return Response({
+            'topic_revisions': topic_data,
+            'flashcard_topics': flashcard_topics,
+            'total_count': len(topic_data) + len(flashcard_topics)
+        })
+
+    def _get_day_number(self, fc_revision):
+        """Get the day number for a flashcard revision"""
+        revisions = FlashCardRevisionSchedule.objects.filter(
+            flashcard=fc_revision.flashcard
+        ).order_by('scheduled_date')
+        for i, rev in enumerate(revisions):
+            if rev.id == fc_revision.id:
+                return i + 1
+        return None
 
 class TodayTopics(APIView):
     """
@@ -223,12 +409,32 @@ class TopicViewSet(viewsets.ModelViewSet):
         initial_revision_date = None
         if 'initial_revision_date' in serializer.validated_data:
             initial_revision_date = serializer.validated_data.pop('initial_revision_date')
-            
+
         # Create the topic
         topic = serializer.save(user=self.request.user)
-        
-        # Create revision schedule for the new topic with the specified date
-        RevisionSchedule.create_schedule(topic, base_date=initial_revision_date)
+
+        # Auto-create a flashcard for manually created topics
+        # This ensures manual topics appear in the flashcard review session
+        if topic.source_type == 'manual':
+            print(f'[DEBUG] Auto-creating flashcard for manual topic: {topic.title}')
+            flashcard = FlashCard.objects.create(
+                topic=topic,
+                title=topic.title,
+                content=topic.content,
+                order=1
+            )
+            print(f'[DEBUG] Flashcard created with ID: {flashcard.id}')
+
+            # Create flashcard revision schedule
+            FlashCardRevisionSchedule.create_schedule(
+                flashcard,
+                base_date=initial_revision_date
+            )
+            print(f'[DEBUG] Flashcard revision schedule created')
+        else:
+            # Only create topic revision schedule for topics WITHOUT flashcards
+            # (link, image, or any other non-manual topics that don't auto-generate flashcards)
+            RevisionSchedule.create_schedule(topic, base_date=initial_revision_date)
 
 class RevisionScheduleViewSet(viewsets.ModelViewSet):
     serializer_class = RevisionScheduleSerializer
@@ -265,6 +471,38 @@ class RevisionScheduleViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'])
     def postpone(self, request, pk=None):
+        revision = self.get_object()
+        revision.postpone()
+        serializer = self.get_serializer(revision)
+        return Response(serializer.data)
+
+class FlashCardRevisionScheduleViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for managing flashcard revision schedules.
+    Provides complete and postpone actions for flashcard revisions.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return FlashCardRevisionSchedule.objects.filter(
+            flashcard__topic__user=self.request.user
+        )
+
+    def get_serializer_class(self):
+        from .serializers import FlashCardRevisionScheduleSerializer
+        return FlashCardRevisionScheduleSerializer
+
+    @action(detail=True, methods=['post'])
+    def complete(self, request, pk=None):
+        """Mark a flashcard revision as completed"""
+        revision = self.get_object()
+        revision.complete()
+        serializer = self.get_serializer(revision)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['post'])
+    def postpone(self, request, pk=None):
+        """Postpone a flashcard revision"""
         revision = self.get_object()
         revision.postpone()
         serializer = self.get_serializer(revision)
@@ -380,4 +618,232 @@ class GoogleLoginView(APIView):
         except Exception as e:
             return Response({
                 'error': f'Google login failed: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class ChangePasswordView(APIView):
+    """
+    API endpoint for changing user password.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        """Change user password"""
+        current_password = request.data.get('current_password')
+        new_password = request.data.get('new_password')
+
+        if not current_password or not new_password:
+            return Response({
+                'error': 'Both current and new password are required'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Verify current password
+        if not request.user.check_password(current_password):
+            return Response({
+                'error': 'Current password is incorrect'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Set new password
+        request.user.set_password(new_password)
+        request.user.save()
+
+        return Response({
+            'message': 'Password changed successfully'
+        }, status=status.HTTP_200_OK)
+
+
+class DocumentUploadView(APIView):
+    """
+    API endpoint for uploading documents and generating flashcards using Gemini AI
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        """Handle document upload and flashcard generation"""
+        serializer = DocumentUploadSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # Get validated data
+            document = serializer.validated_data['document']
+            title = serializer.validated_data.get('title', '')
+            initial_revision_date = serializer.validated_data.get('initial_revision_date')
+
+            # Determine document type
+            file_extension = document.name.split('.')[-1].lower()
+            if file_extension == 'pdf':
+                doc_type = 'pdf'
+            elif file_extension in ['doc', 'docx']:
+                doc_type = 'docx'
+            else:
+                return Response({
+                    'error': 'Unsupported file type'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            # Save the uploaded file temporarily
+            file_path = default_storage.save(
+                f'temp_uploads/{document.name}',
+                ContentFile(document.read())
+            )
+            full_file_path = os.path.join(default_storage.location, file_path)
+
+            # Generate flashcards using LangGraph workflow
+            result = generate_flashcards_from_document(full_file_path, doc_type)
+
+            # Delete temporary file
+            default_storage.delete(file_path)
+
+            if not result['success']:
+                return Response({
+                    'error': result['error']
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            # Use Gemini-generated title if not provided by user
+            if not title:
+                title = result.get('topic_title', '') or f"Document: {document.name.rsplit('.', 1)[0]}"
+
+            # Create the Topic
+            topic = Topic.objects.create(
+                user=request.user,
+                title=title,
+                content=f"Generated from document: {document.name}\n\nExtracted {result['extracted_text_length']} characters",
+                source_type='document',
+                source_file=document
+            )
+
+            # Note: We don't create TopicRevisionSchedule here because this topic will have flashcards
+            # Topics with flashcards are reviewed only through their flashcards, not as topics
+
+            # Create FlashCards from the generated flashcards
+            flashcards_created = []
+            for idx, flashcard_data in enumerate(result['flashcards']):
+                flashcard = FlashCard.objects.create(
+                    topic=topic,
+                    title=flashcard_data['title'],
+                    content=flashcard_data['content'],
+                    order=idx + 1
+                )
+                flashcards_created.append(flashcard)
+
+                # Create revision schedule for each flashcard
+                FlashCardRevisionSchedule.create_schedule(
+                    flashcard,
+                    base_date=initial_revision_date
+                )
+
+            # Return the created topic with flashcards
+            response_serializer = TopicWithFlashcardsSerializer(topic)
+            return Response({
+                'message': f'Successfully created {len(flashcards_created)} flashcards',
+                'topic': response_serializer.data,
+                'flashcards_count': len(flashcards_created)
+            }, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            return Response({
+                'error': f'An error occurred: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class ImageUploadView(APIView):
+    """
+    API endpoint for uploading images and generating flashcards using Gemini Vision AI
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        """Handle image upload and flashcard generation"""
+        serializer = ImageUploadSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # Get validated data
+            images = serializer.validated_data['images']
+            title = serializer.validated_data.get('title', '')
+            initial_revision_date = serializer.validated_data.get('initial_revision_date')
+
+            # Save uploaded images temporarily
+            image_paths = []
+            saved_files = []
+
+            for idx, image in enumerate(images):
+                # Save to temporary location
+                file_path = default_storage.save(
+                    f'temp_uploads/image_{idx}_{image.name}',
+                    ContentFile(image.read())
+                )
+                full_file_path = os.path.join(default_storage.location, file_path)
+                image_paths.append(full_file_path)
+                saved_files.append(file_path)
+
+            # Generate flashcards using LangGraph workflow
+            result = generate_flashcards_from_images(image_paths)
+
+            # Delete temporary files
+            for file_path in saved_files:
+                try:
+                    default_storage.delete(file_path)
+                except:
+                    pass
+
+            if not result['success']:
+                return Response({
+                    'error': result['error']
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            # Use Gemini-generated title if not provided by user
+            if not title:
+                title = result.get('topic_title', '') or f"Images: {len(images)} image(s)"
+
+            # Create the Topic
+            topic = Topic.objects.create(
+                user=request.user,
+                title=title,
+                content=f"Generated from {len(images)} image(s)\n\nExtracted {result['extracted_content_length']} characters",
+                source_type='image'
+            )
+
+            # Note: We don't create TopicRevisionSchedule here because this topic will have flashcards
+            # Topics with flashcards are reviewed only through their flashcards, not as topics
+
+            # Create FlashCards from the generated flashcards
+            flashcards_created = []
+            for idx, flashcard_data in enumerate(result['flashcards']):
+                flashcard = FlashCard.objects.create(
+                    topic=topic,
+                    title=flashcard_data['title'],
+                    content=flashcard_data['content'],
+                    order=idx + 1
+                )
+                flashcards_created.append(flashcard)
+
+                # Create revision schedule for each flashcard
+                FlashCardRevisionSchedule.create_schedule(
+                    flashcard,
+                    base_date=initial_revision_date
+                )
+
+            # Return the created topic with flashcards
+            response_serializer = TopicWithFlashcardsSerializer(topic)
+            return Response({
+                'message': f'Successfully created {len(flashcards_created)} flashcards from {len(images)} image(s)',
+                'topic': response_serializer.data,
+                'flashcards_count': len(flashcards_created),
+                'images_processed': len(images)
+            }, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            # Clean up temporary files in case of error
+            for file_path in saved_files:
+                try:
+                    default_storage.delete(file_path)
+                except:
+                    pass
+
+            return Response({
+                'error': f'An error occurred: {str(e)}'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

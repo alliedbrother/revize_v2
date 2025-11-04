@@ -11,12 +11,22 @@ const api = axios.create({
   },
 });
 
-// Add token to requests if it exists
+// Add token and timezone to requests
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
     config.headers.Authorization = `Token ${token}`;
   }
+
+  // Add user's timezone to all requests
+  // This ensures the backend can calculate "today" based on user's local time
+  try {
+    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    config.headers['X-Timezone'] = userTimezone;
+  } catch (e) {
+    console.warn('Could not detect user timezone:', e);
+  }
+
   return config;
 });
 
@@ -56,6 +66,24 @@ export const deleteTopic = async (id) => {
   await api.delete(`/topics/${id}/`);
 };
 
+export const uploadDocument = async (formData) => {
+  const response = await api.post('/topics/upload-document/', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+};
+
+export const uploadImages = async (formData) => {
+  const response = await api.post('/topics/upload-images/', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+};
+
 // Revisions
 export const getTodaysRevisions = async () => {
   // We're using the server's endpoint which determines "today" based on server time
@@ -66,6 +94,11 @@ export const getTodaysRevisions = async () => {
 
 export const getMissedRevisions = async () => {
   const response = await api.get('/revisions/missed/');
+  return response.data;
+};
+
+export const getCompletedTodayRevisions = async () => {
+  const response = await api.get('/revisions/completed-today/');
   return response.data;
 };
 
@@ -81,6 +114,17 @@ export const completeRevision = async (revisionId) => {
 
 export const postponeRevision = async (revisionId) => {
   const response = await api.post(`/revisions/${revisionId}/postpone/`);
+  return response.data;
+};
+
+// Flashcard Revisions
+export const completeFlashcardRevision = async (revisionId) => {
+  const response = await api.post(`/flashcard-revisions/${revisionId}/complete/`);
+  return response.data;
+};
+
+export const postponeFlashcardRevision = async (revisionId) => {
+  const response = await api.post(`/flashcard-revisions/${revisionId}/postpone/`);
   return response.data;
 };
 
@@ -103,7 +147,9 @@ export const authService = {
   },
   
   logout: async () => {
-    await api.post('/logout/');
+    // Token-based auth doesn't need backend logout
+    // Just clear local storage (handled in AuthContext)
+    return Promise.resolve();
   },
   
   changePassword: async (passwordData) => {

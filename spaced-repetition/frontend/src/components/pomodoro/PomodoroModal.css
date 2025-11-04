@@ -28,10 +28,10 @@
 .pomodoro-modal-container {
   background: var(--card-bg);
   border-radius: 20px;
-  box-shadow: 
+  box-shadow:
     0 20px 60px rgba(0, 0, 0, 0.3),
     0 8px 24px rgba(0, 0, 0, 0.2);
-  max-width: 600px;
+  max-width: 1000px;
   width: 100%;
   max-height: 90vh;
   overflow: hidden;
@@ -104,7 +104,10 @@
 .pomodoro-modal-content {
   padding: 0;
   max-height: calc(90vh - 80px);
-  overflow-y: auto;
+  overflow-y: visible;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Override pomodoro card styles for modal */
@@ -155,6 +158,7 @@
   
   .pomodoro-modal-content {
     max-height: calc(95vh - 70px);
+    overflow-y: visible;
   }
 }
 
@@ -188,31 +192,11 @@
   
   .pomodoro-modal-content {
     max-height: calc(98vh - 60px);
+    overflow-y: visible;
   }
 }
 
-/* Smooth scrolling for modal content */
-.pomodoro-modal-content {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 212, 170, 0.3) transparent;
-}
-
-.pomodoro-modal-content::-webkit-scrollbar {
-  width: 6px;
-}
-
-.pomodoro-modal-content::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.pomodoro-modal-content::-webkit-scrollbar-thumb {
-  background: rgba(0, 212, 170, 0.3);
-  border-radius: 3px;
-}
-
-.pomodoro-modal-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 212, 170, 0.5);
-}
+/* Removed scrollbar styles since content no longer scrolls */
 
 /* Ensure modal is above everything */
 .pomodoro-modal-overlay {

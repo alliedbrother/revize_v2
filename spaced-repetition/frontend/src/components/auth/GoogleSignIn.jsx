@@ -1,10 +1,12 @@
 import { useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '../../context/ThemeContext';
 
 const GoogleSignIn = ({ onError }) => {
   const { googleLogin } = useAuth();
   const navigate = useNavigate();
+  const { isDarkMode } = useTheme();
   const googleButtonRef = useRef(null);
 
   useEffect(() => {
@@ -23,7 +25,7 @@ const GoogleSignIn = ({ onError }) => {
         document.head.removeChild(existingScript);
       }
     };
-  }, []);
+  }, [isDarkMode]); // Re-render when theme changes
 
   const initializeGoogleSignIn = () => {
     if (window.google) {
@@ -38,7 +40,7 @@ const GoogleSignIn = ({ onError }) => {
         window.google.accounts.id.renderButton(
           googleButtonRef.current,
           {
-            theme: 'outline',
+            theme: isDarkMode ? 'filled_black' : 'outline',
             size: 'large',
             width: '100%',
             text: 'signin_with',
@@ -89,26 +91,26 @@ const GoogleSignIn = ({ onError }) => {
         .google-signin-container {
           margin: 1rem 0;
         }
-        
+
         .divider-container {
           display: flex;
           align-items: center;
           margin: 1.5rem 0 1rem 0;
         }
-        
+
         .divider-line {
           flex: 1;
           height: 1px;
-          background-color: #e9ecef;
+          background-color: ${isDarkMode ? '#4a5568' : '#e9ecef'};
         }
-        
+
         .divider-text {
           margin: 0 1rem;
-          color: #6c757d;
+          color: ${isDarkMode ? '#cbd5e1' : '#6c757d'};
           font-size: 0.9rem;
           font-weight: 500;
         }
-        
+
         .google-signin-button {
           display: flex;
           justify-content: center;

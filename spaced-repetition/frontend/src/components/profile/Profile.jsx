@@ -123,254 +123,123 @@ const Profile = () => {
     }
   }, [user]);
 
-  // Calculate days since joining (placeholder)
-  const getDaysSinceJoined = () => {
-    return Math.floor(Math.random() * 100) + 30; // Placeholder calculation
-  };
-
   return (
     <div className="modern-profile-page">
       <Container fluid className="profile-wrapper">
         {/* Hero Section */}
-        <div className="profile-hero">
-          <div className="hero-background">
-            <div className="hero-pattern"></div>
-          </div>
-          <div className="hero-content">
+        <Card className="profile-hero-card">
+          <Card.Body className="profile-hero-body">
             <div className="profile-avatar-large">
               <span className="avatar-initial">{getUserInitial()}</span>
-              <div className="avatar-status"></div>
             </div>
             <div className="profile-header-info">
               <h1 className="profile-display-name">{user?.username || 'User'}</h1>
-              <p className="profile-email-display">{user?.email || 'user@example.com'}</p>
-              <div className="profile-badges">
-                <Badge bg="success" className="member-badge">
-                  <i className="bi bi-check-circle-fill me-1"></i>
-                  Active Member
-                </Badge>
-                <Badge bg="primary" className="streak-badge">
-                  <i className="bi bi-fire me-1"></i>
-                  {getDaysSinceJoined()} Days
-                </Badge>
-              </div>
+              <p className="profile-email-display">
+                <i className="bi bi-envelope me-2"></i>
+                {user?.email || 'user@example.com'}
+              </p>
             </div>
-          </div>
-        </div>
+          </Card.Body>
+        </Card>
 
         {/* Main Content */}
-        <Row className="profile-content-row">
-          {/* Left Column - Quick Stats */}
-          <Col lg={4} className="mb-4">
+        <Row className="profile-content-row g-4">
+          {/* Learning Stats */}
+          <Col lg={12}>
             <Card className="stats-card">
-              <Card.Header className="stats-header">
-                <h5 className="stats-title">
-                  <i className="bi bi-graph-up me-2"></i>
-                  Learning Stats
+              <Card.Header>
+                <h5 className="mb-0">
+                  <i className="bi bi-bar-chart-fill me-2"></i>
+                  Learning Statistics
                 </h5>
               </Card.Header>
-              <Card.Body className="stats-body">
+              <Card.Body>
                 {statsLoading ? (
                   <div className="text-center py-4">
-                    <div className="spinner-border" role="status">
+                    <div className="spinner-border text-primary" role="status">
                       <span className="visually-hidden">Loading...</span>
                     </div>
                   </div>
                 ) : (
-                  <>
-                    <div className="stat-item">
-                      <div className="stat-icon topics-icon">
-                        <i className="bi bi-book"></i>
+                  <Row className="g-4">
+                    <Col md={3} sm={6}>
+                      <div className="stat-item">
+                        <div className="stat-icon-wrapper bg-primary bg-opacity-10">
+                          <i className="bi bi-journal-text text-primary"></i>
+                        </div>
+                        <div className="stat-content">
+                          <div className="stat-number">{stats?.total_topics || 0}</div>
+                          <div className="stat-label">Total Topics</div>
+                        </div>
                       </div>
-                      <div className="stat-details">
-                        <div className="stat-number">{stats?.total_topics || 0}</div>
-                        <div className="stat-label">Topics Created</div>
+                    </Col>
+                    <Col md={3} sm={6}>
+                      <div className="stat-item">
+                        <div className="stat-icon-wrapper bg-success bg-opacity-10">
+                          <i className="bi bi-check-circle text-success"></i>
+                        </div>
+                        <div className="stat-content">
+                          <div className="stat-number">{stats?.completed_revisions || 0}</div>
+                          <div className="stat-label">Completed Revisions</div>
+                        </div>
                       </div>
-                    </div>
-                    <div className="stat-item">
-                      <div className="stat-icon revisions-icon">
-                        <i className="bi bi-arrow-repeat"></i>
+                    </Col>
+                    <Col md={3} sm={6}>
+                      <div className="stat-item">
+                        <div className="stat-icon-wrapper bg-warning bg-opacity-10">
+                          <i className="bi bi-hourglass-split text-warning"></i>
+                        </div>
+                        <div className="stat-content">
+                          <div className="stat-number">{stats?.pending_revisions || 0}</div>
+                          <div className="stat-label">Pending Revisions</div>
+                        </div>
                       </div>
-                      <div className="stat-details">
-                        <div className="stat-number">{stats?.completed_revisions || 0}</div>
-                        <div className="stat-label">Revisions Done</div>
+                    </Col>
+                    <Col md={3} sm={6}>
+                      <div className="stat-item">
+                        <div className="stat-icon-wrapper bg-info bg-opacity-10">
+                          <i className="bi bi-calendar-week text-info"></i>
+                        </div>
+                        <div className="stat-content">
+                          <div className="stat-number">{stats?.topics_this_week || 0}</div>
+                          <div className="stat-label">Topics This Week</div>
+                        </div>
                       </div>
-                    </div>
-                    <div className="stat-item">
-                      <div className="stat-icon streak-icon">
-                        <i className="bi bi-fire"></i>
-                      </div>
-                      <div className="stat-details">
-                        <div className="stat-number">{stats?.topics_this_week || 0}</div>
-                        <div className="stat-label">Topics This Week</div>
-                      </div>
-                    </div>
-                  </>
+                    </Col>
+                  </Row>
                 )}
-              </Card.Body>
-            </Card>
-
-            {/* Quick Actions */}
-            <Card className="actions-card">
-              <Card.Header className="actions-header">
-                <h5 className="actions-title">
-                  <i className="bi bi-lightning-charge me-2"></i>
-                  Quick Actions
-                </h5>
-              </Card.Header>
-              <Card.Body className="actions-body">
-                <Button 
-                  variant="outline-primary" 
-                  className="action-btn"
-                  onClick={() => setShowPasswordModal(true)}
-                >
-                  <i className="bi bi-shield-lock me-2"></i>
-                  Change Password
-                </Button>
-                <Button 
-                  variant="outline-danger" 
-                  className="action-btn"
-                  onClick={logout}
-                >
-                  <i className="bi bi-box-arrow-right me-2"></i>
-                  Sign Out
-                </Button>
               </Card.Body>
             </Card>
           </Col>
 
-          {/* Right Column - Account Information */}
-          <Col lg={8}>
-            <Card className="account-card">
-              <Card.Header className="account-header">
-                <h5 className="account-title">
-                  <i className="bi bi-person-circle me-2"></i>
-                  Account Information
-                </h5>
-              </Card.Header>
-              <Card.Body className="account-body">
-                <Row>
-                  <Col md={6}>
-                    <div className="info-group">
-                      <label className="info-label">Username</label>
-                      <div className="info-value">
-                        <i className="bi bi-person me-2"></i>
-                        {user?.username || 'Not set'}
-                      </div>
-                    </div>
-                  </Col>
-                  <Col md={6}>
-                    <div className="info-group">
-                      <label className="info-label">Email Address</label>
-                      <div className="info-value">
-                        <i className="bi bi-envelope me-2"></i>
-                        {user?.email || 'Not set'}
-                      </div>
-                    </div>
-                  </Col>
-                </Row>
-                
-                <Row>
-                  <Col md={6}>
-                    <div className="info-group">
-                      <label className="info-label">Member Since</label>
-                      <div className="info-value">
-                        <i className="bi bi-calendar-check me-2"></i>
-                        January 2024
-                      </div>
-                    </div>
-                  </Col>
-                  <Col md={6}>
-                    <div className="info-group">
-                      <label className="info-label">Account Status</label>
-                      <div className="info-value">
-                        <i className="bi bi-check-circle-fill text-success me-2"></i>
-                        Active
-                      </div>
-                    </div>
-                  </Col>
-                </Row>
-
-                <Row>
-                  <Col md={6}>
-                    <div className="info-group">
-                      <label className="info-label">Last Login</label>
-                      <div className="info-value">
-                        <i className="bi bi-clock me-2"></i>
-                        Today at 10:30 AM
-                      </div>
-                    </div>
-                  </Col>
-                  <Col md={6}>
-                    <div className="info-group">
-                      <label className="info-label">Preferred Language</label>
-                      <div className="info-value">
-                        <i className="bi bi-globe me-2"></i>
-                        English
-                      </div>
-                    </div>
-                  </Col>
-                </Row>
-              </Card.Body>
-            </Card>
-
-            {/* Learning Preferences */}
-            <Card className="preferences-card">
-              <Card.Header className="preferences-header">
-                <h5 className="preferences-title">
+          {/* Account Actions */}
+          <Col lg={12}>
+            <Card className="actions-card">
+              <Card.Header>
+                <h5 className="mb-0">
                   <i className="bi bi-gear me-2"></i>
-                  Learning Preferences
+                  Account Settings
                 </h5>
               </Card.Header>
-              <Card.Body className="preferences-body">
-                <Row>
-                  <Col md={6}>
-                    <div className="preference-item">
-                      <div className="preference-icon">
-                        <i className="bi bi-bell"></i>
-                      </div>
-                      <div className="preference-details">
-                        <div className="preference-name">Daily Reminders</div>
-                        <div className="preference-status enabled">Enabled</div>
-                      </div>
-                    </div>
-                  </Col>
-                  <Col md={6}>
-                    <div className="preference-item">
-                      <div className="preference-icon">
-                        <i className="bi bi-moon"></i>
-                      </div>
-                      <div className="preference-details">
-                        <div className="preference-name">Dark Mode</div>
-                        <div className="preference-status enabled">Enabled</div>
-                      </div>
-                    </div>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col md={6}>
-                    <div className="preference-item">
-                      <div className="preference-icon">
-                        <i className="bi bi-clock"></i>
-                      </div>
-                      <div className="preference-details">
-                        <div className="preference-name">Study Reminders</div>
-                        <div className="preference-status enabled">9:00 AM Daily</div>
-                      </div>
-                    </div>
-                  </Col>
-                  <Col md={6}>
-                    <div className="preference-item">
-                      <div className="preference-icon">
-                        <i className="bi bi-trophy"></i>
-                      </div>
-                      <div className="preference-details">
-                        <div className="preference-name">Achievement Notifications</div>
-                        <div className="preference-status enabled">Enabled</div>
-                      </div>
-                    </div>
-                  </Col>
-                </Row>
+              <Card.Body>
+                <div className="actions-grid">
+                  <Button
+                    variant="outline-primary"
+                    className="action-btn"
+                    onClick={() => setShowPasswordModal(true)}
+                  >
+                    <i className="bi bi-shield-lock me-2"></i>
+                    Change Password
+                  </Button>
+                  <Button
+                    variant="outline-danger"
+                    className="action-btn"
+                    onClick={logout}
+                  >
+                    <i className="bi bi-box-arrow-right me-2"></i>
+                    Sign Out
+                  </Button>
+                </div>
               </Card.Body>
             </Card>
           </Col>

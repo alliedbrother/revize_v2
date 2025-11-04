@@ -1,0 +1,22 @@
+[Unit]
+Description=Django Gunicorn Application Server
+After=network.target
+
+[Service]
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/revize_v2/spaced-repetition/backend
+ExecStart=/home/ubuntu/revize_v2/venv/bin/gunicorn --workers 3 --bind 127.0.0.1:8000 spaced_repetition.wsgi:application
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=django
+
+# Environment variables
+Environment=DJANGO_SETTINGS_MODULE=spaced_repetition.settings
+Environment=PYTHONPATH=/home/ubuntu/revize_v2/spaced-repetition/backend
+
+[Install]
+WantedBy=multi-user.target 

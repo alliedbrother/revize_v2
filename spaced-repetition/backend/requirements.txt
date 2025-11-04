@@ -35,3 +35,14 @@ uvicorn==0.27.1  # ASGI server (alternative to gunicorn)
 # Additional production dependencies
 requests==2.32.4  # HTTP library
 certifi==2025.7.14  # SSL certificates
+
+# AI and LangGraph dependencies
+langchain==0.3.0
+langchain-google-genai==2.0.0
+langgraph==0.2.28
+google-generativeai==0.7.2
+
+# Document processing
+PyPDF2==3.0.1
+python-docx==1.1.2
+Pillow==10.4.0  # For image processing

@@ -6,10 +6,19 @@ import datetime
 # Create your models here.
 
 class Topic(models.Model):
+    SOURCE_TYPE_CHOICES = [
+        ('manual', 'Manual Entry'),
+        ('link', 'Web Link'),
+        ('image', 'Image Upload'),
+        ('document', 'Document Upload'),
+    ]
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     content = models.TextField(default="")
     resource_url = models.URLField(max_length=500, blank=True, null=True)
+    source_type = models.CharField(max_length=20, choices=SOURCE_TYPE_CHOICES, default='manual')
+    source_file = models.FileField(upload_to='topic_sources/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -44,20 +53,20 @@ class RevisionSchedule(models.Model):
     @staticmethod
     def create_schedule(topic, base_date=None):
         """Create a complete revision schedule for a new topic
-        
+
         Args:
             topic: The Topic model instance
             base_date: The date from which to calculate revision dates (defaults to today)
         """
         # Spaced repetition intervals in days
         intervals = [1, 4, 9, 16, 25, 39, 60]
-        
+
         # Use provided base_date or default to today
         if base_date is None:
             base_date = timezone.now().date()
-        
+
         print(f"Creating revision schedule starting from: {base_date}")
-        
+
         for interval in intervals:
             scheduled_date = base_date + timezone.timedelta(days=interval)
             RevisionSchedule.objects.create(
@@ -65,63 +74,68 @@ class RevisionSchedule(models.Model):
                 scheduled_date=scheduled_date
             )
 
-class Revision(models.Model):
-    STATUS_CHOICES = (
-        ('pending', 'Pending'),
-        ('completed', 'Completed'),
-        ('postponed', 'Postponed'),
-    )
 
-    topic = models.ForeignKey(Topic, on_delete=models.CASCADE, related_name='legacy_revisions')
-    scheduled_date = models.DateField()
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
-    completion_date = models.DateField(null=True, blank=True)
-    postponed_to = models.DateField(null=True, blank=True)
-    interval = models.IntegerField(default=1)  # Days until next revision
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
+class FlashCard(models.Model):
+    """Individual flashcard generated from a topic"""
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE, related_name='flashcards')
+    title = models.CharField(max_length=300)
+    content = models.TextField()
+    order = models.IntegerField(default=0)  # Order within the topic
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['topic', 'order']
 
     def __str__(self):
-        return f"{self.topic.title} - {self.scheduled_date}"
+        return f"{self.topic.title} - Card {self.order}"
+
+
+class FlashCardRevisionSchedule(models.Model):
+    """Revision schedule for individual flashcards"""
+    flashcard = models.ForeignKey(FlashCard, on_delete=models.CASCADE, related_name='revisions')
+    scheduled_date = models.DateField()
+    completed = models.BooleanField(default=False)
+    postponed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['scheduled_date']
 
-    def mark_completed(self):
-        """Mark revision as completed and calculate next revision date."""
-        today = datetime.date.today()
-        self.status = 'completed'
-        self.completion_date = today
+    def __str__(self):
+        return f"{self.flashcard.title} - {self.scheduled_date}"
+
+    def postpone(self):
+        """Postpone the revision by one day"""
+        self.scheduled_date = self.scheduled_date + timezone.timedelta(days=1)
+        self.postponed = True
         self.save()
-        
-        # Calculate next revision date based on spaced repetition algorithm
-        # Simple implementation: double the interval each time
-        next_interval = self.interval * 2
-        next_date = today + datetime.timedelta(days=next_interval)
-        
-        print(f"TODAY: {today}, NEXT DATE: {next_date}, INTERVAL: {next_interval}")
-        
-        # Create next revision
-        Revision.objects.create(
-            topic=self.topic,
-            scheduled_date=next_date,
-            interval=next_interval,
-        )
-    
-    def postpone(self, days=1):
-        """Postpone the revision by specified number of days."""
-        today = datetime.date.today()
-        postponed_date = today + datetime.timedelta(days=days)
-        
-        self.status = 'postponed'
-        self.postponed_to = postponed_date
+
+    def complete(self):
+        """Mark the revision as completed"""
+        self.completed = True
         self.save()
-        
-        print(f"POSTPONING: Today: {today}, Postponed to: {postponed_date}, Days: {days}")
-        
-        # Create new revision for the postponed date
-        Revision.objects.create(
-            topic=self.topic,
-            scheduled_date=postponed_date,
-            interval=self.interval,  # Keep the same interval
-        )
+
+    @staticmethod
+    def create_schedule(flashcard, base_date=None):
+        """Create a complete revision schedule for a flashcard
+
+        Args:
+            flashcard: The FlashCard model instance
+            base_date: The date from which to calculate revision dates (defaults to today)
+        """
+        # Spaced repetition intervals in days
+        intervals = [1, 4, 9, 16, 25, 39, 60]
+
+        # Use provided base_date or default to today
+        if base_date is None:
+            base_date = timezone.now().date()
+
+        for interval in intervals:
+            scheduled_date = base_date + timezone.timedelta(days=interval)
+            FlashCardRevisionSchedule.objects.create(
+                flashcard=flashcard,
+                scheduled_date=scheduled_date
+            )
+

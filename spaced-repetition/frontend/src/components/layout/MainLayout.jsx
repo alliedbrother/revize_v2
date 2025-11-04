@@ -3,7 +3,11 @@ import Sidebar from './Sidebar';
 import './MainLayout.css';
 
 const MainLayout = ({ children }) => {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  // Initialize sidebar as collapsed by default, or use saved preference
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+    const saved = localStorage.getItem('sidebarCollapsed');
+    return saved !== null ? JSON.parse(saved) : true; // Default to true (collapsed)
+  });
   const [isMobile, setIsMobile] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -25,7 +29,10 @@ const MainLayout = ({ children }) => {
     if (isMobile) {
       setIsMobileMenuOpen(!isMobileMenuOpen);
     } else {
-      setIsSidebarCollapsed(!isSidebarCollapsed);
+      const newCollapsedState = !isSidebarCollapsed;
+      setIsSidebarCollapsed(newCollapsedState);
+      // Save preference to localStorage
+      localStorage.setItem('sidebarCollapsed', JSON.stringify(newCollapsedState));
     }
   };
 

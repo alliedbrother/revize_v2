@@ -8,7 +8,6 @@ import './ModernDashboard.css';
 import AddTopicCard from '../topics/AddTopicCard';
 import FloatingTimerButton from '../pomodoro/FloatingTimerButton';
 import TodaysRevisionsList from '../topics/TodaysRevisionsList';
-import RevisionSchedule from '../revisions/RevisionSchedule';
 import AllTopics from '../topics/AllTopics';
 import Statistics from '../dashboard/Statistics';
 import WaveBottom from '../common/WaveBottom';
@@ -28,7 +27,7 @@ const ModernDashboard = () => {
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const tabParam = urlParams.get('tab');
-    if (tabParam && ['today', 'schedule', 'topics', 'stats'].includes(tabParam)) {
+    if (tabParam && ['today', 'topics', 'stats'].includes(tabParam)) {
       setActiveTab(tabParam);
     }
   }, [location.search]);
@@ -42,13 +41,6 @@ const ModernDashboard = () => {
     setRefreshTrigger(prev => prev + 1);
   };
 
-  const tabs = [
-    { id: 'today', label: "Today's Learning", icon: '📚' },
-    { id: 'schedule', label: 'Revision Schedule', icon: '📅' },
-    { id: 'topics', label: 'All Topics', icon: '📖' },
-    { id: 'stats', label: 'Statistics', icon: '📊' }
-  ];
-
   const renderTabContent = () => {
     switch (activeTab) {
       case 'today':
@@ -56,17 +48,11 @@ const ModernDashboard = () => {
           <div className="today-learning-layout">
             {/* Left Half - Add Topic Card */}
             <AddTopicCard />
-            
+
             {/* Right Half - Progress */}
             <div className="progress-section">
               <TodaysRevisionsList />
             </div>
-          </div>
-        );
-      case 'schedule':
-        return (
-          <div className="full-width-content">
-            <RevisionSchedule />
           </div>
         );
       case 'topics':

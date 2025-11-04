@@ -1,0 +1,757 @@
+[
+{
+    "model": "auth.user",
+    "fields": {
+        "password": "pbkdf2_sha256$870000$PfiGCJYBnFeMrK4bnLGDDG$HoUcv5PwChuKW7lTLbIk1ywBn5N9qX46Z3RcflpmKhQ=",
+        "last_login": "2025-10-25T07:51:42.661Z",
+        "is_superuser": true,
+        "username": "saiakhil",
+        "first_name": "",
+        "last_name": "",
+        "email": "saiakhil121@gmail.com",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2025-10-25T07:50:41.424Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "fields": {
+        "password": "pbkdf2_sha256$870000$P4q9rDlzW4PDMl8ZE5lCxL$N7iQ6023dvZOxZa/D0CWVTcIYkaHuU/qV1WLmISCjs4=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "testuser",
+        "first_name": "",
+        "last_name": "",
+        "email": "testuser@gmail.com",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2025-10-25T07:56:34.643Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "fg1ck9r48rr5oihff80iyf8xym7lqhlb",
+    "fields": {
+        "session_data": ".eJxVjDsOwjAQRO_iGln-O6akzxmstXeDA8iW4qRC3J1ESgGabt6bebMI21ri1mmJM7Irk-zy2yXIT6oHwAfUe-O51XWZEz8UftLOx4b0up3u30GBXva1DyEoKRxRVpM2VuxxJimrE7iUpSeQGCbpjNXZDwgoNAyeMIH23in2-QLEUzdv:1vCZ3u:wIUh-gz70WlZVszrpnAaI5Qad_PJdtr1WMPC0PqcnfQ",
+        "expire_date": "2025-11-08T07:51:42.662Z"
+    }
+},
+{
+    "model": "sites.site",
+    "fields": {
+        "domain": "example.com",
+        "name": "example.com"
+    }
+},
+{
+    "model": "authtoken.token",
+    "pk": "b42a5ce44de1f99054e329e180e64fd137a550f7",
+    "fields": {
+        "user": [
+            "testuser"
+        ],
+        "created": "2025-10-25T07:56:34.839Z"
+    }
+},
+{
+    "model": "api.topic",
+    "pk": 1,
+    "fields": {
+        "user": [
+            "testuser"
+        ],
+        "title": "Manual Testing",
+        "content": "Manual Testing 1",
+        "resource_url": null,
+        "source_type": "manual",
+        "source_file": "",
+        "created_at": "2025-10-25T07:56:59.639Z",
+        "updated_at": "2025-10-25T07:56:59.639Z"
+    }
+},
+{
+    "model": "api.topic",
+    "pk": 2,
+    "fields": {
+        "user": [
+            "testuser"
+        ],
+        "title": "Manual Prev 1",
+        "content": "Lets see if this shows up as flash card",
+        "resource_url": null,
+        "source_type": "manual",
+        "source_file": "",
+        "created_at": "2025-10-25T07:57:34.460Z",
+        "updated_at": "2025-10-25T07:57:34.460Z"
+    }
+},
+{
+    "model": "api.topic",
+    "pk": 3,
+    "fields": {
+        "user": [
+            "testuser"
+        ],
+        "title": "CI/CD: Continuous Integration & Continuous Delivery/Deployment Explained",
+        "content": "Generated from document: CI_CD.pdf\n\nExtracted 5173 characters",
+        "resource_url": null,
+        "source_type": "document",
+        "source_file": "topic_sources/CI_CD_gDqlm2v.pdf",
+        "created_at": "2025-10-25T07:58:06.716Z",
+        "updated_at": "2025-10-25T07:58:06.716Z"
+    }
+},
+{
+    "model": "api.revisionschedule",
+    "pk": 1,
+    "fields": {
+        "topic": 1,
+        "scheduled_date": "2025-10-26",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:56:59.642Z",
+        "updated_at": "2025-10-25T07:56:59.642Z"
+    }
+},
+{
+    "model": "api.revisionschedule",
+    "pk": 2,
+    "fields": {
+        "topic": 1,
+        "scheduled_date": "2025-10-29",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:56:59.644Z",
+        "updated_at": "2025-10-25T07:56:59.644Z"
+    }
+},
+{
+    "model": "api.revisionschedule",
+    "pk": 3,
+    "fields": {
+        "topic": 1,
+        "scheduled_date": "2025-11-03",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:56:59.646Z",
+        "updated_at": "2025-10-25T07:56:59.646Z"
+    }
+},
+{
+    "model": "api.revisionschedule",
+    "pk": 4,
+    "fields": {
+        "topic": 1,
+        "scheduled_date": "2025-11-10",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:56:59.647Z",
+        "updated_at": "2025-10-25T07:56:59.647Z"
+    }
+},
+{
+    "model": "api.revisionschedule",
+    "pk": 5,
+    "fields": {
+        "topic": 1,
+        "scheduled_date": "2025-11-19",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:56:59.648Z",
+        "updated_at": "2025-10-25T07:56:59.648Z"
+    }
+},
+{
+    "model": "api.revisionschedule",
+    "pk": 6,
+    "fields": {
+        "topic": 1,
+        "scheduled_date": "2025-12-03",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:56:59.649Z",
+        "updated_at": "2025-10-25T07:56:59.649Z"
+    }
+},
+{
+    "model": "api.revisionschedule",
+    "pk": 7,
+    "fields": {
+        "topic": 1,
+        "scheduled_date": "2025-12-24",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:56:59.650Z",
+        "updated_at": "2025-10-25T07:56:59.650Z"
+    }
+},
+{
+    "model": "api.revisionschedule",
+    "pk": 8,
+    "fields": {
+        "topic": 2,
+        "scheduled_date": "2025-10-25",
+        "completed": true,
+        "postponed": false,
+        "created_at": "2025-10-25T07:57:34.462Z",
+        "updated_at": "2025-10-25T07:59:52.710Z"
+    }
+},
+{
+    "model": "api.revisionschedule",
+    "pk": 9,
+    "fields": {
+        "topic": 2,
+        "scheduled_date": "2025-10-28",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:57:34.463Z",
+        "updated_at": "2025-10-25T07:57:34.463Z"
+    }
+},
+{
+    "model": "api.revisionschedule",
+    "pk": 10,
+    "fields": {
+        "topic": 2,
+        "scheduled_date": "2025-11-02",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:57:34.465Z",
+        "updated_at": "2025-10-25T07:57:34.465Z"
+    }
+},
+{
+    "model": "api.revisionschedule",
+    "pk": 11,
+    "fields": {
+        "topic": 2,
+        "scheduled_date": "2025-11-09",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:57:34.467Z",
+        "updated_at": "2025-10-25T07:57:34.467Z"
+    }
+},
+{
+    "model": "api.revisionschedule",
+    "pk": 12,
+    "fields": {
+        "topic": 2,
+        "scheduled_date": "2025-11-18",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:57:34.468Z",
+        "updated_at": "2025-10-25T07:57:34.468Z"
+    }
+},
+{
+    "model": "api.revisionschedule",
+    "pk": 13,
+    "fields": {
+        "topic": 2,
+        "scheduled_date": "2025-12-02",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:57:34.469Z",
+        "updated_at": "2025-10-25T07:57:34.469Z"
+    }
+},
+{
+    "model": "api.revisionschedule",
+    "pk": 14,
+    "fields": {
+        "topic": 2,
+        "scheduled_date": "2025-12-23",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:57:34.469Z",
+        "updated_at": "2025-10-25T07:57:34.469Z"
+    }
+},
+{
+    "model": "api.flashcard",
+    "pk": 1,
+    "fields": {
+        "topic": 3,
+        "title": "CI/CD Fundamentals: Definition and Core Concepts",
+        "content": "CI/CD stands for Continuous Integration and Continuous Delivery/Deployment. It represents a modern DevOps practice that automates the software release pipeline, allowing for faster and more reliable software delivery. Continuous Integration (CI) focuses on integrating code changes from multiple developers into a shared repository frequently. This integration triggers automated builds and tests to detect integration issues early. The main objectives of CI are to automate the build and testing processes, ensure code quality, and identify integration problems as soon as possible.\n\nContinuous Delivery (CD) takes CI a step further by automating the deployment of validated builds to various environments, including staging and production. Continuous Deployment automates the entire release process, automatically deploying changes to production after they pass all tests. The goals of CD are to maintain environment consistency, reduce the time between code commit and release, and automate the deployment of tested builds. Together, CI/CD practices improve release velocity, reduce manual errors, and enhance software stability. They enable teams to deliver value to users more quickly and efficiently.",
+        "order": 1,
+        "created_at": "2025-10-25T07:58:06.718Z",
+        "updated_at": "2025-10-25T07:58:06.718Z"
+    }
+},
+{
+    "model": "api.flashcard",
+    "pk": 2,
+    "fields": {
+        "topic": 3,
+        "title": "Continuous Integration (CI): Objectives, Workflow, and Tools",
+        "content": "Continuous Integration (CI) aims to detect integration issues early in the software development lifecycle. Its primary objectives include automating builds and tests and maintaining code quality through consistent validation. The CI workflow typically involves these steps: a developer commits code changes to the main branch of a repository; this action triggers the CI tool to initiate an automated build process; the pipeline then executes various tests, such as unit tests, integration tests, and code quality checks; finally, the CI tool generates reports and logs, providing immediate feedback to the development team. Several tools facilitate CI processes. Jenkins is a popular open-source option known for its high customizability. GitHub Actions is well-suited for projects hosted on GitHub, offering seamless integration. GitLab CI/CD is integrated directly within GitLab repositories, providing a comprehensive DevOps platform. CircleCI is a scalable, cloud-native CI solution designed for speed and efficiency. These tools help teams automate the building, testing, and integration of code changes, ensuring a stable and reliable codebase.",
+        "order": 2,
+        "created_at": "2025-10-25T07:58:06.728Z",
+        "updated_at": "2025-10-25T07:58:06.728Z"
+    }
+},
+{
+    "model": "api.flashcard",
+    "pk": 3,
+    "fields": {
+        "topic": 3,
+        "title": "Continuous Deployment (CD): Objectives, Workflow, and Strategies",
+        "content": "Continuous Deployment (CD) aims to automate the deployment of tested builds to production environments. Its objectives include maintaining environment consistency and reducing the time between code commit and production release. The CD workflow typically follows these steps: code successfully passes the CI pipeline; artifacts, such as binaries or Docker images, are stored in a registry; deployment pipelines automatically promote builds through various environments (e.g., development, staging, production); monitoring tools validate the performance and stability of the deployed application. Several deployment strategies are commonly used in CD. Blue-Green Deployment involves maintaining two identical environments (blue and green) and switching traffic to the new version (green) once it's verified. Canary Deployment releases changes incrementally to a small subset of users to minimize risk. Rolling Deployment gradually replaces old instances of the application with new ones. These strategies enable teams to deploy updates with minimal downtime and risk, ensuring a smooth user experience.",
+        "order": 3,
+        "created_at": "2025-10-25T07:58:06.736Z",
+        "updated_at": "2025-10-25T07:58:06.736Z"
+    }
+},
+{
+    "model": "api.flashcard",
+    "pk": 4,
+    "fields": {
+        "topic": 3,
+        "title": "CI/CD Pipeline Architecture: Stages and Toolchain Overview",
+        "content": "A CI/CD pipeline consists of several stages that automate the software release process. The typical stages are: Source (triggering the pipeline via code commits or pull request merges), Build (compiling and packaging the source code), Test (running automated tests to validate functionality), Artifact Management (storing build outputs securely), Deploy (automating environment rollouts), and Monitor (validating and observing deployed services). The toolchain for a CI/CD pipeline involves various tools for different functions. Version control systems like GitHub, GitLab, and Bitbucket manage source code. Build and test tools such as Jenkins, GitHub Actions, and GitLab CI automate the build and testing processes. Artifact storage solutions like DockerHub, AWS ECR, and JFrog Artifactory store build outputs. Infrastructure as Code (IaC) tools like Terraform, Ansible, and CloudFormation manage infrastructure declaratively. CD/GitOps tools like ArgoCD, Spinnaker, and FluxCD automate deployments, and monitoring tools like Prometheus, Grafana, and Datadog validate and observe deployed services. This comprehensive toolchain ensures a streamlined and automated software delivery process.",
+        "order": 4,
+        "created_at": "2025-10-25T07:58:06.742Z",
+        "updated_at": "2025-10-25T07:58:06.742Z"
+    }
+},
+{
+    "model": "api.flashcard",
+    "pk": 5,
+    "fields": {
+        "topic": 3,
+        "title": "CI/CD Best Practices: Key Principles for Effective Implementation",
+        "content": "To effectively implement CI/CD, several best practices should be followed. First, automate everything – builds, tests, security scans, and deployments – to reduce manual intervention and human error. Second, fail fast by catching and fixing issues early in the development cycle. Third, keep pipelines modular by separating CI from CD for flexibility and maintainability. Fourth, leverage Infrastructure as Code (IaC) to manage infrastructure declaratively, ensuring consistency across environments. Fifth, enforce security checks by including Static Application Security Testing (SAST), Dynamic Application Security Testing (DAST), and dependency scanning in the pipeline. Sixth, enable observability by integrating monitoring tools to track application performance and identify potential issues. Seventh, version control everything, including code, configurations, and scripts, to ensure reproducibility and traceability. Finally, foster a culture of collaboration and continuous improvement by encouraging feedback and learning from failures. By adhering to these best practices, teams can maximize the benefits of CI/CD and achieve faster, more reliable software delivery.",
+        "order": 5,
+        "created_at": "2025-10-25T07:58:06.748Z",
+        "updated_at": "2025-10-25T07:58:06.748Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 1,
+    "fields": {
+        "flashcard": 1,
+        "scheduled_date": "2025-10-25",
+        "completed": true,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.719Z",
+        "updated_at": "2025-10-25T07:59:47.467Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 2,
+    "fields": {
+        "flashcard": 1,
+        "scheduled_date": "2025-10-28",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.721Z",
+        "updated_at": "2025-10-25T07:58:06.721Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 3,
+    "fields": {
+        "flashcard": 1,
+        "scheduled_date": "2025-11-02",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.723Z",
+        "updated_at": "2025-10-25T07:58:06.723Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 4,
+    "fields": {
+        "flashcard": 1,
+        "scheduled_date": "2025-11-09",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.724Z",
+        "updated_at": "2025-10-25T07:58:06.724Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 5,
+    "fields": {
+        "flashcard": 1,
+        "scheduled_date": "2025-11-18",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.725Z",
+        "updated_at": "2025-10-25T07:58:06.725Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 6,
+    "fields": {
+        "flashcard": 1,
+        "scheduled_date": "2025-12-02",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.726Z",
+        "updated_at": "2025-10-25T07:58:06.726Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 7,
+    "fields": {
+        "flashcard": 1,
+        "scheduled_date": "2025-12-23",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.727Z",
+        "updated_at": "2025-10-25T07:58:06.727Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 8,
+    "fields": {
+        "flashcard": 2,
+        "scheduled_date": "2025-10-25",
+        "completed": true,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.730Z",
+        "updated_at": "2025-10-25T07:59:47.981Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 9,
+    "fields": {
+        "flashcard": 2,
+        "scheduled_date": "2025-10-28",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.731Z",
+        "updated_at": "2025-10-25T07:58:06.731Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 10,
+    "fields": {
+        "flashcard": 2,
+        "scheduled_date": "2025-11-02",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.732Z",
+        "updated_at": "2025-10-25T07:58:06.732Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 11,
+    "fields": {
+        "flashcard": 2,
+        "scheduled_date": "2025-11-09",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.733Z",
+        "updated_at": "2025-10-25T07:58:06.733Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 12,
+    "fields": {
+        "flashcard": 2,
+        "scheduled_date": "2025-11-18",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.734Z",
+        "updated_at": "2025-10-25T07:58:06.734Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 13,
+    "fields": {
+        "flashcard": 2,
+        "scheduled_date": "2025-12-02",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.735Z",
+        "updated_at": "2025-10-25T07:58:06.735Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 14,
+    "fields": {
+        "flashcard": 2,
+        "scheduled_date": "2025-12-23",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.736Z",
+        "updated_at": "2025-10-25T07:58:06.736Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 15,
+    "fields": {
+        "flashcard": 3,
+        "scheduled_date": "2025-10-25",
+        "completed": true,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.738Z",
+        "updated_at": "2025-10-25T07:59:48.423Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 16,
+    "fields": {
+        "flashcard": 3,
+        "scheduled_date": "2025-10-28",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.738Z",
+        "updated_at": "2025-10-25T07:58:06.738Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 17,
+    "fields": {
+        "flashcard": 3,
+        "scheduled_date": "2025-11-02",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.739Z",
+        "updated_at": "2025-10-25T07:58:06.739Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 18,
+    "fields": {
+        "flashcard": 3,
+        "scheduled_date": "2025-11-09",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.740Z",
+        "updated_at": "2025-10-25T07:58:06.740Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 19,
+    "fields": {
+        "flashcard": 3,
+        "scheduled_date": "2025-11-18",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.740Z",
+        "updated_at": "2025-10-25T07:58:06.740Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 20,
+    "fields": {
+        "flashcard": 3,
+        "scheduled_date": "2025-12-02",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.741Z",
+        "updated_at": "2025-10-25T07:58:06.741Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 21,
+    "fields": {
+        "flashcard": 3,
+        "scheduled_date": "2025-12-23",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.742Z",
+        "updated_at": "2025-10-25T07:58:06.742Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 22,
+    "fields": {
+        "flashcard": 4,
+        "scheduled_date": "2025-10-25",
+        "completed": true,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.743Z",
+        "updated_at": "2025-10-25T07:59:48.879Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 23,
+    "fields": {
+        "flashcard": 4,
+        "scheduled_date": "2025-10-28",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.744Z",
+        "updated_at": "2025-10-25T07:58:06.744Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 24,
+    "fields": {
+        "flashcard": 4,
+        "scheduled_date": "2025-11-02",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.745Z",
+        "updated_at": "2025-10-25T07:58:06.745Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 25,
+    "fields": {
+        "flashcard": 4,
+        "scheduled_date": "2025-11-09",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.745Z",
+        "updated_at": "2025-10-25T07:58:06.745Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 26,
+    "fields": {
+        "flashcard": 4,
+        "scheduled_date": "2025-11-18",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.746Z",
+        "updated_at": "2025-10-25T07:58:06.746Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 27,
+    "fields": {
+        "flashcard": 4,
+        "scheduled_date": "2025-12-02",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.747Z",
+        "updated_at": "2025-10-25T07:58:06.747Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 28,
+    "fields": {
+        "flashcard": 4,
+        "scheduled_date": "2025-12-23",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.747Z",
+        "updated_at": "2025-10-25T07:58:06.747Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 29,
+    "fields": {
+        "flashcard": 5,
+        "scheduled_date": "2025-10-25",
+        "completed": true,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.749Z",
+        "updated_at": "2025-10-25T07:59:49.558Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 30,
+    "fields": {
+        "flashcard": 5,
+        "scheduled_date": "2025-10-28",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.750Z",
+        "updated_at": "2025-10-25T07:58:06.750Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 31,
+    "fields": {
+        "flashcard": 5,
+        "scheduled_date": "2025-11-02",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.750Z",
+        "updated_at": "2025-10-25T07:58:06.750Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 32,
+    "fields": {
+        "flashcard": 5,
+        "scheduled_date": "2025-11-09",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.751Z",
+        "updated_at": "2025-10-25T07:58:06.751Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 33,
+    "fields": {
+        "flashcard": 5,
+        "scheduled_date": "2025-11-18",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.751Z",
+        "updated_at": "2025-10-25T07:58:06.751Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 34,
+    "fields": {
+        "flashcard": 5,
+        "scheduled_date": "2025-12-02",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.752Z",
+        "updated_at": "2025-10-25T07:58:06.752Z"
+    }
+},
+{
+    "model": "api.flashcardrevisionschedule",
+    "pk": 35,
+    "fields": {
+        "flashcard": 5,
+        "scheduled_date": "2025-12-23",
+        "completed": false,
+        "postponed": false,
+        "created_at": "2025-10-25T07:58:06.753Z",
+        "updated_at": "2025-10-25T07:58:06.753Z"
+    }
+}
+]

@@ -1,0 +1,13 @@
+# Frontend .env file 
+# Location: /home/ubuntu/revize_v2/spaced-repetition/frontend/.env
+
+# API Configuration (Primary domain)
+VITE_API_BASE_URL=https://revize.live/api
+VITE_API_URL=https://revize.live
+
+# Alternative configurations for testing (comment out when using domain)
+# VITE_API_BASE_URL=http://18.227.190.69/api
+# VITE_API_URL=http://18.227.190.69
+
+# Google OAuth (same client ID as backend)
+VITE_GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com 

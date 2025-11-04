@@ -228,35 +228,57 @@ const TopicDetailCard = ({ show, onHide, topicId }) => {
               <Card.Body>
                 {topic.revisions && topic.revisions.length > 0 ? (
                   <div className="revision-timeline">
-                    {topic.revisions
-                      .sort((a, b) => new Date(a.scheduled_date) - new Date(b.scheduled_date))
-                      .map((revision, index) => (
-                      <div key={revision.id} className="revision-item">
-                        <div className={`revision-marker ${revision.completed ? 'completed' : 'pending'}`}>
-                          {revision.completed ? (
-                            <i className="bi bi-check-circle-fill"></i>
-                          ) : (
-                            <i className="bi bi-circle"></i>
-                          )}
-                        </div>
-                        <div className="revision-content">
-                          <div className="revision-date">
-                            {formatDateFromTimestamp(revision.scheduled_date)}
-                          </div>
-                          <div className="revision-status">
-                            <Badge 
-                              bg={revision.completed ? 'success' : 'warning'}
-                              className="me-2"
-                            >
-                              {revision.completed ? 'Completed' : 'Pending'}
-                            </Badge>
-                            <span className="revision-number">
-                              Revision {index + 1}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+                    {(() => {
+                      // Group revisions by date
+                      const groupedByDate = topic.revisions.reduce((acc, revision) => {
+                        const dateKey = revision.scheduled_date;
+                        if (!acc[dateKey]) {
+                          acc[dateKey] = [];
+                        }
+                        acc[dateKey].push(revision);
+                        return acc;
+                      }, {});
+
+                      // Sort dates and render
+                      return Object.entries(groupedByDate)
+                        .sort(([dateA], [dateB]) => new Date(dateA) - new Date(dateB))
+                        .map(([date, revisions], index) => {
+                          const completedCount = revisions.filter(r => r.completed).length;
+                          const totalCount = revisions.length;
+                          const allCompleted = completedCount === totalCount;
+
+                          return (
+                            <div key={date} className="revision-item">
+                              <div className={`revision-marker ${allCompleted ? 'completed' : 'pending'}`}>
+                                {allCompleted ? (
+                                  <i className="bi bi-check-circle-fill"></i>
+                                ) : (
+                                  <i className="bi bi-circle"></i>
+                                )}
+                              </div>
+                              <div className="revision-content">
+                                <div className="revision-date">
+                                  {formatDateFromTimestamp(date)}
+                                </div>
+                                <div className="revision-status">
+                                  <Badge
+                                    bg={allCompleted ? 'success' : 'warning'}
+                                    className="me-2"
+                                  >
+                                    {allCompleted ? 'Completed' : 'Pending'}
+                                  </Badge>
+                                  <span className="revision-number">
+                                    {totalCount > 1
+                                      ? `${totalCount} flashcards ${allCompleted ? 'completed' : 'due'}`
+                                      : `Revision ${index + 1}`
+                                    }
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        });
+                    })()}
                   </div>
                 ) : (
                   <p className="text-muted text-center py-3">

@@ -52,7 +52,7 @@ const Sidebar = ({ isCollapsed, toggleSidebar, isMobile, isMobileMenuOpen }) => 
           <i className="bi bi-house-door"></i>
           {!isCollapsed && <span>Dashboard</span>}
         </div>
-        <div 
+        <div
           className={`nav-item ${isActive('/dashboard') && location.search.includes('tab=topics') ? 'active' : ''}`}
           data-tooltip="All Topics"
           onClick={() => handleNavigation('/dashboard?tab=topics')}
@@ -60,15 +60,7 @@ const Sidebar = ({ isCollapsed, toggleSidebar, isMobile, isMobileMenuOpen }) => 
           <i className="bi bi-book"></i>
           {!isCollapsed && <span>All Topics</span>}
         </div>
-        <div 
-          className={`nav-item ${isActive('/dashboard') && location.search.includes('tab=schedule') ? 'active' : ''}`}
-          data-tooltip="Schedule"
-          onClick={() => handleNavigation('/dashboard?tab=schedule')}
-        >
-          <i className="bi bi-calendar-range"></i>
-          {!isCollapsed && <span>Schedule</span>}
-        </div>
-        <div 
+        <div
           className={`nav-item ${isActive('/dashboard') && location.search.includes('tab=stats') ? 'active' : ''}`}
           data-tooltip="Statistics"
           onClick={() => handleNavigation('/dashboard?tab=stats')}

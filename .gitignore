@@ -1,2 +1,11 @@
 node_modules
-venv    
+venv
+*.env
+.env
+.env.local
+.env.*.local
+**/.env
+**/.env.local
+**/.env.*.local
+spaced-repetition/backend/.env
+spaced-repetition/frontend/.env    

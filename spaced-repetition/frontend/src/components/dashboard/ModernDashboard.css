@@ -1,11 +1,11 @@
 /* Modern Dashboard - Professional Education Application */
 .modern-dashboard {
-  background-color: var(--main-bg);
-  color: var(--main-text-primary);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   min-height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  margin-left: 32px;
-  margin-right: 32px;
+  font-family: var(--font-family-base);
+  display: flex;
+  flex-direction: column;
 }
 
 /* Fallback Component */
@@ -15,115 +15,42 @@
   align-items: center;
   justify-content: center;
   min-height: 400px;
-  background-color: var(--card-bg);
-  border-radius: 8px;
-  box-shadow: var(--card-shadow);
-  margin: 24px;
-  padding: 32px;
+  background-color: var(--bg-surface);
+  border-radius: var(--radius-base);
+  box-shadow: var(--shadow-base);
+  margin: var(--spacing-3);
+  padding: var(--spacing-4);
 }
 
 .fallback-component h3 {
-  color: var(--main-text-primary);
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 16px;
+  color: var(--text-primary);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--spacing-2);
 }
 
 .fallback-component p {
-  color: var(--main-text-secondary);
-  font-size: 1rem;
+  color: var(--text-secondary);
+  font-size: var(--font-size-base);
   text-align: center;
   max-width: 400px;
-  line-height: 1.6;
+  line-height: var(--line-height-relaxed);
 }
 
-/* Professional Header */
+/* Professional Header - Simplified */
 .dashboard-header {
-  background: linear-gradient(135deg, #00d4aa, #1e3a8a);
+  background: var(--gradient-primary);
   color: #ffffff;
-  padding: 32px 32px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: var(--spacing-2) var(--spacing-4);
+  box-shadow: var(--shadow-md);
   position: relative;
-  overflow: hidden;
+  overflow: visible;
+  border-radius: 0;
 }
 
-/* Animated wavy bottom edge */
+/* Remove decorative shadow */
 .dashboard-header::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 200%;
-  height: 40px;
-  background: linear-gradient(135deg, #00d4aa, #1e3a8a);
-  clip-path: polygon(
-    0% 60%,
-    5% 50%,
-    10% 45%,
-    15% 50%,
-    20% 60%,
-    25% 65%,
-    30% 60%,
-    35% 50%,
-    40% 45%,
-    45% 50%,
-    50% 60%,
-    55% 65%,
-    60% 60%,
-    65% 50%,
-    70% 45%,
-    75% 50%,
-    80% 60%,
-    85% 65%,
-    90% 60%,
-    95% 50%,
-    100% 45%,
-    100% 100%,
-    0% 100%
-  );
-  animation: waveFlow 8s linear infinite;
-  z-index: 1;
-}
-
-/* Secondary wave layer for depth */
-.dashboard-header::before {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 200%;
-  height: 35px;
-  background: linear-gradient(135deg, rgba(0, 212, 170, 0.8), rgba(30, 58, 138, 0.8));
-  clip-path: polygon(
-    0% 65%,
-    8% 55%,
-    16% 50%,
-    24% 55%,
-    32% 65%,
-    40% 70%,
-    48% 65%,
-    56% 55%,
-    64% 50%,
-    72% 55%,
-    80% 65%,
-    88% 70%,
-    96% 65%,
-    100% 55%,
-    100% 100%,
-    0% 100%
-  );
-  animation: waveFlow 12s linear infinite reverse;
-  z-index: 2;
-}
-
-/* Wave animation */
-@keyframes waveFlow {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
+  display: none;
 }
 
 /* Ensure header content stays above waves */
@@ -322,76 +249,45 @@
   }
 }
 
-/* Enhanced particle effect for individual tabs */
-.nav-tab {
-  position: relative;
-  z-index: 2;
-}
-
-.nav-tab::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  background: radial-gradient(circle, rgba(0, 212, 170, 0.3) 0%, transparent 70%);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: all 0.4s ease;
-  opacity: 0;
-  z-index: -1;
-}
-
-.nav-tab:hover::before {
-  width: 120%;
-  height: 200%;
-  opacity: 1;
-}
-
-.nav-tab.active::before {
-  width: 100%;
-  height: 150%;
-  opacity: 0.5;
-  background: radial-gradient(circle, rgba(0, 212, 170, 0.1) 0%, transparent 70%);
-}
+/* Unified Tab Styling - Clean and Simple */
 
 .nav-tabs {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-1);
   max-width: 1400px;
   margin: 0 auto;
+  border-bottom: 2px solid var(--border-primary);
 }
 
 .nav-tab {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 16px 24px;
+  gap: var(--spacing-1);
+  padding: var(--spacing-2) var(--spacing-3);
   background: none;
   border: none;
-  color: var(--tab-text);
+  border-bottom: 3px solid transparent;
+  color: var(--text-secondary);
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s ease;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-base) var(--radius-base) 0 0;
+  transition: all var(--transition-base);
   white-space: nowrap;
-  border-radius: 6px 6px 0 0;
+  position: relative;
 }
 
 .nav-tab:hover {
-  color: var(--tab-text);
-  background-color: var(--tab-hover-bg);
-  transform: translateY(-1px);
+  color: var(--text-primary);
+  background-color: var(--hover-overlay);
+  border-bottom-color: var(--color-primary-300);
 }
 
 .nav-tab.active {
-  color: #1e293b;
-  background-color: #ffffff;
-  border-bottom: 3px solid #00d4aa;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  font-weight: 600;
+  color: var(--color-primary-600);
+  background-color: var(--bg-surface);
+  border-bottom-color: var(--color-primary-500);
+  font-weight: var(--font-weight-semibold);
 }
 
 .tab-icon {
@@ -402,28 +298,54 @@
   font-weight: 500;
 }
 
+/* Dashboard Navigation */
+.dashboard-nav {
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-primary);
+  padding: 0 var(--spacing-4);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-index-sticky);
+  box-shadow: var(--shadow-sm);
+}
+
 /* Professional Main Content */
 .dashboard-main {
-  background-color: #f8fafc;
+  background-color: var(--bg-primary);
   flex: 1;
-  padding: 24px 32px;
-  max-width: 1400px;
+  padding: 0;
+  max-width: 1920px;
   margin: 0 auto;
   width: 100%;
 }
 
 .tab-content {
   width: 100%;
-  background-color: #f8fafc;
 }
 
-/* Today's Learning Layout - Professional 50/50 Split */
+/* Today's Learning Layout - Responsive Grid */
 .today-learning-layout {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
+  grid-template-columns: 1fr 450px;
+  gap: 0;
   align-items: start;
   width: 100%;
+  height: calc(100vh - 80px);
+  overflow: hidden;
+}
+
+/* Flashcard Review Section (Left 70%) */
+.flashcard-review-section {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Add Topic Section (Right 30%) */
+.add-topic-section {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-left: 1px solid var(--border-primary);
 }
 
 /* Timer section removed - now using single pomodoro card */
@@ -432,46 +354,45 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  background-color: #f8fafc;
   padding: 0;
 }
 
 /* Full Width Content for Other Tabs */
 .full-width-content {
   width: 100%;
-  background-color: #f8fafc;
 }
 
 /* Professional Card Styling */
 .full-width-content .card,
 .progress-section .card {
-  background-color: var(--card-bg);
-  border: 2px solid #00d4aa;
-  box-shadow: 0 2px 8px rgba(0, 212, 170, 0.15);
-  border-radius: 8px;
-  transition: all 0.2s ease;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  box-shadow: var(--shadow-base);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-base);
 }
 
 .full-width-content .card:hover,
 .progress-section .card:hover {
-  box-shadow: 0 4px 12px rgba(0, 212, 170, 0.25);
+  box-shadow: var(--shadow-md);
   transform: translateY(-2px);
+  border-color: var(--color-primary-300);
 }
 
 .full-width-content .card-header,
 .progress-section .card-header {
-  background-color: var(--card-bg);
-  border-bottom: 1px solid #00d4aa;
-  color: var(--main-text-primary);
-  font-weight: 600;
-  padding: 16px 24px;
-  border-radius: 8px 8px 0 0;
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-primary);
+  color: var(--text-primary);
+  font-weight: var(--font-weight-semibold);
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 }
 
 .full-width-content .card-body,
 .progress-section .card-body {
-  padding: 24px;
-  color: #1e293b;
+  padding: var(--spacing-3);
+  color: var(--text-primary);
 }
 
 /* Professional Button Styling */
@@ -752,4 +673,271 @@
 
 .dashboard-nav::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+/* Dark Mode Tab Styling */
+body.dark-theme .nav-tab {
+  color: var(--text-secondary);
+}
+
+body.dark-theme .nav-tab:hover {
+  color: var(--text-primary);
+  background-color: var(--hover-overlay);
+  border-bottom-color: var(--color-primary-400);
+}
+
+body.dark-theme .nav-tab.active {
+  color: var(--color-primary-400);
+  background-color: var(--bg-elevated);
+  border-bottom-color: var(--color-primary-500);
+}
+
+/* ===================================
+   RESPONSIVE DESIGN
+   =================================== */
+
+/* Desktop to Laptop - 1200px and below */
+/* Large Desktop - 1400px to 1599px */
+@media (max-width: 1599px) {
+  .today-learning-layout {
+    grid-template-columns: 1fr 400px;
+  }
+}
+
+/* Desktop - 1200px to 1399px */
+@media (max-width: 1399px) {
+  .today-learning-layout {
+    grid-template-columns: 1fr 380px;
+  }
+}
+
+/* Small Desktop - 1024px to 1199px */
+@media (max-width: 1199px) {
+  .dashboard-main {
+    padding: 0;
+  }
+
+  .today-learning-layout {
+    grid-template-columns: 1fr 350px;
+    height: calc(100vh - 75px);
+  }
+}
+
+/* Tablet - 768px to 1023px */
+@media (max-width: 1023px) {
+  .dashboard-main {
+    padding: 0;
+  }
+
+  .today-learning-layout {
+    grid-template-columns: 1fr 320px;
+    gap: var(--spacing-2);
+    height: calc(100vh - 70px);
+  }
+
+  .dashboard-header {
+    padding: var(--spacing-2) var(--spacing-3);
+  }
+
+  .welcome-message {
+    font-size: var(--font-size-xl);
+  }
+
+  .header-subtitle {
+    font-size: var(--font-size-xs);
+  }
+}
+
+/* Mobile Landscape & Small Tablets - 640px to 768px */
+@media (max-width: 768px) {
+  .modern-dashboard {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .dashboard-header {
+    border-radius: 0;
+  }
+
+  .dashboard-header::after {
+    display: none;
+  }
+
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-2);
+  }
+
+  .header-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .dashboard-nav {
+    padding: 0 var(--spacing-2);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .nav-tabs {
+    min-width: min-content;
+  }
+
+  .nav-tab {
+    font-size: var(--font-size-xs);
+    padding: var(--spacing-2);
+    gap: var(--spacing-1);
+    white-space: nowrap;
+  }
+
+  .tab-icon {
+    font-size: var(--font-size-sm);
+  }
+
+  .tab-label {
+    font-size: var(--font-size-xs);
+  }
+
+  .dashboard-main {
+    padding: var(--spacing-2);
+  }
+
+  /* Stack today's learning layout on mobile - keep both sections */
+  .today-learning-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    gap: var(--spacing-3);
+    height: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: var(--spacing-4);
+  }
+
+  /* Make flashcard section compact on mobile */
+  .flashcard-review-section {
+    min-height: 60vh;
+    height: auto;
+  }
+
+  /* Make Add Topic section accessible on mobile */
+  .add-topic-section {
+    height: auto;
+    min-height: 400px;
+    border-left: none;
+    border-top: 2px solid var(--border-primary);
+    padding-top: var(--spacing-3);
+  }
+
+  /* Flashcard review takes full width on mobile */
+  .flashcard-review-section {
+    width: 100%;
+  }
+
+  .user-avatar img {
+    width: 36px;
+    height: 36px;
+  }
+
+  .logout-btn {
+    font-size: var(--font-size-xs);
+    padding: var(--spacing-1) var(--spacing-2);
+  }
+}
+
+/* Mobile Portrait - Up to 640px */
+@media (max-width: 640px) {
+  .dashboard-header {
+    padding: var(--spacing-2);
+  }
+
+  .welcome-message {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--spacing-1);
+  }
+
+  .header-subtitle {
+    font-size: 0.75rem;
+  }
+
+  .nav-tab {
+    flex-direction: column;
+    padding: var(--spacing-1);
+    min-width: 70px;
+  }
+
+  .tab-icon {
+    font-size: var(--font-size-base);
+  }
+
+  .tab-label {
+    font-size: 0.7rem;
+  }
+
+  .dashboard-main {
+    padding: var(--spacing-2);
+  }
+
+  .user-avatar img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .user-menu {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacing-2);
+  }
+}
+
+/* Extra Small Mobile - Up to 480px */
+@media (max-width: 480px) {
+  .dashboard-nav {
+    padding: 0 var(--spacing-1);
+  }
+
+  .nav-tabs {
+    gap: var(--spacing-1);
+  }
+
+  .nav-tab {
+    padding: var(--spacing-1);
+    min-width: 60px;
+  }
+
+  .tab-label {
+    font-size: 0.65rem;
+  }
+
+  .welcome-message {
+    font-size: var(--font-size-base);
+  }
+
+  .dashboard-main {
+    padding: var(--spacing-1);
+  }
+
+  .today-learning-layout {
+    gap: var(--spacing-1);
+  }
+}
+
+/* Landscape Orientation Adjustments */
+@media (max-height: 600px) and (orientation: landscape) {
+  .dashboard-header {
+    padding: var(--spacing-1) var(--spacing-3);
+  }
+
+  .welcome-message {
+    font-size: var(--font-size-base);
+    margin-bottom: 0;
+  }
+
+  .header-subtitle {
+    display: none;
+  }
+
+  .nav-tab {
+    padding: var(--spacing-1) var(--spacing-2);
+  }
 } 

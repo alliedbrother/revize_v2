@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { Card, Badge, Alert, Form, Row, Col, Button, ListGroup, Spinner } from 'react-bootstrap';
 import { useAuth } from '../../context/AuthContext';
 import { getRevisionSchedule, completeRevision, postponeRevision } from '../../services/api';
-import { RefreshContext } from '../dashboard/ModernDashboard';
+import { RefreshContext } from '../../context/RefreshContext';
 import { formatDate, parseDate } from '../../utils/dateUtils';
 import './Revisions.css';
 import './RevisionSchedule.css';

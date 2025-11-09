@@ -62,7 +62,7 @@ Type or paste your own content
 - Full control over what you want to learn
 - Instantly converted to flashcards
 
-#### 🔗 **Web Links** *(Coming Soon)*
+#### 🔗 **Web Links** 
 Paste YouTube videos or article links
 - AI summarizes video content or articles
 - Extracts key learning points automatically
@@ -260,6 +260,7 @@ Revize reviews content just before you're about to forget it, strengthening memo
 **Result**: Information retention of **80-90%** even months later.
 
 ---
+
 
 ## 🌟 What Makes Revize Different?
 

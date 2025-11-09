@@ -32,16 +32,19 @@ export const AuthProvider = ({ children }) => {
     try {
       setError(null);
       console.log('AuthContext: Attempting login with:', credentials);
-      
+
       const response = await authService.login(credentials);
       console.log('AuthContext: Login response:', response);
-      
+
       if (response && response.token) {
         localStorage.setItem('token', response.token);
         setUser({
           id: response.user_id,
           username: response.username,
-          email: response.email
+          email: response.email,
+          first_name: response.first_name || '',
+          last_name: response.last_name || '',
+          profile_picture: response.profile_picture || null
         });
         return { success: true };
       } else {
@@ -72,13 +75,16 @@ export const AuthProvider = ({ children }) => {
       
       const response = await authService.register(userData);
       console.log('AuthContext: Registration response:', response);
-      
+
       if (response && response.token) {
         localStorage.setItem('token', response.token);
         setUser({
           id: response.user_id,
           username: response.username,
-          email: response.email
+          email: response.email,
+          first_name: response.first_name || '',
+          last_name: response.last_name || '',
+          profile_picture: response.profile_picture || null
         });
         return { success: true };
       } else {
@@ -151,8 +157,9 @@ export const AuthProvider = ({ children }) => {
           id: response.user_id,
           username: response.username,
           email: response.email,
-          first_name: response.first_name,
-          last_name: response.last_name
+          first_name: response.first_name || '',
+          last_name: response.last_name || '',
+          profile_picture: response.profile_picture || null
         });
         return { success: true };
       } else {
@@ -174,8 +181,14 @@ export const AuthProvider = ({ children }) => {
   const updateUser = async (updatedData) => {
     try {
       setError(null);
-      const updatedUser = await userService.updateProfile(updatedData);
-      setUser(updatedUser);
+
+      // Always merge the updated data with existing user state
+      // This ensures profile_picture, first_name, etc. are preserved and updated
+      setUser(prevUser => ({
+        ...prevUser,
+        ...updatedData
+      }));
+
       return { success: true };
     } catch (err) {
       const errorMessage = err.response?.data?.message || 'Failed to update profile';

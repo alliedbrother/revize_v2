@@ -1,15 +1,17 @@
 """
-LangGraph workflow for generating flashcards from images using Gemini Vision
+LangGraph workflow for generating flashcards from images using Gemini Vision with OpenAI fallback
 """
 import os
 import time
 from typing import TypedDict, List, Annotated
 import operator
-from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage, SystemMessage
 from langgraph.graph import StateGraph, END
+from langsmith import traceable
 import json
 import base64
+from .llm_manager import LLMManager
+from .logger_config import get_logger, log_flashcard_generation
 
 
 class ImageFlashcardState(TypedDict):
@@ -23,39 +25,23 @@ class ImageFlashcardState(TypedDict):
     retry_count: int
     max_retries: int
     current_step: str
+    llm_provider: str  # 'gemini' or 'openai'
+    llm_metadata: dict  # Tokens, latency, etc.
+    user_id: str  # For logging and tracing
 
 
 def process_images_with_vision(state: ImageFlashcardState) -> ImageFlashcardState:
     """
     Node: Send images directly to Gemini Vision API and extract content
-    Includes retry logic with exponential backoff
+    Uses LLM manager with Gemini->OpenAI fallback
     """
+    logger = get_logger(__name__)
+    operation_start = time.time()
+    user_id = state.get('user_id')
+
     try:
-        retry_count = state.get("retry_count", 0)
-        max_retries = state.get("max_retries", 3)
-
-        if retry_count >= max_retries:
-            return {
-                **state,
-                "error": f"Failed to process images after {max_retries} retries",
-                "current_step": "failed"
-            }
-
-        # Get Gemini API key from environment
-        api_key = os.getenv('GEMINI_API_KEY')
-        if not api_key:
-            return {
-                **state,
-                "error": "GEMINI_API_KEY not found in environment variables",
-                "current_step": "failed"
-            }
-
-        # Initialize Gemini Vision model
-        llm = ChatGoogleGenerativeAI(
-            model="gemini-2.0-flash-exp",
-            google_api_key=api_key,
-            temperature=0.3
-        )
+        # Initialize LLM Manager for vision processing
+        llm_manager = LLMManager(user_id=user_id, temperature=0.3)
 
         # Prepare images for API - convert to base64
         image_parts = []
@@ -78,13 +64,16 @@ def process_images_with_vision(state: ImageFlashcardState) -> ImageFlashcardStat
                         }
                     })
             except Exception as e:
-                print(f"Error reading image {img_path}: {str(e)}")
+                logger.error(f"Error reading image {img_path}: {str(e)}",
+                           extra={'user_id': user_id, 'image_path': img_path})
                 continue
 
         if not image_parts:
+            error_msg = "No valid images could be processed"
+            logger.error(error_msg, extra={'user_id': user_id})
             return {
                 **state,
-                "error": "No valid images could be processed",
+                "error": error_msg,
                 "current_step": "failed"
             }
 
@@ -101,83 +90,87 @@ Your task:
 Provide a COMPREHENSIVE summary that captures EVERYTHING a student needs to learn from these images.
 Be thorough and detailed - don't miss any important information."""
 
-        # Call Gemini Vision API with images
+        # Create message with text and images
         message_content = [
             {'type': 'text', 'text': vision_prompt}
         ] + image_parts
 
-        response = llm.invoke([HumanMessage(content=message_content)])
+        # Call LLM with fallback for vision processing
+        response_text, llm_provider, llm_metadata = llm_manager.call_with_fallback(
+            messages=[HumanMessage(content=message_content)],
+            max_retries=3,
+            operation_name="image_vision_extraction"
+        )
 
-        extracted_content = response.content.strip()
+        extracted_content = response_text.strip()
 
         if not extracted_content:
-            raise ValueError("Empty response from Gemini Vision API")
+            raise ValueError("Empty response from vision API")
+
+        # Log successful vision extraction
+        total_latency = time.time() - operation_start
+        logger.info(
+            f"Vision extraction completed: {len(extracted_content)} chars, provider: {llm_provider}",
+            extra={
+                'user_id': user_id,
+                'operation': 'image_vision_extraction',
+                'llm_provider': llm_provider,
+                'success': True,
+                'image_count': state['image_count'],
+                'content_length': len(extracted_content),
+                'tokens': llm_metadata.get('tokens_used'),
+                'latency': total_latency
+            }
+        )
 
         return {
             **state,
             "extracted_content": extracted_content,
+            "llm_provider": llm_provider,
+            "llm_metadata": llm_metadata,
             "error": "",
             "retry_count": 0,
             "current_step": "vision_complete"
         }
 
     except Exception as e:
-        # Increment retry count
-        new_retry_count = retry_count + 1
+        error_msg = str(e)
+        total_latency = time.time() - operation_start
 
-        # Exponential backoff
-        if new_retry_count < max_retries:
-            wait_time = 2 ** new_retry_count
-            print(f"Vision API failed (attempt {new_retry_count}/{max_retries}), retrying in {wait_time}s: {str(e)}")
-            time.sleep(wait_time)
+        # Log failed vision extraction
+        logger.error(
+            f"Vision extraction failed: {error_msg}",
+            extra={
+                'user_id': user_id,
+                'operation': 'image_vision_extraction',
+                'success': False,
+                'error': error_msg,
+                'image_count': state.get('image_count', 0),
+                'latency': total_latency
+            }
+        )
 
-            return {
-                **state,
-                "retry_count": new_retry_count,
-                "current_step": "vision_retry",
-                "error": ""
-            }
-        else:
-            return {
-                **state,
-                "error": f"Vision extraction failed after {max_retries} retries: {str(e)}",
-                "current_step": "failed"
-            }
+        return {
+            **state,
+            "error": f"Vision extraction failed: {error_msg}",
+            "current_step": "failed"
+        }
 
 
 def generate_flashcards_from_content(state: ImageFlashcardState) -> ImageFlashcardState:
     """
     Node: Generate flashcards from extracted content
-    Includes retry logic with exponential backoff
+    Uses LLM manager with Gemini->OpenAI fallback
     """
+    logger = get_logger(__name__)
+    operation_start = time.time()
+    user_id = state.get('user_id')
+
     try:
-        retry_count = state.get("retry_count", 0)
-        max_retries = state.get("max_retries", 3)
+        # Initialize LLM Manager
+        llm_manager = LLMManager(user_id=user_id, temperature=0.7)
 
-        if retry_count >= max_retries:
-            return {
-                **state,
-                "error": f"Failed to generate flashcards after {max_retries} retries",
-                "current_step": "failed"
-            }
-
-        # Get Gemini API key from environment
-        api_key = os.getenv('GEMINI_API_KEY')
-        if not api_key:
-            return {
-                **state,
-                "error": "GEMINI_API_KEY not found in environment variables",
-                "current_step": "failed"
-            }
-
-        # Initialize Gemini model
-        llm = ChatGoogleGenerativeAI(
-            model="gemini-2.0-flash-exp",
-            google_api_key=api_key,
-            temperature=0.7
-        )
-
-        # Create the prompt for flashcard generation (same as document workflow)
+        # Create the prompt for flashcard generation
         system_prompt = SystemMessage(content="""You are an expert educational content creator specialized in creating detailed, comprehensive flashcards for effective learning.
 
 Your task is to analyze the provided text and:
@@ -192,6 +185,16 @@ Guidelines for creating flashcards:
 5. Use clear, concise language but provide thorough explanations
 6. Include examples where relevant
 7. Cover different aspects of the content (concepts, applications, comparisons, etc.)
+8. **Format content using Markdown for better readability:**
+   - Use **bold** for key terms, important concepts, and emphasis
+   - Use *italics* for secondary emphasis or introducing terms
+   - Use bullet points (- or *) or numbered lists (1., 2., 3.) for steps, features, or multiple items
+   - Use `inline code` for technical terms, commands, variable names, or code snippets
+   - Use ```code blocks``` for multi-line code examples
+   - Use > blockquotes for definitions, important quotes, or key takeaways
+   - Use headings (### or ####) if structuring complex concepts into sections
+   - Use line breaks between paragraphs for better readability
+   - Use horizontal rules (---) to separate major sections if needed
 
 Return ONLY a valid JSON object with this exact structure:
 {
@@ -199,11 +202,11 @@ Return ONLY a valid JSON object with this exact structure:
     "flashcards": [
         {
             "title": "Brief title of the concept (max 100 characters)",
-            "content": "Detailed explanation of the concept (150-300 words, can include examples, context, and key points)"
+            "content": "Detailed explanation in Markdown format (150-300 words, with proper formatting for readability)"
         },
         {
             "title": "Another concept title",
-            "content": "Another detailed explanation..."
+            "content": "Another detailed explanation with Markdown formatting..."
         }
     ]
 }
@@ -216,20 +219,21 @@ Important: Return ONLY the JSON object, no additional text or formatting.""")
 
 Generate a topic title and 4-10 comprehensive flashcards covering the most important concepts.""")
 
-        # Call Gemini API
-        response = llm.invoke([system_prompt, human_prompt])
-
-        # Parse the JSON response
-        response_text = response.content.strip()
+        # Call LLM with fallback
+        response_text, llm_provider, llm_metadata = llm_manager.call_with_fallback(
+            messages=[system_prompt, human_prompt],
+            max_retries=3,
+            operation_name="image_flashcard_generation"
+        )
 
         # Remove markdown code blocks if present
+        response_text = response_text.strip()
         if response_text.startswith("```json"):
-            response_text = response_text[7:]  # Remove ```json
+            response_text = response_text[7:]
         if response_text.startswith("```"):
-            response_text = response_text[3:]  # Remove ```
+            response_text = response_text[3:]
         if response_text.endswith("```"):
-            response_text = response_text[:-3]  # Remove trailing ```
-
+            response_text = response_text[:-3]
         response_text = response_text.strip()
 
         # Parse JSON
@@ -245,44 +249,64 @@ Generate a topic title and 4-10 comprehensive flashcards covering the most impor
         if not isinstance(flashcards, list):
             raise ValueError("Flashcards is not a list")
 
-        if len(flashcards) == 0:
-            raise ValueError("No flashcards were generated")
-
         for card in flashcards:
             if "title" not in card or "content" not in card:
                 raise ValueError("Flashcard missing required fields (title or content)")
+
+        # Log successful generation
+        total_latency = time.time() - operation_start
+        log_flashcard_generation(
+            logger,
+            operation_type='image',
+            user_id=user_id,
+            input_source=f"{state.get('image_count', 0)} images",
+            llm_provider=llm_provider,
+            success=True,
+            flashcards_count=len(flashcards),
+            tokens=llm_metadata.get('tokens_used'),
+            latency=total_latency,
+            image_count=state.get('image_count', 0),
+            content_length=len(state.get('extracted_content', ''))
+        )
 
         return {
             **state,
             "topic_title": topic_title,
             "flashcards": flashcards,
+            "llm_provider": llm_provider,
+            "llm_metadata": llm_metadata,
             "error": "",
             "retry_count": 0,
             "current_step": "complete"
         }
 
     except Exception as e:
-        # Increment retry count
-        new_retry_count = retry_count + 1
+        error_msg = str(e)
+        total_latency = time.time() - operation_start
 
-        # Exponential backoff
-        if new_retry_count < max_retries:
-            wait_time = 2 ** new_retry_count
-            print(f"Flashcard generation failed (attempt {new_retry_count}/{max_retries}), retrying in {wait_time}s: {str(e)}")
-            time.sleep(wait_time)
+        # Log failed generation
+        log_flashcard_generation(
+            logger,
+            operation_type='image',
+            user_id=user_id,
+            input_source=f"{state.get('image_count', 0)} images",
+            llm_provider=None,
+            success=False,
+            error=error_msg,
+            latency=total_latency,
+            image_count=state.get('image_count', 0),
+            content_length=len(state.get('extracted_content', ''))
+        )
 
-            return {
-                **state,
-                "retry_count": new_retry_count,
-                "current_step": "flashcard_retry",
-                "error": ""
-            }
-        else:
-            return {
-                **state,
-                "error": f"Flashcard generation failed after {max_retries} retries: {str(e)}",
-                "current_step": "failed"
-            }
+        return {
+            **state,
+            "topic_title": "",
+            "flashcards": [],
+            "llm_provider": None,
+            "llm_metadata": {},
+            "error": f"Flashcard generation failed: {error_msg}",
+            "current_step": "failed"
+        }
 
 
 def should_continue_vision(state: ImageFlashcardState) -> str:
@@ -364,15 +388,21 @@ def build_image_flashcard_workflow():
 image_flashcard_workflow = build_image_flashcard_workflow()
 
 
-def generate_flashcards_from_images(image_paths: List[str]) -> dict:
+@traceable(
+    name="generate_flashcards_from_images",
+    metadata={"source": "images"},
+    tags=["flashcards", "images", "llm"]
+)
+def generate_flashcards_from_images(image_paths: List[str], user_id: str = None) -> dict:
     """
     Main function to generate flashcards from images
 
     Args:
         image_paths: List of paths to image files
+        user_id: Optional user ID for tracing
 
     Returns:
-        dict: Result containing flashcards, topic_title, or error
+        dict: Result containing flashcards, topic_title, llm_provider, or error
     """
     initial_state = {
         "image_paths": image_paths,
@@ -383,11 +413,17 @@ def generate_flashcards_from_images(image_paths: List[str]) -> dict:
         "error": "",
         "retry_count": 0,
         "max_retries": 3,
-        "current_step": "start"
+        "current_step": "start",
+        "llm_provider": None,
+        "llm_metadata": {},
+        "user_id": user_id or ""
     }
 
-    # Run the workflow
-    result = image_flashcard_workflow.invoke(initial_state)
+    # Run the workflow with metadata
+    result = image_flashcard_workflow.invoke(
+        initial_state,
+        config={"metadata": {"user_id": user_id, "image_count": len(image_paths)}}
+    )
 
     return {
         "success": not bool(result.get("error")),
@@ -395,5 +431,7 @@ def generate_flashcards_from_images(image_paths: List[str]) -> dict:
         "flashcards": result.get("flashcards", []),
         "error": result.get("error", ""),
         "extracted_content_length": len(result.get("extracted_content", "")),
-        "images_processed": len(image_paths)
+        "images_processed": len(image_paths),
+        "llm_provider": result.get("llm_provider"),
+        "llm_metadata": result.get("llm_metadata", {})
     }

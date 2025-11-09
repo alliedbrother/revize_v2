@@ -2,7 +2,7 @@ import { useState, useContext } from 'react';
 import { Modal, Form, Button, Alert } from 'react-bootstrap';
 import { useAuth } from '../../context/AuthContext';
 import { createTopic } from '../../services/api';
-import { RefreshContext } from '../dashboard/ModernDashboard';
+import { RefreshContext } from '../../context/RefreshContext';
 
 const AddTopicModal = ({ show, onHide }) => {
   const [title, setTitle] = useState('');

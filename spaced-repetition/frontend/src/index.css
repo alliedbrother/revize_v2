@@ -1,6 +1,15 @@
 /* Import Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap');
 
+/* Import Design Tokens */
+@import './styles/design-tokens.css';
+
+/* Import Animations & Micro-interactions */
+@import './styles/animations.css';
+
+/* Import Accessibility Enhancements */
+@import './styles/accessibility.css';
+
 :root {
   /* Main Application Gradient Colors - Teal to Navy */
   --gradient-teal: #00d4aa;

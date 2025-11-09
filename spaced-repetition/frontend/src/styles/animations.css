@@ -1,0 +1,499 @@
+/* ================================================
+   MICRO-INTERACTIONS & ANIMATIONS
+   Subtle, purposeful animations for better UX
+   ================================================ */
+
+/* ===================================
+   FADE ANIMATIONS
+   =================================== */
+
+/* Fade In */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Fade In Up */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fade In Down */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fade In Left */
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Fade In Right */
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ===================================
+   SCALE ANIMATIONS
+   =================================== */
+
+/* Scale In */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Scale Out */
+@keyframes scaleOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+/* Pulse */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* ===================================
+   SLIDE ANIMATIONS
+   =================================== */
+
+/* Slide In Up */
+@keyframes slideInUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Slide In Down */
+@keyframes slideInDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Slide In Left */
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Slide In Right */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* ===================================
+   ROTATE ANIMATIONS
+   =================================== */
+
+/* Rotate */
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Rotate Reverse */
+@keyframes rotateReverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+/* ===================================
+   BOUNCE ANIMATIONS
+   =================================== */
+
+/* Bounce */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Bounce In */
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ===================================
+   SHAKE ANIMATION
+   =================================== */
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-5px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(5px);
+  }
+}
+
+/* ===================================
+   SHIMMER ANIMATION (for loading)
+   =================================== */
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+/* ===================================
+   UTILITY CLASSES
+   =================================== */
+
+/* Fade Animations */
+.animate-fade-in {
+  animation: fadeIn 0.3s var(--transition-base);
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s var(--transition-base);
+}
+
+.animate-fade-in-down {
+  animation: fadeInDown 0.4s var(--transition-base);
+}
+
+.animate-fade-in-left {
+  animation: fadeInLeft 0.4s var(--transition-base);
+}
+
+.animate-fade-in-right {
+  animation: fadeInRight 0.4s var(--transition-base);
+}
+
+/* Scale Animations */
+.animate-scale-in {
+  animation: scaleIn 0.3s var(--transition-base);
+}
+
+.animate-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Slide Animations */
+.animate-slide-in-up {
+  animation: slideInUp 0.4s var(--transition-base);
+}
+
+.animate-slide-in-down {
+  animation: slideInDown 0.4s var(--transition-base);
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.4s var(--transition-base);
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.4s var(--transition-base);
+}
+
+/* Rotate Animations */
+.animate-rotate {
+  animation: rotate 1s linear infinite;
+}
+
+/* Bounce Animations */
+.animate-bounce {
+  animation: bounce 1s ease-in-out infinite;
+}
+
+.animate-bounce-in {
+  animation: bounceIn 0.6s var(--transition-spring);
+}
+
+/* Shake Animation */
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* ===================================
+   MICRO-INTERACTIONS
+   =================================== */
+
+/* Smooth Hover Lift */
+.hover-lift {
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Subtle Hover Lift */
+.hover-lift-sm {
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.hover-lift-sm:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Hover Scale */
+.hover-scale {
+  transition: transform var(--transition-base);
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+/* Subtle Hover Scale */
+.hover-scale-sm {
+  transition: transform var(--transition-base);
+}
+
+.hover-scale-sm:hover {
+  transform: scale(1.02);
+}
+
+/* Hover Brightness */
+.hover-brighten {
+  transition: filter var(--transition-base);
+}
+
+.hover-brighten:hover {
+  filter: brightness(1.1);
+}
+
+/* Hover Glow */
+.hover-glow {
+  transition: box-shadow var(--transition-base);
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(0, 212, 170, 0.4);
+}
+
+/* Button Ripple Effect */
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-ripple::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn-ripple:active::after {
+  width: 300px;
+  height: 300px;
+}
+
+/* Smooth Underline on Hover */
+.hover-underline {
+  position: relative;
+  display: inline-block;
+}
+
+.hover-underline::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--color-primary-500);
+  transition: width var(--transition-base);
+}
+
+.hover-underline:hover::after {
+  width: 100%;
+}
+
+/* ===================================
+   LOADING STATES
+   =================================== */
+
+/* Spinner */
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-gray-200);
+  border-top-color: var(--color-primary-500);
+  border-radius: 50%;
+  animation: rotate 0.8s linear infinite;
+}
+
+.spinner-lg {
+  width: 40px;
+  height: 40px;
+  border-width: 3px;
+}
+
+.spinner-sm {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+
+/* Dots Loading */
+.loading-dots {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.loading-dots span {
+  width: 8px;
+  height: 8px;
+  background: var(--color-primary-500);
+  border-radius: 50%;
+  animation: bounce 1.4s ease-in-out infinite;
+}
+
+.loading-dots span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.loading-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loading-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* ===================================
+   STAGGER ANIMATIONS
+   =================================== */
+
+/* Stagger children animations */
+.stagger-fade-in > * {
+  animation: fadeInUp 0.4s var(--transition-base);
+}
+
+.stagger-fade-in > *:nth-child(1) { animation-delay: 0s; }
+.stagger-fade-in > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger-fade-in > *:nth-child(3) { animation-delay: 0.2s; }
+.stagger-fade-in > *:nth-child(4) { animation-delay: 0.3s; }
+.stagger-fade-in > *:nth-child(5) { animation-delay: 0.4s; }
+.stagger-fade-in > *:nth-child(6) { animation-delay: 0.5s; }
+
+/* ===================================
+   ACCESSIBILITY
+   =================================== */
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .hover-lift:hover,
+  .hover-lift-sm:hover,
+  .hover-scale:hover,
+  .hover-scale-sm:hover {
+    transform: none;
+  }
+}

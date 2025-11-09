@@ -38,6 +38,21 @@
 .brand-content {
   display: flex;
   align-items: center;
+  gap: 0.75rem;
+}
+
+.brand-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+  transition: var(--transition);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.modern-brand:hover .brand-logo {
+  transform: scale(1.05) rotate(2deg);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
 }
 
 .brand-text {
@@ -120,6 +135,30 @@
   box-shadow: var(--shadow-md);
 }
 
+/* Navbar Credit Display */
+.navbar-credit-display {
+  display: flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  transition: var(--transition);
+  border-radius: var(--border-radius-sm);
+}
+
+.navbar-credit-display:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.navbar-credit-display:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+.navbar-credit-display .credit-badge {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
 /* CTA Button */
 .cta-button {
   background: rgba(255, 255, 255, 0.2);
@@ -168,6 +207,15 @@
 .user-dropdown-title {
   display: flex;
   align-items: center;
+}
+
+.navbar-profile-picture {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Dropdown Menu */
@@ -277,6 +325,12 @@
     background: transparent;
     border: none;
     padding: 0.75rem 0;
+  }
+
+  .navbar-credit-display {
+    justify-content: flex-start;
+    padding: 0.75rem 0;
+    margin: 0.25rem 0;
   }
 }
 

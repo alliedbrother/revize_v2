@@ -1,0 +1,284 @@
+/* ================================================
+   Level Progress - Gamified Design
+   ================================================ */
+
+.level-progress-card {
+  border: none;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, rgba(0, 212, 170, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
+  border: 1px solid rgba(0, 212, 170, 0.2);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
+  overflow: hidden;
+}
+
+.level-progress-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(0, 212, 170, 0.3);
+}
+
+.level-progress-card .card-body {
+  padding: var(--spacing-4);
+}
+
+/* Header */
+.level-header {
+  margin-bottom: var(--spacing-3);
+}
+
+.level-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.level-title i {
+  color: var(--color-primary-500);
+  font-size: var(--font-size-xl);
+}
+
+/* Main Content */
+.level-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.level-badge-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.level-badge {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.level-badge-inner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  background: var(--gradient-primary);
+  border-radius: var(--radius-full);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(0, 212, 170, 0.3);
+  border: 3px solid white;
+}
+
+.level-badge-glow {
+  position: absolute;
+  inset: -10px;
+  background: var(--gradient-primary);
+  border-radius: var(--radius-full);
+  opacity: 0.3;
+  filter: blur(15px);
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.level-number {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  color: white;
+  line-height: 1;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.level-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: var(--spacing-1);
+}
+
+.total-xp {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+}
+
+.total-xp i {
+  color: #FBB F24;
+  font-size: var(--font-size-lg);
+}
+
+/* XP Progress Section */
+.xp-progress-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.xp-progress-header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-1);
+  font-weight: var(--font-weight-semibold);
+}
+
+.xp-current {
+  font-size: var(--font-size-xl);
+  color: var(--color-primary-600);
+}
+
+.xp-target {
+  font-size: var(--font-size-base);
+  color: var(--text-tertiary);
+}
+
+.xp-progress-bar {
+  height: 12px;
+  background-color: var(--bg-tertiary);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.xp-progress-bar .progress-bar {
+  background: var(--gradient-primary);
+  transition: width 0.6s ease-in-out;
+}
+
+.xp-progress-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--font-size-sm);
+}
+
+.xp-percentage {
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+.xp-remaining {
+  color: var(--text-tertiary);
+}
+
+/* Level Up Soon Message */
+.level-up-soon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-1);
+  padding: var(--spacing-2);
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-radius: var(--radius-base);
+  color: #F59E0B;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  margin-top: var(--spacing-2);
+  animation: fadeIn 0.5s ease-out;
+}
+
+.level-up-soon i {
+  font-size: var(--font-size-base);
+  animation: flash 1.5s ease-in-out infinite;
+}
+
+/* Animations */
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes flash {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Dark Mode */
+body.dark-theme .level-progress-card {
+  background: linear-gradient(135deg, rgba(0, 212, 170, 0.15) 0%, rgba(5, 150, 105, 0.08) 100%);
+  border-color: rgba(0, 212, 170, 0.25);
+}
+
+body.dark-theme .level-badge-inner {
+  border-color: var(--bg-elevated);
+}
+
+body.dark-theme .xp-progress-bar {
+  background-color: var(--bg-surface);
+}
+
+body.dark-theme .level-up-soon {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.08) 100%);
+  border-color: rgba(251, 191, 36, 0.35);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .level-progress-card .card-body {
+    padding: var(--spacing-3);
+  }
+
+  .level-badge {
+    width: 100px;
+    height: 100px;
+  }
+
+  .level-number {
+    font-size: var(--font-size-3xl);
+  }
+
+  .xp-current {
+    font-size: var(--font-size-lg);
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .level-badge-glow,
+  .level-up-soon i,
+  .level-progress-card {
+    animation: none;
+  }
+
+  .level-progress-card:hover {
+    transform: none;
+  }
+
+  .xp-progress-bar .progress-bar {
+    transition: none;
+  }
+}

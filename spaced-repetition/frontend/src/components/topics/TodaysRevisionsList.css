@@ -97,6 +97,7 @@ body.dark-theme .clickable-topic:hover {
   display: flex !important;
   flex-direction: row !important;
   flex-wrap: nowrap !important;
+  justify-content: center !important;
   gap: 0.75rem;
   overflow-x: auto;
   overflow-y: hidden;
@@ -152,13 +153,23 @@ body.dark-theme .clickable-topic:hover {
   flex-shrink: 0;
 }
 
-/* Hover state */
-.revision-tabs .nav-link:hover {
-  border-color: #00d4aa !important;
-  background: rgba(0, 212, 170, 0.08);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 6px rgba(0, 212, 170, 0.2);
-  color: var(--main-text-primary);
+/* Hover state - Fixed to prevent dark background */
+.revision-tabs .nav-link:hover:not(.active) {
+  border-color: rgba(0, 212, 170, 0.4) !important;
+  background-color: var(--hover-overlay) !important;
+  transform: none;
+  box-shadow: none;
+  color: var(--text-primary) !important;
+}
+
+/* Override all Bootstrap default hover states */
+.revision-tabs .nav-tabs .nav-link:hover:not(.active),
+.revision-tabs .nav-tabs .nav-link:focus:not(.active),
+.revision-tabs .nav-item .nav-link:hover:not(.active) {
+  border-color: rgba(0, 212, 170, 0.4) !important;
+  background-color: var(--hover-overlay) !important;
+  color: var(--text-primary) !important;
+  isolation: isolate;
 }
 
 /* Active tab */
@@ -185,7 +196,7 @@ body.dark-theme .clickable-topic:hover {
   font-weight: 700;
 }
 
-/* Icon-only action buttons styling */
+/* Icon-only action buttons styling - 44px minimum touch targets */
 .todays-revisions-list .d-flex.gap-2 {
   flex-wrap: nowrap;
   align-items: center;
@@ -193,15 +204,15 @@ body.dark-theme .clickable-topic:hover {
 }
 
 .todays-revisions-list .d-flex.gap-2 .btn-sm {
-  min-width: 42px;
-  min-height: 42px;
+  min-width: 44px;
+  min-height: 44px;
   padding: 0.5rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   white-space: nowrap;
-  border-radius: 8px;
+  border-radius: var(--radius-base);
 }
 
 .todays-revisions-list .d-flex.gap-2 .btn-sm i {
@@ -260,10 +271,18 @@ body.dark-theme .revision-tabs .nav-link i {
   color: var(--main-text-primary) !important;
 }
 
-body.dark-theme .revision-tabs .nav-link:hover {
-  background: rgba(0, 212, 170, 0.15) !important;
-  border-color: #00d4aa !important;
-  color: var(--main-text-primary) !important;
+body.dark-theme .revision-tabs .nav-link:hover:not(.active) {
+  background-color: var(--hover-overlay) !important;
+  border-color: rgba(0, 212, 170, 0.4) !important;
+  color: var(--text-primary) !important;
+}
+
+body.dark-theme .revision-tabs .nav-tabs .nav-link:hover:not(.active),
+body.dark-theme .revision-tabs .nav-tabs .nav-link:focus:not(.active),
+body.dark-theme .revision-tabs .nav-item .nav-link:hover:not(.active) {
+  background-color: var(--hover-overlay) !important;
+  border-color: rgba(0, 212, 170, 0.4) !important;
+  color: var(--text-primary) !important;
 }
 
 body.dark-theme .revision-tabs .nav-link.active {
@@ -304,9 +323,9 @@ body.dark-theme .revision-tabs .nav-link.active .badge {
   }
 
   .todays-revisions-list .d-flex.gap-2 .btn-sm {
-    min-width: 38px;
-    min-height: 38px;
-    padding: 0.4rem;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0.5rem;
   }
 
   .todays-revisions-list .d-flex.gap-2 .btn-sm i {

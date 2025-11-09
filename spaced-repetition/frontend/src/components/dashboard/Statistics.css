@@ -1,24 +1,383 @@
-body.dark-theme .statistics-dashboard,
-body.dark-theme .statistics-card,
-body.dark-theme .statistics-section,
-body.dark-theme .card {
-  background-color: #334155 !important;
-  color: #fff !important;
+/* ================================================
+   Statistics Page - Gamified Design with Design Tokens
+   ================================================ */
+
+.statistics-container {
+  padding: 0;
+  animation: fadeIn 0.4s ease-out;
 }
-body.dark-theme .statistics-dashboard .stat-title,
-body.dark-theme .statistics-dashboard .stat-value,
-body.dark-theme .statistics-dashboard .stat-label {
-  color: #fff !important;
+
+/* Hero Banner with Gradient Background */
+.stats-hero-banner {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  border-radius: 16px;
+  padding: 32px 28px;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
+  animation: fadeInDown 0.6s ease-out;
 }
-body.dark-theme .statistics-dashboard .badge-primary {
-  background-color: #00d4aa !important;
-  color: #fff !important;
+
+.stats-hero-banner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
 }
-body.dark-theme .statistics-dashboard .badge-success {
-  background-color: #10b981 !important;
-  color: #fff !important;
+
+.stats-hero-banner::after {
+  content: '';
+  position: absolute;
+  bottom: -30%;
+  left: -5%;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
 }
-body.dark-theme .statistics-dashboard .badge-warning {
-  background-color: #f59e0b !important;
-  color: #fff !important;
-} 
+
+.stats-hero-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.stats-hero-icon {
+  flex-shrink: 0;
+}
+
+.stats-hero-icon i {
+  font-size: 52px;
+  color: white;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+  animation: rocketBounce 2s ease-in-out infinite;
+}
+
+.stats-hero-text {
+  flex: 1;
+}
+
+.stats-hero-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: white;
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  letter-spacing: -0.5px;
+}
+
+.stats-hero-subtitle {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.95);
+  margin: 0;
+  line-height: 1.5;
+  font-weight: 500;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes rocketBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Equal Height Cards - Apply to specific card types */
+.streak-tracker-card,
+.level-progress-card,
+.daily-goals-card {
+  min-height: 380px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.streak-tracker-card .card-body,
+.level-progress-card .card-body,
+.daily-goals-card .card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Achievement Grid - smaller card in column 3 */
+.achievement-grid-card {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+/* Quick Stats Summary Card */
+.quick-stats-card {
+  border: none;
+  border-radius: var(--radius-lg);
+  background-color: var(--bg-surface);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.quick-stats-card .card-body {
+  padding: 16px;
+}
+
+.quick-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-1);
+  padding: 12px;
+  background-color: var(--bg-elevated);
+  border-radius: var(--radius-base);
+  transition: all var(--transition-base);
+}
+
+.quick-stat:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.stat-icon {
+  font-size: var(--font-size-3xl);
+  margin-bottom: var(--spacing-1);
+}
+
+.stat-icon.streak-color {
+  color: #FF6B35;
+}
+
+.stat-icon.level-color {
+  color: var(--color-primary-500);
+}
+
+.stat-icon.achievement-color {
+  color: #FFD700;
+}
+
+.stat-icon.goal-color {
+  color: var(--color-success);
+}
+
+.stat-value {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-medium);
+  text-align: center;
+}
+
+/* Loading State */
+.statistics-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+}
+
+.statistics-loading p {
+  margin-top: var(--spacing-3);
+  color: var(--text-secondary);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Dark Mode */
+body.dark-theme .stats-hero-banner {
+  background: linear-gradient(135deg, #4c63d2 0%, #5a3b7d 50%, #c061d8 100%);
+  box-shadow: 0 10px 30px rgba(76, 99, 210, 0.4);
+}
+
+body.dark-theme .stats-hero-banner::before {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+}
+
+body.dark-theme .stats-hero-banner::after {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+}
+
+body.dark-theme .quick-stats-card {
+  background-color: var(--bg-surface);
+}
+
+body.dark-theme .quick-stat {
+  background-color: var(--bg-tertiary);
+}
+
+body.dark-theme .quick-stat:hover {
+  background-color: var(--bg-elevated);
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  /* Remove min-height on tablets/mobile for better flow */
+  .streak-tracker-card,
+  .level-progress-card,
+  .daily-goals-card {
+    min-height: auto;
+  }
+
+  .stats-hero-banner {
+    padding: 24px 20px;
+    margin-bottom: 20px;
+  }
+
+  .stats-hero-icon i {
+    font-size: 42px;
+  }
+
+  .stats-hero-title {
+    font-size: 26px;
+  }
+
+  .stats-hero-subtitle {
+    font-size: 14px;
+  }
+
+  .quick-stats-card .card-body {
+    padding: 12px;
+  }
+
+  .quick-stat {
+    padding: 10px;
+  }
+
+  .stat-icon {
+    font-size: var(--font-size-2xl);
+  }
+
+  .stat-value {
+    font-size: var(--font-size-xl);
+  }
+}
+
+@media (max-width: 768px) {
+  .stats-hero-banner {
+    padding: 20px 16px;
+    margin-bottom: 16px;
+    border-radius: 12px;
+  }
+
+  .stats-hero-content {
+    gap: 16px;
+  }
+
+  .stats-hero-icon i {
+    font-size: 36px;
+  }
+
+  .stats-hero-title {
+    font-size: 22px;
+  }
+
+  .stats-hero-subtitle {
+    font-size: 13px;
+  }
+
+  .quick-stats-card .card-body {
+    padding: 10px;
+  }
+
+  .quick-stat {
+    padding: 8px;
+    margin-bottom: 8px;
+  }
+
+  .stat-icon {
+    font-size: var(--font-size-xl);
+  }
+
+  .stat-value {
+    font-size: var(--font-size-lg);
+  }
+
+  .stat-label {
+    font-size: var(--font-size-xs);
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-hero-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .stats-hero-icon i {
+    font-size: 40px;
+  }
+
+  .stats-hero-title {
+    font-size: 20px;
+  }
+
+  .stats-hero-subtitle {
+    font-size: 12px;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .statistics-container,
+  .stats-hero-banner,
+  .stats-hero-icon i,
+  .streak-tracker-card,
+  .level-progress-card,
+  .daily-goals-card,
+  .achievement-grid-card,
+  .quick-stat {
+    animation: none !important;
+  }
+
+  .quick-stat:hover {
+    transform: none;
+  }
+}

@@ -1,176 +1,151 @@
 import { useState, useEffect, useContext } from 'react';
-import { Card, Row, Col, Alert, Button, ProgressBar } from 'react-bootstrap';
+import { Card, Row, Col, Alert, Spinner } from 'react-bootstrap';
 import { useAuth } from '../../context/AuthContext';
-import { getStatistics } from '../../services/api';
+import { getGamificationStats } from '../../services/api';
 import { RefreshContext } from './ModernDashboard';
-import './css/Statistics.css';
+import StreakTracker from './StreakTracker';
+import LevelProgress from './LevelProgress';
+import AchievementGrid from './AchievementGrid';
+import DailyGoals from './DailyGoals';
+import './Statistics.css';
 
 const Statistics = () => {
-  const [stats, setStats] = useState(null);
+  const [gamificationData, setGamificationData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const { user } = useAuth();
   const { refreshTrigger } = useContext(RefreshContext);
 
   useEffect(() => {
-    loadStatistics();
-  }, [refreshTrigger]); // Refresh when triggerRefresh is called
+    loadGamificationStats();
+  }, [refreshTrigger]);
 
-  const loadStatistics = async () => {
+  const loadGamificationStats = async () => {
     try {
       setLoading(true);
-      const data = await getStatistics();
-      setStats(data);
+      const data = await getGamificationStats();
+      setGamificationData(data);
       setError('');
     } catch (err) {
-      setError('Failed to load statistics');
-      console.error("Error loading statistics:", err);
+      setError('Failed to load gamification statistics');
+      console.error("Error loading gamification stats:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading && !stats) {
+  if (loading && !gamificationData) {
     return (
       <div className="statistics-loading">
-        <i className="bi bi-graph-up spinning"></i>
-        <p>Loading statistics...</p>
+        <Spinner animation="border" variant="primary" />
+        <p className="mt-3">Loading your progress...</p>
       </div>
     );
   }
 
-  if (!stats) {
-    return <Alert variant="info">No statistics available yet.</Alert>;
+  if (error) {
+    return (
+      <Alert variant="danger" className="m-4">
+        <i className="bi bi-exclamation-triangle me-2"></i>
+        {error}
+      </Alert>
+    );
   }
 
-  const completionRate = stats.total_revisions > 0
-    ? Math.round((stats.completed_revisions / stats.total_revisions) * 100)
-    : 0;
+  if (!gamificationData) {
+    return (
+      <Alert variant="info" className="m-4">
+        <i className="bi bi-info-circle me-2"></i>
+        No statistics available yet. Start studying to see your progress!
+      </Alert>
+    );
+  }
+
+  const { streak, level, recent_achievements, total_achievements, available_achievements, daily_goals, goals_completed_today } = gamificationData;
 
   return (
     <div className="statistics-container">
-      <Card className="statistics-card">
-        <Card.Header className="d-flex justify-content-between align-items-center">
-          <h4 className="mb-0">
-            <i className="bi bi-bar-chart-fill me-2"></i>
-            Your Learning Statistics
-          </h4>
-          <Button
-            variant="outline-primary"
-            size="sm"
-            onClick={loadStatistics}
-            disabled={loading}
-          >
-            <i className={`bi bi-arrow-repeat me-1 ${loading ? 'spinning' : ''}`}></i>
-            {loading ? 'Refreshing...' : 'Refresh'}
-          </Button>
-        </Card.Header>
-        <Card.Body>
-          {error && <Alert variant="danger">{error}</Alert>}
+      {/* Hero Banner with Gradient */}
+      <div className="stats-hero-banner">
+        <div className="stats-hero-content">
+          <div className="stats-hero-icon">
+            <i className="bi bi-rocket-takeoff-fill"></i>
+          </div>
+          <div className="stats-hero-text">
+            <h1 className="stats-hero-title">Level Up Your Skills</h1>
+            <p className="stats-hero-subtitle">Track your progress, unlock achievements, and master your learning goals</p>
+          </div>
+        </div>
+      </div>
 
-          {/* Key Metrics Grid */}
-          <Row className="g-4 mb-4">
-            <Col md={3} sm={6}>
-              <Card className="metric-card h-100">
-                <Card.Body className="text-center">
-                  <div className="metric-icon-wrapper bg-primary bg-opacity-10 mx-auto mb-3">
-                    <i className="bi bi-journal-text text-primary"></i>
+      {/* Quick Stats Summary - Moved to Top */}
+      <Row className="mb-3">
+        <Col xs={12}>
+          <Card className="quick-stats-card">
+            <Card.Body>
+              <Row className="text-center">
+                <Col xs={6} md={3}>
+                  <div className="quick-stat">
+                    <i className="bi bi-fire stat-icon streak-color"></i>
+                    <div className="stat-value">{streak?.current_streak || 0}</div>
+                    <div className="stat-label">Day Streak</div>
                   </div>
-                  <h2 className="metric-value mb-1">{stats.total_topics || 0}</h2>
-                  <p className="metric-label text-muted mb-0">Total Topics</p>
-                </Card.Body>
-              </Card>
-            </Col>
-
-            <Col md={3} sm={6}>
-              <Card className="metric-card h-100">
-                <Card.Body className="text-center">
-                  <div className="metric-icon-wrapper bg-success bg-opacity-10 mx-auto mb-3">
-                    <i className="bi bi-check-circle text-success"></i>
+                </Col>
+                <Col xs={6} md={3}>
+                  <div className="quick-stat">
+                    <i className="bi bi-award-fill stat-icon level-color"></i>
+                    <div className="stat-value">Level {level?.current_level || 1}</div>
+                    <div className="stat-label">{level?.total_xp || 0} Total XP</div>
                   </div>
-                  <h2 className="metric-value mb-1">{stats.completed_revisions || 0}</h2>
-                  <p className="metric-label text-muted mb-0">Completed Revisions</p>
-                </Card.Body>
-              </Card>
-            </Col>
-
-            <Col md={3} sm={6}>
-              <Card className="metric-card h-100">
-                <Card.Body className="text-center">
-                  <div className="metric-icon-wrapper bg-warning bg-opacity-10 mx-auto mb-3">
-                    <i className="bi bi-hourglass-split text-warning"></i>
+                </Col>
+                <Col xs={6} md={3}>
+                  <div className="quick-stat">
+                    <i className="bi bi-trophy-fill stat-icon achievement-color"></i>
+                    <div className="stat-value">{total_achievements || 0}</div>
+                    <div className="stat-label">Achievements</div>
                   </div>
-                  <h2 className="metric-value mb-1">{stats.pending_revisions || 0}</h2>
-                  <p className="metric-label text-muted mb-0">Pending Revisions</p>
-                </Card.Body>
-              </Card>
-            </Col>
-
-            <Col md={3} sm={6}>
-              <Card className="metric-card h-100">
-                <Card.Body className="text-center">
-                  <div className="metric-icon-wrapper bg-info bg-opacity-10 mx-auto mb-3">
-                    <i className="bi bi-calendar-week text-info"></i>
+                </Col>
+                <Col xs={6} md={3}>
+                  <div className="quick-stat">
+                    <i className="bi bi-check-circle-fill stat-icon goal-color"></i>
+                    <div className="stat-value">{goals_completed_today || 0}/{daily_goals?.length || 0}</div>
+                    <div className="stat-label">Daily Goals</div>
                   </div>
-                  <h2 className="metric-value mb-1">{stats.topics_this_week || 0}</h2>
-                  <p className="metric-label text-muted mb-0">Topics This Week</p>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
+                </Col>
+              </Row>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
 
-          {/* Completion Progress */}
-          <Row>
-            <Col xs={12}>
-              <Card className="progress-card">
-                <Card.Header>
-                  <h5 className="mb-0">
-                    <i className="bi bi-graph-up me-2"></i>
-                    Overall Progress
-                  </h5>
-                </Card.Header>
-                <Card.Body>
-                  <div className="mb-3">
-                    <div className="d-flex justify-content-between mb-2">
-                      <span className="fw-semibold">Completion Rate</span>
-                      <span className="fw-bold text-primary">{completionRate}%</span>
-                    </div>
-                    <ProgressBar
-                      now={completionRate}
-                      variant="primary"
-                      className="custom-progress-bar"
-                      style={{ height: '12px' }}
-                    />
-                  </div>
+      {/* Gamification Stats Grid - 3 Equal Columns */}
+      <Row className="g-2">
+        {/* Column 1 - Streak Tracker */}
+        <Col lg={4}>
+          <StreakTracker streak={streak} />
+        </Col>
 
-                  <Row className="text-center mt-4 pt-3 border-top">
-                    <Col xs={4}>
-                      <div className="stat-detail">
-                        <div className="stat-value text-success">{stats.completed_revisions || 0}</div>
-                        <div className="stat-label text-muted small">Completed</div>
-                      </div>
-                    </Col>
-                    <Col xs={4}>
-                      <div className="stat-detail">
-                        <div className="stat-value text-warning">{stats.pending_revisions || 0}</div>
-                        <div className="stat-label text-muted small">Pending</div>
-                      </div>
-                    </Col>
-                    <Col xs={4}>
-                      <div className="stat-detail">
-                        <div className="stat-value text-primary">{stats.total_revisions || 0}</div>
-                        <div className="stat-label text-muted small">Total</div>
-                      </div>
-                    </Col>
-                  </Row>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-        </Card.Body>
-      </Card>
+        {/* Column 2 - Level Progress */}
+        <Col lg={4}>
+          <LevelProgress level={level} />
+        </Col>
+
+        {/* Column 3 - Goals & Achievements */}
+        <Col lg={4}>
+          <DailyGoals
+            goals={daily_goals}
+            goalsCompletedToday={goals_completed_today}
+          />
+          <div className="mt-2">
+            <AchievementGrid
+              achievements={recent_achievements}
+              totalAchievements={available_achievements}
+            />
+          </div>
+        </Col>
+      </Row>
     </div>
   );
 };
 
-export default Statistics; 
+export default Statistics;

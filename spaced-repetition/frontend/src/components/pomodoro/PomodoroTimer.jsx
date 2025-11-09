@@ -2,9 +2,9 @@ import { useState, useRef, useEffect } from 'react';
 import './Pomodoro.css';
 
 const SESSION_TYPES = [
-  { key: 'focus', label: 'Focus', duration: 25 * 60, color: 'var(--gradient-navy)' },
-  { key: 'short', label: 'Short Break', duration: 5 * 60, color: '#00bcd4' },
-  { key: 'long', label: 'Long Break', duration: 15 * 60, color: '#00d4aa' },
+  { key: 'focus', label: 'Focus', duration: 25 * 60, color: 'rgba(0, 188, 212, 0.15)' },
+  { key: 'short', label: 'Short Break', duration: 5 * 60, color: 'rgba(0, 188, 212, 0.15)' },
+  { key: 'long', label: 'Long Break', duration: 15 * 60, color: 'rgba(0, 212, 170, 0.15)' },
 ];
 
 const QUOTES = [
@@ -15,35 +15,15 @@ const QUOTES = [
   "You've got this!"
 ];
 
-function PomodoroTimer() {
+function PomodoroTimer({ compact = false, collapsed = false, onToggleCollapse }) {
   const [sessionIdx, setSessionIdx] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(SESSION_TYPES[0].duration);
   const [isRunning, setIsRunning] = useState(false);
   const [completed, setCompleted] = useState(0);
   const [quoteIdx, setQuoteIdx] = useState(0);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [isExpanded, setIsExpanded] = useState(false);
   const intervalRef = useRef(null);
 
-  // Handle window resize for responsive design
-  useEffect(() => {
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  // Get responsive dimensions
-  const getCircleDimensions = () => {
-    if (windowWidth <= 576) {
-      return { size: 200, radius: 80, center: 100 };
-    } else if (windowWidth <= 768) {
-      return { size: 240, radius: 100, center: 120 };
-    } else if (windowWidth <= 1200) {
-      return { size: 280, radius: 120, center: 140 };
-    }
-    return { size: 320, radius: 140, center: 160 };
-  };
-
-  const { size, radius, center } = getCircleDimensions();
 
   // Timer logic
   useEffect(() => {
@@ -63,6 +43,19 @@ function PomodoroTimer() {
     return () => clearInterval(intervalRef.current);
   }, [isRunning]);
 
+  // ESC key handler for zen mode
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape' && isExpanded) {
+        setIsExpanded(false);
+      }
+    };
+    if (isExpanded) {
+      document.addEventListener('keydown', handleEscape);
+      return () => document.removeEventListener('keydown', handleEscape);
+    }
+  }, [isExpanded]);
+
   // Change session
   const handleSession = idx => {
     setSessionIdx(idx);
@@ -77,93 +70,206 @@ function PomodoroTimer() {
   const progress = 1 - secondsLeft / SESSION_TYPES[sessionIdx].duration;
 
   return (
-    <div className="pomodoro-main">
-      <div className="pomodoro-card">
-        <h3 className="pomodoro-title">Pomodoro Timer</h3>
-        <div className="pomodoro-session-tabs">
-          {SESSION_TYPES.map((s, i) => (
-            <button
-              key={s.key}
-              className={`pomodoro-tab${i === sessionIdx ? ' active' : ''}`}
-              style={i === sessionIdx ? { background: s.color, color: '#fff' } : {}}
-              onClick={() => handleSession(i)}
-            >
-              {s.label}
-            </button>
-          ))}
-        </div>
-        <div className={`pomodoro-timer-visual ${!isRunning ? 'timer-paused' : ''}`}>
-          <svg width={size} height={size}>
-            {/* Define gradients */}
-            <defs>
-              <linearGradient id="backgroundGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#ffffff" stopOpacity="0.8" />
-                <stop offset="50%" stopColor="#f0f8ff" stopOpacity="0.7" />
-                <stop offset="100%" stopColor="#ffffff" stopOpacity="0.6" />
-              </linearGradient>
-              <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
-                <stop offset="25%" stopColor="#f0f8ff" stopOpacity="0.95" />
-                <stop offset="50%" stopColor="#e6f3ff" stopOpacity="0.9" />
-                <stop offset="75%" stopColor="#cce7ff" stopOpacity="0.85" />
-                <stop offset="100%" stopColor="#ffffff" stopOpacity="0.9" />
-              </linearGradient>
-              
-              {/* Add radial gradient for enhanced depth */}
-              <radialGradient id="glowGradient" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="#ffffff" stopOpacity="0.3" />
-                <stop offset="70%" stopColor="#e6f3ff" stopOpacity="0.1" />
-                <stop offset="100%" stopColor="transparent" stopOpacity="0" />
-              </radialGradient>
-              
-              {/* Add filter for enhanced glow effect */}
-              <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                <feMerge> 
-                  <feMergeNode in="coloredBlur"/>
-                  <feMergeNode in="SourceGraphic"/>
-                </feMerge>
-              </filter>
-            </defs>
-            
-            {/* Background circle - White Donut */}
-            <circle
-              cx={center} cy={center} r={radius}
-              className="timer-bg-circle"
-            />
-            
-            {/* Progress circle with enhanced effects */}
-            <circle
-              cx={center} cy={center} r={radius}
-              className="timer-progress-circle"
-              strokeDasharray={2 * Math.PI * radius}
-              strokeDashoffset={(1 - progress) * 2 * Math.PI * radius}
-              filter="url(#glow)"
-            />
-          </svg>
-          <div className="pomodoro-timer-text">
-            {format(secondsLeft)}
-          </div>
-        </div>
-        <div className="pomodoro-controls">
-          <button className="pomodoro-btn start" onClick={() => setIsRunning(true)} disabled={isRunning}>
-            <i className="bi bi-play-fill"></i> Start
+    <>
+      <div className="pomodoro-main">
+        <div className={`pomodoro-card ${compact ? 'compact' : ''} ${collapsed ? 'collapsed' : ''}`}>
+          {compact && !collapsed && (
+            <>
+              <button
+                className="pomodoro-expand-btn"
+                onClick={() => setIsExpanded(true)}
+                aria-label="Expand timer to full screen"
+                title="Zen mode"
+              >
+                <i className="bi bi-arrows-fullscreen"></i>
+              </button>
+              {onToggleCollapse && (
+                <button
+                  className="pomodoro-collapse-btn"
+                  onClick={onToggleCollapse}
+                  aria-label={collapsed ? "Expand timer" : "Minimize timer"}
+                  title={collapsed ? "Expand timer" : "Minimize timer"}
+                >
+                  <i className={`bi ${collapsed ? 'bi-chevron-down' : 'bi-chevron-up'}`}></i>
+                </button>
+              )}
+            </>
+          )}
+
+          {/* Collapsed state with gradient card */}
+          {collapsed ? (
+            <div className="pomodoro-collapsed-content">
+              <button
+                className={`pomodoro-collapsed-play-btn ${isRunning ? 'running' : ''}`}
+                onClick={() => setIsRunning(!isRunning)}
+                aria-label={isRunning ? "Pause timer" : "Start timer"}
+                title={isRunning ? "Pause timer" : "Start timer"}
+              >
+                <i className={`bi ${isRunning ? 'bi-pause-fill' : 'bi-play-fill'}`}></i>
+              </button>
+              <div className="pomodoro-collapsed-info">
+                <div className="pomodoro-timer-display">
+                  <div className="pomodoro-timer-text">
+                    {format(secondsLeft)}
+                  </div>
+                </div>
+              </div>
+              {onToggleCollapse && (
+                <button
+                  className="pomodoro-collapsed-expand-btn"
+                  onClick={onToggleCollapse}
+                  aria-label="Expand timer"
+                  title="Expand timer"
+                >
+                  <i className="bi bi-chevron-down"></i>
+                </button>
+              )}
+            </div>
+          ) : (
+            <>
+              <div className="pomodoro-header">
+                <h3 className="pomodoro-title">Pomodoro Timer</h3>
+              </div>
+
+              {/* Timer Display - Always visible */}
+              <div className="pomodoro-timer-display">
+                <div className="pomodoro-timer-text">
+                  {format(secondsLeft)}
+                </div>
+              </div>
+            </>
+          )}
+
+          {!collapsed && (
+            <>
+              <div className="pomodoro-session-tabs">
+              {SESSION_TYPES.map((s, i) => (
+                <button
+                  key={s.key}
+                  className={`pomodoro-tab${i === sessionIdx ? ' active' : ''}`}
+                  onClick={() => handleSession(i)}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+            {/* Linear Progress Bar */}
+            <div className="pomodoro-progress-bar-container">
+              <div
+                className="pomodoro-progress-bar-fill"
+                style={{ width: `${progress * 100}%` }}
+              />
+            </div>
+            </>
+          )}
+
+        {!collapsed && (
+          <div className="pomodoro-controls">
+          <button
+            className="pomodoro-btn start"
+            onClick={() => setIsRunning(true)}
+            disabled={isRunning}
+            aria-label="Start timer"
+          >
+            <i className="bi bi-play-fill"></i>
+            <span className="pomodoro-btn-text">Start</span>
           </button>
-          <button className="pomodoro-btn pause" onClick={() => setIsRunning(false)} disabled={!isRunning}>
-            <i className="bi bi-pause-fill"></i> Pause
+          <button
+            className="pomodoro-btn pause"
+            onClick={() => setIsRunning(false)}
+            disabled={!isRunning}
+            aria-label="Pause timer"
+          >
+            <i className="bi bi-pause-fill"></i>
+            <span className="pomodoro-btn-text">Pause</span>
           </button>
-          <button className="pomodoro-btn reset" onClick={() => { setSecondsLeft(SESSION_TYPES[sessionIdx].duration); setIsRunning(false); }}>
-            <i className="bi bi-arrow-counterclockwise"></i> Reset
+          <button
+            className="pomodoro-btn reset"
+            onClick={() => { setSecondsLeft(SESSION_TYPES[sessionIdx].duration); setIsRunning(false); }}
+            aria-label="Reset timer"
+          >
+            <i className="bi bi-arrow-counterclockwise"></i>
+            <span className="pomodoro-btn-text">Reset</span>
           </button>
         </div>
-        <div className="pomodoro-quote">
-          <i className="bi bi-chat-quote"></i> {QUOTES[quoteIdx]}
-        </div>
-        <div className="pomodoro-session-info">
-          <span>Completed Sessions: <b>{completed}</b></span>
-        </div>
+        )}
+        {!compact && (
+          <>
+            <div className="pomodoro-quote">
+              <i className="bi bi-chat-quote"></i> {QUOTES[quoteIdx]}
+            </div>
+            <div className="pomodoro-session-info">
+              <span>Completed Sessions: <b>{completed}</b></span>
+            </div>
+          </>
+        )}
       </div>
     </div>
+
+    {/* Zen Mode Overlay */}
+    {isExpanded && (
+      <div className="pomodoro-zen-overlay" onClick={() => setIsExpanded(false)}>
+        <div className="pomodoro-zen-content" onClick={(e) => e.stopPropagation()}>
+          <button
+            className="pomodoro-zen-close"
+            onClick={() => setIsExpanded(false)}
+            aria-label="Close zen mode"
+          >
+            <i className="bi bi-x-lg"></i>
+          </button>
+
+          <h2 className="pomodoro-zen-session-label">
+            {SESSION_TYPES[sessionIdx].label}
+          </h2>
+
+          <div className="pomodoro-zen-timer">
+            {format(secondsLeft)}
+          </div>
+
+          <div className="pomodoro-zen-progress">
+            <div
+              className="pomodoro-zen-progress-fill"
+              style={{ width: `${progress * 100}%` }}
+            />
+          </div>
+
+          <div className="pomodoro-zen-controls">
+            <button
+              className="pomodoro-zen-btn start"
+              onClick={() => setIsRunning(true)}
+              disabled={isRunning}
+              aria-label="Start timer"
+            >
+              <i className="bi bi-play-fill"></i>
+            </button>
+            <button
+              className="pomodoro-zen-btn pause"
+              onClick={() => setIsRunning(false)}
+              disabled={!isRunning}
+              aria-label="Pause timer"
+            >
+              <i className="bi bi-pause-fill"></i>
+            </button>
+            <button
+              className="pomodoro-zen-btn reset"
+              onClick={() => { setSecondsLeft(SESSION_TYPES[sessionIdx].duration); setIsRunning(false); }}
+              aria-label="Reset timer"
+            >
+              <i className="bi bi-arrow-counterclockwise"></i>
+            </button>
+          </div>
+
+          <div className="pomodoro-zen-quote">
+            <i className="bi bi-chat-quote"></i> {QUOTES[quoteIdx]}
+          </div>
+
+          <div className="pomodoro-zen-completed">
+            Completed Sessions: <strong>{completed}</strong>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 }
 

@@ -26,17 +26,56 @@
   text-align: center;
 }
 
+.profile-avatar-container {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 1.5rem;
+}
+
 .profile-avatar-large {
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.25);
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.5rem;
   border: 4px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.profile-picture-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-picture-upload-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00d4aa 0%, #0ea5e9 100%);
+  border: 3px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.profile-picture-upload-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.profile-picture-upload-btn i {
+  color: #ffffff;
+  font-size: 16px;
 }
 
 .avatar-initial {
@@ -53,9 +92,16 @@
 .profile-display-name {
   font-size: 2rem;
   font-weight: 700;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
   color: #ffffff;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.profile-username-display {
+  font-size: 0.95rem;
+  opacity: 0.85;
+  margin-bottom: 0.5rem;
+  color: #ffffff;
 }
 
 .profile-email-display {
@@ -145,6 +191,97 @@
   text-transform: uppercase;
   letter-spacing: 0.8px;
   font-weight: 600;
+}
+
+/* Credits Card */
+.credits-card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  background: var(--card-bg);
+}
+
+.credits-card .card-header {
+  background: transparent;
+  border-bottom: 1px solid var(--input-border);
+  padding: 1rem 1.25rem;
+}
+
+.credits-card .card-header h5 {
+  font-weight: 600;
+  color: var(--main-text-primary);
+  margin: 0;
+}
+
+.credit-info {
+  text-align: center;
+}
+
+.credit-balance {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
+.credit-description {
+  color: var(--main-text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+}
+
+.credit-stats {
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--input-border);
+}
+
+/* Profile Info Card */
+.profile-info-card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  background: var(--card-bg);
+}
+
+.profile-info-card .card-header {
+  background: transparent;
+  border-bottom: 1px solid var(--input-border);
+  padding: 1rem 1.25rem;
+}
+
+.profile-info-card .card-header h5 {
+  font-weight: 600;
+  color: var(--main-text-primary);
+  margin: 0;
+}
+
+.profile-info-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-info-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--main-text-secondary);
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.profile-info-value {
+  font-size: 1rem;
+  color: var(--main-text-primary);
+  margin: 0;
+}
+
+.crop-container {
+  max-width: 100%;
+  text-align: center;
+}
+
+.crop-container img {
+  max-height: 400px;
 }
 
 /* Actions Card */
@@ -258,19 +395,41 @@ body.dark-theme .profile-hero-card {
 }
 
 body.dark-theme .stats-card,
+body.dark-theme .credits-card,
+body.dark-theme .profile-info-card,
 body.dark-theme .actions-card {
   background-color: #334155;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 body.dark-theme .stats-card .card-header,
+body.dark-theme .credits-card .card-header,
+body.dark-theme .profile-info-card .card-header,
 body.dark-theme .actions-card .card-header {
   border-bottom-color: #475569;
 }
 
 body.dark-theme .stats-card .card-header h5,
+body.dark-theme .credits-card .card-header h5,
+body.dark-theme .profile-info-card .card-header h5,
 body.dark-theme .actions-card .card-header h5 {
   color: #ffffff;
+}
+
+body.dark-theme .profile-info-label {
+  color: #94a3b8;
+}
+
+body.dark-theme .profile-info-value {
+  color: #ffffff;
+}
+
+body.dark-theme .credit-description {
+  color: #94a3b8;
+}
+
+body.dark-theme .credit-stats {
+  border-top-color: #475569;
 }
 
 body.dark-theme .stat-item {

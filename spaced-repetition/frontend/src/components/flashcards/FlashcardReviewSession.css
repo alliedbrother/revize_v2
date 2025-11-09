@@ -1,689 +1,646 @@
-/* Flashcard Review Modal - Full Screen Design */
+/* ================================================
+   Flashcard Review Session - Redesigned
+   Matches home page card style with design tokens
+   ================================================ */
+
+/* ===================================
+   Modal Container
+   =================================== */
+
 .flashcard-review-modal .modal-content {
-  background: var(--main-bg);
+  background-color: var(--bg-primary);
   border: none;
   border-radius: 0;
   height: 100vh;
-}
-
-.flashcard-review-body {
-  display: flex;
-  flex-direction: column;
-  padding: 0;
-  position: relative;
-  height: 100vh;
-  background: var(--main-bg);
   overflow: hidden;
 }
 
-/* Compact Progress Bar */
+.flashcard-review-body {
+  padding: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-primary);
+}
+
+/* ===================================
+   Progress Bar Section
+   =================================== */
+
 .flashcard-progress-container {
-  position: relative;
-  background: var(--card-bg);
-  padding: 0.75rem 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  z-index: 100;
+  background-color: var(--bg-surface);
+  padding: var(--spacing-2) var(--spacing-3);
+  border-bottom: 1px solid var(--border-primary);
   flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
 }
 
 .flashcard-progress-info {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5rem;
-  color: var(--main-text-primary);
-  font-size: 0.875rem;
-  font-weight: 600;
+  margin-bottom: var(--spacing-2);
+}
+
+.progress-text {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+}
+
+.badge-practice {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  background-color: var(--color-success);
+  color: #FFFFFF;
+  padding: var(--spacing-1) calc(var(--spacing-1) + 2px);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
 }
 
 .progress-right {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: var(--spacing-2);
 }
 
 .remaining-text {
-  color: var(--main-text-secondary);
-  font-weight: 500;
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+}
+
+.btn-exit {
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  font-size: var(--font-size-lg);
+  cursor: pointer;
+  padding: var(--spacing-1) var(--spacing-2);
+  transition: all var(--transition-base);
+  border-radius: var(--radius-base);
+}
+
+.btn-exit:hover {
+  color: var(--color-danger);
+  background-color: var(--hover-overlay);
 }
 
 .flashcard-progress-bar {
-  width: 100%;
-  height: 4px;
-  background: var(--input-border);
-  border-radius: 10px;
+  height: 6px;
+  background-color: var(--bg-tertiary);
+  border-radius: var(--radius-full);
   overflow: hidden;
 }
 
 .flashcard-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #00d4aa, #00b894);
-  border-radius: 10px;
-  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--gradient-primary);
+  border-radius: var(--radius-full);
+  transition: width var(--transition-base);
 }
 
-/* Flashcard Container - Full Width */
+/* ===================================
+   Card Container - Compact Design
+   =================================== */
+
 .flashcard-container {
   flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
-  align-items: stretch;
-  justify-content: center;
-  width: 100%;
-  padding: 1rem 2rem;
-  overflow: hidden;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-1) 0 var(--spacing-1) 0;
+  background-color: var(--bg-surface);
 }
 
 .flashcard {
-  background: var(--card-bg);
-  border-radius: 12px;
-  border: 1px solid var(--input-border);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  padding: 2rem;
   width: 100%;
-  max-width: 1200px;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  transition: all 0.3s ease;
-  overflow: hidden;
+  max-width: 100%;
+  background-color: var(--bg-surface);
+  border-radius: 0;
+  box-shadow: none;
+  padding: var(--spacing-4);
+  animation: fadeIn 0.3s var(--transition-base);
+  border: none;
 }
 
-.flashcard:hover {
-  box-shadow: 0 6px 24px rgba(0, 212, 170, 0.12);
-}
+/* ===================================
+   Card Header
+   =================================== */
 
-/* Compact Flashcard Header */
 .flashcard-header {
+  margin-bottom: var(--spacing-4);
+  padding-bottom: var(--spacing-3);
+  border-bottom: 1px solid var(--border-secondary);
+}
+
+.card-header-section {
+  margin-bottom: var(--spacing-3);
+  padding-bottom: var(--spacing-3);
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.card-header-content {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid var(--input-border);
-  flex-shrink: 0;
-  gap: 1rem;
+  align-items: flex-start;
+  gap: var(--spacing-2);
 }
 
-.flashcard-topic {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--main-text-primary);
+.flashcard-title {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
   margin: 0;
-  letter-spacing: -0.3px;
   line-height: 1.3;
   flex: 1;
+  letter-spacing: -0.02em;
 }
 
-.flashcard-number {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #ffffff;
-  background: linear-gradient(135deg, #00d4aa 0%, #0ea5e9 100%);
-  padding: 0.4rem 0.8rem;
-  border-radius: 20px;
-  letter-spacing: 0.5px;
+.flashcard-topic-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  background-color: var(--bg-tertiary);
+  color: var(--text-secondary);
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
   flex-shrink: 0;
 }
 
-/* Flashcard Content - Maximum Space */
-.flashcard-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  padding: 1.5rem 0;
-  max-width: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  min-height: 0;
+.flashcard-topic-badge i {
+  font-size: var(--font-size-base);
 }
 
-.flashcard-content::-webkit-scrollbar {
+/* ===================================
+   Card Content
+   =================================== */
+
+.flashcard-content-wrapper {
+  overflow-y: auto;
+  max-height: calc(100vh - 350px);
+  padding-right: var(--spacing-2);
+}
+
+.flashcard-content-wrapper::-webkit-scrollbar {
   width: 8px;
 }
 
-.flashcard-content::-webkit-scrollbar-track {
-  background: transparent;
-  border-radius: 10px;
+.flashcard-content-wrapper::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-full);
 }
 
-.flashcard-content::-webkit-scrollbar-thumb {
-  background: var(--input-border);
-  border-radius: 10px;
-  transition: background 0.3s ease;
+.flashcard-content-wrapper::-webkit-scrollbar-thumb {
+  background: var(--border-primary);
+  border-radius: var(--radius-full);
 }
 
-.flashcard-content::-webkit-scrollbar-thumb:hover {
-  background: #00d4aa;
+.flashcard-content-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
 }
 
-.flashcard-content p {
-  font-size: 1.125rem;
-  line-height: 1.8;
-  color: var(--main-text-primary);
-  margin: 0 0 1rem 0;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  font-weight: 400;
-  letter-spacing: 0.2px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.flashcard-content-section {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-relaxed);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-3);
+  overflow-y: auto;
+  max-height: calc(100vh - 400px);
 }
 
-.flashcard-content p:last-child {
-  margin-bottom: 0;
+.flashcard-content-section::-webkit-scrollbar {
+  width: 8px;
+}
+
+.flashcard-content-section::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-full);
+}
+
+.flashcard-content-section::-webkit-scrollbar-thumb {
+  background: var(--border-primary);
+  border-radius: var(--radius-full);
+}
+
+.flashcard-content-section::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
 }
 
 .flashcard-resource {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 1rem 1.25rem;
-  background: rgba(0, 212, 170, 0.08);
-  border-radius: 10px;
-  border-left: 3px solid #00d4aa;
-  transition: all 0.3s ease;
-  flex-shrink: 0;
-}
-
-.flashcard-resource:hover {
-  background: rgba(0, 212, 170, 0.12);
-  transform: translateX(4px);
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-4);
+  padding: var(--spacing-3);
+  background-color: var(--bg-elevated);
+  border-radius: var(--radius-base);
+  border: 1px solid var(--border-primary);
 }
 
 .flashcard-resource i {
-  color: #00d4aa;
-  font-size: 1.2rem;
+  color: var(--color-primary-500);
+  font-size: var(--font-size-xl);
+  flex-shrink: 0;
 }
 
 .flashcard-resource a {
-  color: #00d4aa;
+  color: var(--color-primary-600);
   text-decoration: none;
-  font-weight: 600;
-  font-size: 0.95rem;
-  transition: color 0.3s ease;
+  font-weight: var(--font-weight-medium);
+  transition: all 0.2s ease;
 }
 
 .flashcard-resource a:hover {
-  color: #00b894;
+  color: var(--color-primary-700);
   text-decoration: underline;
 }
 
-/* Flashcard Topic Label */
-.flashcard-topic-label {
+/* ===================================
+   Resource Box
+   =================================== */
+
+.resource-box {
+  background-color: rgba(16, 185, 129, 0.1);
+  border-left: 3px solid var(--color-success);
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--radius-base);
+  margin-top: var(--spacing-3);
+}
+
+.resource-link {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  background: rgba(108, 117, 125, 0.08);
-  border-radius: 8px;
-  flex-shrink: 0;
+  gap: var(--spacing-1);
+  text-decoration: none;
+  color: var(--color-success);
+  font-weight: var(--font-weight-medium);
+  transition: all var(--transition-base);
 }
 
-.flashcard-topic-label i {
-  color: var(--main-text-secondary);
-  font-size: 0.95rem;
+.resource-link:hover {
+  color: var(--color-success);
+  text-decoration: underline;
 }
 
-.flashcard-topic-label small {
-  color: var(--main-text-secondary);
-  font-size: 0.875rem;
-  font-weight: 500;
+.resource-link i {
+  font-size: var(--font-size-lg);
 }
 
-/* Compact Flashcard Meta */
+/* ===================================
+   Meta Information
+   =================================== */
+
 .flashcard-meta {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--input-border);
-  flex-shrink: 0;
+  justify-content: space-between;
   align-items: center;
+  padding-top: var(--spacing-2);
+  margin-top: var(--spacing-2);
+  border-top: 1px solid var(--border-primary);
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
 }
 
 .meta-item {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.85rem;
-  color: var(--main-text-secondary);
-  font-weight: 500;
-}
-
-.meta-item i {
-  color: #00d4aa;
-  font-size: 0.95rem;
+  gap: var(--spacing-1);
 }
 
 .meta-divider {
-  color: var(--main-text-secondary);
-  font-size: 0.85rem;
-  opacity: 0.5;
+  width: 1px;
+  height: 16px;
+  background-color: var(--border-primary);
 }
 
-/* Compact Action Buttons */
+/* ===================================
+   Action Buttons - Match Home Page
+   =================================== */
+
 .flashcard-actions {
-  position: relative;
   display: flex;
-  gap: 0.625rem;
-  padding: 0.75rem 1.5rem;
-  background: var(--card-bg);
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
-  z-index: 100;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3);
+  background-color: var(--bg-surface);
+  border-top: 1px solid var(--border-primary);
   flex-shrink: 0;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .action-btn {
-  flex: 1;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.7rem 1rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 600;
+  gap: var(--spacing-1);
+  padding: var(--spacing-2) var(--spacing-4);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
   cursor: pointer;
-  transition: all 0.25s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: all var(--transition-base);
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  min-height: 44px;
+  flex: 1;
+  max-width: 200px;
 }
 
 .action-btn:disabled {
-  opacity: 0.4;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .action-btn i {
-  font-size: 1.1rem;
+  font-size: var(--font-size-base);
 }
 
+/* Previous Button */
 .btn-previous {
-  background: var(--card-bg);
-  color: var(--main-text-primary);
-  border: 2px solid var(--input-border);
-  flex: 0.8;
+  color: var(--text-secondary);
 }
 
 .btn-previous:hover:not(:disabled) {
-  background: var(--input-bg);
-  border-color: #00d4aa;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 212, 170, 0.15);
+  background-color: var(--hover-overlay);
+  border-color: var(--color-primary-400);
+  color: var(--text-primary);
 }
 
-.btn-review-later {
-  background: #f59e0b;
-  color: #ffffff;
-}
-
-.btn-review-later:hover:not(:disabled) {
-  background: #d97706;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.35);
-}
-
-.btn-got-it {
-  background: linear-gradient(135deg, #00d4aa 0%, #0ea5e9 100%);
-  color: #ffffff;
-}
-
-.btn-got-it:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 212, 170, 0.4);
-}
-
+/* Next Button */
 .btn-next {
-  background: var(--card-bg);
-  color: var(--main-text-primary);
-  border: 2px solid var(--input-border);
-  flex: 0.8;
+  color: var(--text-secondary);
 }
 
 .btn-next:hover:not(:disabled) {
-  background: var(--input-bg);
-  border-color: #00d4aa;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 212, 170, 0.15);
+  background-color: var(--hover-overlay);
+  border-color: var(--color-primary-400);
+  color: var(--text-primary);
 }
 
-/* Compact Exit Button */
-.btn-exit {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-  border: none;
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  flex-shrink: 0;
+/* Focus States */
+.action-btn:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
 }
 
-.btn-exit:hover {
-  background: #ef4444;
-  color: #fff;
-  transform: rotate(90deg) scale(1.1);
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
-}
+/* ===================================
+   Session Complete Screen
+   =================================== */
 
-.btn-exit i {
-  font-size: 1rem;
-}
-
-/* Session Complete Screen */
 .session-complete {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: var(--spacing-5);
   text-align: center;
-  max-width: 600px;
-  padding: 2rem;
-  margin: auto;
+  background-color: var(--bg-surface);
 }
 
 .complete-icon {
-  font-size: 4.5rem;
-  color: #00d4aa;
-  margin-bottom: 1.5rem;
-  animation: bounce 1s ease-in-out;
-}
-
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-20px); }
+  font-size: 64px;
+  color: var(--color-success);
+  margin-bottom: var(--spacing-3);
+  animation: scaleIn 0.5s ease-out;
 }
 
 .session-complete h2 {
-  font-size: 2.25rem;
-  font-weight: 700;
-  color: var(--main-text-primary);
-  margin-bottom: 0.75rem;
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-2);
 }
 
 .complete-message {
-  font-size: 1.05rem;
-  color: var(--main-text-secondary);
-  margin-bottom: 2rem;
+  font-size: var(--font-size-base);
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-4);
 }
 
 .session-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-  width: 100%;
-  margin-bottom: 2rem;
+  display: flex;
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-5);
+  justify-content: center;
+  align-items: center;
 }
 
 .stat-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: center;
+  padding: var(--spacing-3) var(--spacing-4);
+  background-color: var(--bg-elevated);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  min-width: 140px;
+  transition: all var(--transition-base);
+}
+
+.stat-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .stat-number {
-  font-size: 2.75rem;
-  font-weight: 700;
-  color: #00d4aa;
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-1);
+  line-height: 1;
 }
 
 .stat-label {
-  font-size: 0.875rem;
-  color: var(--main-text-secondary);
-  font-weight: 500;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-medium);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .btn-close-session {
-  background: linear-gradient(135deg, #00d4aa 0%, #0ea5e9 100%);
-  color: #ffffff;
-  border: none;
-  border-radius: 10px;
-  padding: 0.875rem 2rem;
-  font-size: 1.05rem;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 212, 170, 0.3);
+  justify-content: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-5);
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-md);
 }
 
 .btn-close-session:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 212, 170, 0.4);
+  box-shadow: var(--shadow-lg);
 }
 
-/* Spinner */
-.spinner-small {
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top: 2px solid #ffffff;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+.btn-close-session:active {
+  transform: translateY(0);
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.btn-close-session i {
+  font-size: var(--font-size-lg);
 }
 
-/* Responsive Design */
-@media (max-width: 992px) {
-  .flashcard-container {
-    padding: 1rem 1.5rem;
+/* ===================================
+   Dark Mode - Minimal Overrides
+   =================================== */
+
+body.dark-theme .flashcard-container {
+  background-color: var(--bg-elevated);
+}
+
+body.dark-theme .flashcard {
+  background-color: var(--bg-elevated);
+  border-color: var(--border-primary);
+}
+
+body.dark-theme .stat-item {
+  background-color: var(--bg-surface);
+}
+
+body.dark-theme .session-complete {
+  background-color: var(--bg-elevated);
+}
+
+body.dark-theme .resource-box {
+  background-color: rgba(16, 185, 129, 0.15);
+}
+
+/* ===================================
+   Animations
+   =================================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
-
-  .flashcard {
-    padding: 1.75rem;
-  }
-
-  .flashcard-topic {
-    font-size: 1.35rem;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ===================================
+   Responsive Design
+   =================================== */
 
 @media (max-width: 768px) {
-  .flashcard-progress-container {
-    padding: 0.625rem 1rem;
-  }
-
-  .flashcard-progress-info {
-    font-size: 0.8rem;
-  }
-
-  .flashcard-container {
-    padding: 0.75rem 1rem;
-  }
-
   .flashcard {
-    padding: 1.5rem;
-    border-radius: 10px;
+    padding: var(--spacing-3);
   }
 
-  .flashcard-header {
-    padding-bottom: 0.875rem;
-    flex-wrap: wrap;
+  .flashcard-title {
+    font-size: var(--font-size-xl);
   }
 
-  .flashcard-topic {
-    font-size: 1.25rem;
-  }
-
-  .flashcard-number {
-    font-size: 0.75rem;
-    padding: 0.35rem 0.7rem;
-  }
-
-  .flashcard-content {
-    padding: 1.25rem 0;
-  }
-
-  .flashcard-content p {
-    font-size: 1.05rem;
-    line-height: 1.75;
-  }
-
-  .flashcard-meta {
-    padding-top: 0.875rem;
+  .flashcard-content-section {
+    font-size: var(--font-size-sm);
+    max-height: calc(100vh - 450px);
   }
 
   .flashcard-actions {
     flex-wrap: wrap;
-    gap: 0.5rem;
-    padding: 0.625rem 1rem;
+    gap: var(--spacing-1);
+    padding: var(--spacing-2);
   }
 
   .action-btn {
-    flex: 1 1 calc(50% - 0.25rem);
-    padding: 0.625rem 0.75rem;
-    font-size: 0.875rem;
-  }
-
-  .btn-text {
-    display: none;
-  }
-
-  .action-btn i {
-    margin: 0;
-  }
-
-  .btn-exit {
-    width: 32px;
-    height: 32px;
-  }
-
-  .progress-right {
-    gap: 0.75rem;
-  }
-
-  .remaining-text {
-    font-size: 0.8rem;
+    min-height: 44px;
+    font-size: var(--font-size-xs);
+    padding: var(--spacing-2);
+    flex: 1;
+    min-width: 80px;
   }
 
   .session-stats {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+
+  .stat-item {
+    min-width: 100px;
+    padding: var(--spacing-2) var(--spacing-3);
   }
 
   .stat-number {
-    font-size: 2.5rem;
-  }
-
-  .session-complete h2 {
-    font-size: 2rem;
+    font-size: var(--font-size-3xl);
   }
 }
 
 @media (max-width: 576px) {
-  .flashcard-progress-container {
-    padding: 0.5rem 0.875rem;
-  }
-
-  .flashcard-progress-info {
-    font-size: 0.75rem;
-  }
-
-  .remaining-text {
-    display: none;
-  }
-
   .flashcard-container {
-    padding: 0.625rem 0.75rem;
+    padding: 0;
   }
 
   .flashcard {
-    padding: 1.25rem;
-    border-radius: 8px;
+    padding: var(--spacing-2);
   }
 
-  .flashcard-topic {
-    font-size: 1.125rem;
+  .flashcard-title {
+    font-size: var(--font-size-lg);
   }
 
-  .flashcard-content {
-    padding: 1rem 0;
+  .card-header-content {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
-  .flashcard-content p {
-    font-size: 1rem;
-    line-height: 1.7;
-  }
-
-  .flashcard-actions {
-    padding: 0.5rem 0.75rem;
-    gap: 0.4rem;
+  .flashcard-topic-badge {
+    align-self: flex-start;
   }
 
   .action-btn {
-    padding: 0.5rem 0.625rem;
-    font-size: 0.8rem;
+    min-height: 44px;
+    padding: var(--spacing-1) var(--spacing-2);
+    font-size: var(--font-size-xs);
   }
 
   .action-btn i {
-    font-size: 1rem;
-  }
-
-  .btn-exit {
-    width: 30px;
-    height: 30px;
-  }
-
-  .btn-exit i {
-    font-size: 0.9rem;
-  }
-
-  .complete-icon {
-    font-size: 3.5rem;
-  }
-
-  .session-complete h2 {
-    font-size: 1.75rem;
-  }
-
-  .stat-number {
-    font-size: 2.25rem;
+    font-size: var(--font-size-sm);
   }
 }
 
-/* Dark Mode Adjustments */
-body.dark-theme .flashcard {
-  border-color: rgba(0, 212, 170, 0.2);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-}
+/* ===================================
+   Reduced Motion
+   =================================== */
 
-body.dark-theme .flashcard:hover {
-  box-shadow: 0 6px 24px rgba(0, 212, 170, 0.25);
-}
-
-body.dark-theme .flashcard-progress-fill {
-  box-shadow: 0 0 8px rgba(0, 212, 170, 0.4);
-}
-
-body.dark-theme .btn-review-later {
-  background: #d97706;
-  color: #ffffff;
-}
-
-body.dark-theme .btn-review-later:hover:not(:disabled) {
-  background: #b45309;
-  box-shadow: 0 6px 16px rgba(217, 119, 6, 0.35);
-}
-
-body.dark-theme .flashcard-resource {
-  background: rgba(0, 212, 170, 0.12);
-}
-
-body.dark-theme .flashcard-resource:hover {
-  background: rgba(0, 212, 170, 0.18);
+@media (prefers-reduced-motion: reduce) {
+  .flashcard,
+  .action-btn,
+  .stat-card {
+    animation: none;
+    transition: none;
+  }
 }

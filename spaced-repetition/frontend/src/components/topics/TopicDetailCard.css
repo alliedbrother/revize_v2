@@ -1,172 +1,243 @@
-/* TopicDetailCard Component Styles */
+/* ================================================
+   Topic Detail Card - Compact & Modern Design
+   Using design tokens for consistent theming
+   ================================================ */
+
+/* ===================================
+   Modal Header - Cyan Gradient
+   =================================== */
 
 .topic-detail-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient-primary);
   color: white;
   border-bottom: none;
+  padding: var(--spacing-3);
 }
 
 .topic-detail-header .modal-title {
   color: white;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-lg);
 }
 
 .topic-detail-header .btn-close {
   filter: brightness(0) invert(1);
 }
 
+/* ===================================
+   Modal Body - Compact Spacing
+   =================================== */
+
 .topic-detail-body {
-  padding: 2rem;
-  background-color: #f8f9fa;
+  padding: var(--spacing-3);
+  background-color: var(--bg-tertiary);
 }
 
-/* Topic Header */
+/* ===================================
+   Topic Header - Inline Compact
+   =================================== */
+
 .topic-header {
-  text-align: center;
-  padding: 1.5rem;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-3);
+  background-color: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--spacing-3);
+  gap: var(--spacing-2);
 }
 
 .topic-header .topic-title {
-  color: #2c3e50;
-  font-weight: 700;
-  margin-bottom: 1rem;
+  color: var(--text-primary);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-xl);
+  margin: 0;
+  flex: 1;
 }
 
 .topic-meta {
   display: flex;
-  justify-content: center;
-  gap: 1rem;
+  align-items: center;
+  gap: var(--spacing-2);
   flex-wrap: wrap;
 }
 
-/* Statistics Cards */
+.topic-meta .badge {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  padding: var(--spacing-1) var(--spacing-2);
+  background-color: var(--color-primary-500);
+  color: white;
+  border: none;
+  border-radius: var(--radius-base);
+}
+
+/* ===================================
+   Statistics Cards - Moderately Compact
+   =================================== */
+
 .stat-card {
   border: none;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  margin-bottom: 1rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
+  background-color: var(--bg-surface);
+  margin-bottom: 0;
 }
 
 .stat-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-md);
 }
 
 .stat-card .card-body {
-  padding: 1.5rem;
+  padding: var(--spacing-2);
 }
 
 .stat-icon {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+  margin-bottom: var(--spacing-1);
 }
 
 .stat-icon.completed {
-  color: #28a745;
+  color: var(--color-success);
 }
 
 .stat-icon.pending {
-  color: #ffc107;
+  color: var(--color-warning);
 }
 
 .stat-icon.total {
-  color: #007bff;
+  color: var(--color-info);
 }
 
 .stat-icon.missed {
-  color: #dc3545;
+  color: var(--color-danger);
 }
 
 .stat-number {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin: 0.5rem 0;
-  color: #2c3e50;
+  font-size: 1.75rem;
+  font-weight: var(--font-weight-bold);
+  margin: var(--spacing-1) 0;
+  color: var(--text-primary);
+  line-height: var(--line-height-tight);
 }
 
 .stat-label {
-  font-size: 0.9rem;
-  color: #6c757d;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
   margin: 0;
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
 }
 
-/* Content Cards */
+/* ===================================
+   Content Cards
+   =================================== */
+
 .topic-detail-body .card {
   border: none;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
+  background-color: var(--bg-surface);
 }
 
 .topic-detail-body .card-header {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border-bottom: 1px solid #dee2e6;
-  padding: 1rem 1.5rem;
+  background-color: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-primary);
+  padding: var(--spacing-2) var(--spacing-3);
 }
 
 .topic-detail-body .card-header h5 {
-  color: #495057;
-  font-weight: 600;
+  color: var(--text-primary);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-base);
   margin: 0;
 }
 
 .topic-detail-body .card-body {
-  padding: 1.5rem;
+  padding: var(--spacing-3);
 }
 
-/* Description */
+/* ===================================
+   Description
+   =================================== */
+
 .description-text {
-  font-size: 1.1rem;
-  line-height: 1.6;
-  color: #495057;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-relaxed);
+  color: var(--text-secondary);
   margin: 0;
 }
 
-/* Study Resource */
-.resource-link {
-  display: inline-flex;
-  align-items: center;
-  color: #007bff;
-  text-decoration: none;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  background-color: #f8f9ff;
-  border: 1px solid #e3f2fd;
-  transition: all 0.2s ease;
+/* ===================================
+   Flashcards Section
+   =================================== */
+
+.flashcards-info {
+  text-align: center;
+  padding: var(--spacing-2);
+  background-color: var(--bg-tertiary);
+  border-radius: var(--radius-base);
+  border: 1px solid var(--border-primary);
 }
 
-.resource-link:hover {
-  background-color: #e3f2fd;
-  color: #0056b3;
-  text-decoration: none;
-  transform: translateY(-1px);
+.flashcards-info p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
 }
 
-/* Next Revision */
-.next-revision-info {
+.topic-detail-body .card-header .btn {
+  font-size: var(--font-size-sm);
+  padding: var(--spacing-1) var(--spacing-3);
+}
+
+/* ===================================
+   Revision Timeline - Collapsible
+   =================================== */
+
+.timeline-toggle {
   display: flex;
   align-items: center;
-  font-size: 1.1rem;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--text-primary);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-base);
+  transition: color var(--transition-base);
 }
 
-/* Revision Timeline */
+.timeline-toggle:hover {
+  color: var(--color-primary-600);
+}
+
+.timeline-toggle i {
+  transition: transform var(--transition-base);
+}
+
+.timeline-toggle.collapsed i {
+  transform: rotate(-90deg);
+}
+
 .revision-timeline {
   position: relative;
-  padding-left: 0;
+  padding: var(--spacing-2) 0;
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 .revision-item {
   display: flex;
   align-items: center;
-  padding: 1rem 0;
-  border-bottom: 1px solid #e9ecef;
-  position: relative;
+  padding: var(--spacing-2) 0;
+  border-bottom: 1px solid var(--border-primary);
 }
 
 .revision-item:last-child {
@@ -174,137 +245,230 @@
 }
 
 .revision-marker {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 1rem;
-  font-size: 1.2rem;
+  margin-right: var(--spacing-2);
+  font-size: 1rem;
   flex-shrink: 0;
 }
 
 .revision-marker.completed {
-  background-color: #d4edda;
-  color: #155724;
+  background-color: rgba(16, 185, 129, 0.15);
+  color: var(--color-success);
 }
 
 .revision-marker.pending {
-  background-color: #fff3cd;
-  color: #856404;
+  background-color: rgba(245, 158, 11, 0.15);
+  color: var(--color-warning);
 }
 
 .revision-content {
   flex: 1;
+  min-width: 0;
 }
 
 .revision-date {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #2c3e50;
-  margin-bottom: 0.25rem;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-1);
 }
 
 .revision-status {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--spacing-1);
+  flex-wrap: wrap;
+}
+
+.revision-status .badge {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  padding: 2px var(--spacing-2);
 }
 
 .revision-number {
-  font-size: 0.9rem;
-  color: #6c757d;
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
 }
 
-/* Responsive Design */
+/* ===================================
+   Empty State
+   =================================== */
+
+.timeline-empty {
+  text-align: center;
+  padding: var(--spacing-4) var(--spacing-2);
+  color: var(--text-tertiary);
+  font-size: var(--font-size-sm);
+}
+
+/* ===================================
+   Modal Footer
+   =================================== */
+
+.modal-footer {
+  padding: var(--spacing-2) var(--spacing-3);
+  background-color: var(--bg-surface);
+  border-top: 1px solid var(--border-primary);
+}
+
+/* ===================================
+   Responsive Design
+   =================================== */
+
 @media (max-width: 768px) {
   .topic-detail-body {
-    padding: 1rem;
+    padding: var(--spacing-2);
   }
-  
+
   .topic-header {
-    padding: 1rem;
-  }
-  
-  .stat-card .card-body {
-    padding: 1rem;
-  }
-  
-  .stat-number {
-    font-size: 2rem;
-  }
-  
-  .revision-item {
     flex-direction: column;
     align-items: flex-start;
+    padding: var(--spacing-2);
   }
-  
-  .revision-marker {
-    margin-right: 0;
-    margin-bottom: 0.5rem;
+
+  .topic-meta {
+    width: 100%;
+  }
+
+  .stat-card .card-body {
+    padding: var(--spacing-2);
+  }
+
+  .stat-number {
+    font-size: 1.5rem;
+  }
+
+  .stat-icon {
+    font-size: 1.25rem;
   }
 }
 
-/* Dark Mode Support */
+/* ===================================
+   Dark Mode Support
+   =================================== */
+
 body.dark-theme .topic-detail-body {
-  background-color: #1e293b;
+  background-color: var(--bg-tertiary);
 }
 
 body.dark-theme .topic-header,
 body.dark-theme .stat-card,
 body.dark-theme .topic-detail-body .card {
-  background-color: #334155;
-  color: #e2e8f0;
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
 }
 
 body.dark-theme .topic-header .topic-title,
 body.dark-theme .stat-number {
-  color: #e2e8f0;
+  color: var(--text-primary);
 }
 
 body.dark-theme .topic-detail-body .card-header {
-  background: linear-gradient(135deg, #334155 0%, #475569 100%);
-  border-bottom-color: #475569;
+  background-color: var(--bg-elevated);
+  border-bottom-color: var(--border-primary);
 }
 
 body.dark-theme .topic-detail-body .card-header h5 {
-  color: #e2e8f0;
+  color: var(--text-primary);
 }
 
 body.dark-theme .description-text {
-  color: #cbd5e1;
-}
-
-body.dark-theme .resource-link {
-  background-color: #1e40af;
-  border-color: #3b82f6;
-  color: #93c5fd;
-}
-
-body.dark-theme .resource-link:hover {
-  background-color: #1e3a8a;
-  color: #dbeafe;
+  color: var(--text-secondary);
 }
 
 body.dark-theme .revision-item {
-  border-bottom-color: #475569;
+  border-bottom-color: var(--border-primary);
 }
 
 body.dark-theme .revision-marker.completed {
-  background-color: #065f46;
-  color: #a7f3d0;
+  background-color: rgba(16, 185, 129, 0.2);
+  color: var(--color-success);
 }
 
 body.dark-theme .revision-marker.pending {
-  background-color: #78350f;
-  color: #fcd34d;
+  background-color: rgba(245, 158, 11, 0.2);
+  color: var(--color-warning);
 }
 
 body.dark-theme .revision-date {
-  color: #e2e8f0;
+  color: var(--text-primary);
 }
 
 body.dark-theme .revision-number {
-  color: #94a3b8;
-} 
+  color: var(--text-tertiary);
+}
+
+body.dark-theme .flashcards-info {
+  background-color: var(--bg-elevated);
+  border-color: var(--border-primary);
+}
+
+body.dark-theme .topic-meta .badge {
+  background-color: var(--color-primary-600);
+  color: white;
+  border: none;
+}
+
+/* ===================================
+   Animations
+   =================================== */
+
+.timeline-content {
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+  }
+}
+
+/* ===================================
+   Reduced Motion
+   =================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .stat-card,
+  .timeline-toggle i,
+  .timeline-content {
+    animation: none;
+    transition: none;
+  }
+
+  .stat-card:hover {
+    transform: none;
+  }
+}
+
+/* ===================================
+   Scrollbar Styling
+   =================================== */
+
+.revision-timeline::-webkit-scrollbar {
+  width: 6px;
+}
+
+.revision-timeline::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-full);
+}
+
+.revision-timeline::-webkit-scrollbar-thumb {
+  background-color: var(--border-primary);
+  border-radius: var(--radius-full);
+}
+
+.revision-timeline::-webkit-scrollbar-thumb:hover {
+  background-color: var(--text-tertiary);
+}

@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
-import { Modal, Card, Badge, Spinner, Alert, Button, Row, Col } from 'react-bootstrap';
+import { Modal, Card, Badge, Spinner, Alert, Button, Row, Col, Collapse } from 'react-bootstrap';
 import { getTopic } from '../../services/api';
 import { formatDateTime, formatDateFromTimestamp } from '../../utils/dateUtils';
+import FlashcardReviewSession from '../flashcards/FlashcardReviewSession';
 import './TopicDetailCard.css';
 
 const TopicDetailCard = ({ show, onHide, topicId }) => {
   const [topic, setTopic] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showFlashcardReview, setShowFlashcardReview] = useState(false);
+  const [timelineExpanded, setTimelineExpanded] = useState(false);
 
   useEffect(() => {
     if (show && topicId) {
@@ -33,11 +36,30 @@ const TopicDetailCard = ({ show, onHide, topicId }) => {
     if (!topic || !topic.revisions) {
       return { completed: 0, pending: 0, total: 0 };
     }
-    
-    const completed = topic.revisions.filter(rev => rev.completed).length;
-    const pending = topic.revisions.filter(rev => !rev.completed).length;
-    const total = topic.revisions.length;
-    
+
+    // Group revisions by date
+    const groupedByDate = topic.revisions.reduce((acc, rev) => {
+      const dateKey = rev.scheduled_date;
+      if (!acc[dateKey]) {
+        acc[dateKey] = [];
+      }
+      acc[dateKey].push(rev);
+      return acc;
+    }, {});
+
+    // Count dates where ALL flashcards are completed
+    const completed = Object.values(groupedByDate).filter(revs =>
+      revs.every(r => r.completed)
+    ).length;
+
+    // Count dates where at least one flashcard is pending
+    const pending = Object.values(groupedByDate).filter(revs =>
+      revs.some(r => !r.completed)
+    ).length;
+
+    // Total number of unique revision dates
+    const total = Object.keys(groupedByDate).length;
+
     return { completed, pending, total };
   };
 
@@ -56,19 +78,58 @@ const TopicDetailCard = ({ show, onHide, topicId }) => {
 
   const getMissedRevisionCount = () => {
     if (!topic || !topic.revisions) return 0;
-    
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
-    return topic.revisions.filter(rev => 
-      !rev.completed && new Date(rev.scheduled_date) < today
-    ).length;
+
+    // Group revisions by date
+    const groupedByDate = topic.revisions.reduce((acc, rev) => {
+      const dateKey = rev.scheduled_date;
+      if (!acc[dateKey]) {
+        acc[dateKey] = [];
+      }
+      acc[dateKey].push(rev);
+      return acc;
+    }, {});
+
+    // Count dates that are before today and have at least one incomplete flashcard
+    return Object.entries(groupedByDate).filter(([date, revs]) => {
+      const revisionDate = new Date(date);
+      revisionDate.setHours(0, 0, 0, 0);
+      return revisionDate < today && revs.some(r => !r.completed);
+    }).length;
   };
 
   const handleClose = () => {
     setTopic(null);
     setError('');
+    setShowFlashcardReview(false);
     onHide();
+  };
+
+  const handleFlashcardReviewClose = () => {
+    setShowFlashcardReview(false);
+  };
+
+  const prepareFlashcardsForReview = () => {
+    if (!topic || !topic.flashcards) return [];
+
+    // Format flashcards to match the structure expected by FlashcardReviewSession
+    return topic.flashcards.map((flashcard) => ({
+      id: null, // No revision ID since this is just viewing
+      flashcard: {
+        id: flashcard.id,
+        title: flashcard.title,
+        content: flashcard.content,
+        topic: {
+          id: topic.id,
+          title: topic.title
+        }
+      },
+      scheduled_date: null,
+      completed: false,
+      isPracticeMode: true // This prevents API calls for completion
+    }));
   };
 
   const stats = calculateRevisionStats();
@@ -76,6 +137,7 @@ const TopicDetailCard = ({ show, onHide, topicId }) => {
   const missedCount = getMissedRevisionCount();
 
   return (
+    <>
     <Modal show={show} onHide={handleClose} size="lg" centered>
       <Modal.Header closeButton className="topic-detail-header">
         <Modal.Title>
@@ -96,23 +158,19 @@ const TopicDetailCard = ({ show, onHide, topicId }) => {
           </Alert>
         ) : topic ? (
           <>
-            {/* Topic Header */}
-            <div className="topic-header mb-4">
-              <h3 className="topic-title mb-2">{topic.title}</h3>
+            {/* Topic Header - Compact Inline */}
+            <div className="topic-header">
+              <h3 className="topic-title">{topic.title}</h3>
               <div className="topic-meta">
-                <Badge bg="light" text="dark" className="me-2">
+                <Badge>
                   <i className="bi bi-calendar-plus me-1"></i>
-                  Created: {formatDateFromTimestamp(topic.created_at)}
-                </Badge>
-                <Badge bg="light" text="dark">
-                  <i className="bi bi-clock me-1"></i>
-                  {formatDateTime(topic.created_at)}
+                  {formatDateFromTimestamp(topic.created_at)}
                 </Badge>
               </div>
             </div>
 
             {/* Revision Statistics */}
-            <Row className="mb-4">
+            <Row className="mb-3">
               <Col md={3}>
                 <Card className="stat-card text-center">
                   <Card.Body>
@@ -160,7 +218,7 @@ const TopicDetailCard = ({ show, onHide, topicId }) => {
             </Row>
 
             {/* Topic Description */}
-            <Card className="mb-4">
+            <Card className="mb-3">
               <Card.Header>
                 <h5 className="mb-0">
                   <i className="bi bi-file-text me-2"></i>
@@ -172,60 +230,44 @@ const TopicDetailCard = ({ show, onHide, topicId }) => {
               </Card.Body>
             </Card>
 
-            {/* Study Resource */}
-            {topic.resource_url && (
-              <Card className="mb-4">
-                <Card.Header>
+            {/* Flashcards Section */}
+            {topic.flashcards && topic.flashcards.length > 0 && (
+              <Card className="mb-3">
+                <Card.Header className="d-flex justify-content-between align-items-center">
                   <h5 className="mb-0">
-                    <i className="bi bi-link-45deg me-2"></i>
-                    Study Resource
+                    <i className="bi bi-card-heading me-2"></i>
+                    Flashcards
+                    <Badge bg="primary" className="ms-2">{topic.flashcards.length}</Badge>
                   </h5>
-                </Card.Header>
-                <Card.Body>
-                  <a 
-                    href={topic.resource_url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="resource-link"
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={() => setShowFlashcardReview(true)}
                   >
-                    <i className="bi bi-box-arrow-up-right me-2"></i>
-                    {topic.resource_url}
-                  </a>
-                </Card.Body>
-              </Card>
-            )}
-
-            {/* Next Revision Info */}
-            {nextRevisionDate && (
-              <Card className="mb-4">
-                <Card.Header>
-                  <h5 className="mb-0">
-                    <i className="bi bi-calendar-check me-2"></i>
-                    Next Revision
-                  </h5>
+                    <i className="bi bi-eye me-1"></i>
+                    View Flashcards
+                  </Button>
                 </Card.Header>
-                <Card.Body>
-                  <div className="next-revision-info">
-                    <Badge bg="primary" className="me-2">
-                      {formatDateFromTimestamp(nextRevisionDate)}
-                    </Badge>
-                    <span className="text-muted">
-                      Your next revision is scheduled for this date
-                    </span>
-                  </div>
-                </Card.Body>
               </Card>
             )}
 
-            {/* Revision History */}
+            {/* Revision History - Collapsible */}
             <Card>
               <Card.Header>
-                <h5 className="mb-0">
-                  <i className="bi bi-clock-history me-2"></i>
-                  Revision Schedule
-                </h5>
+                <button
+                  className={`timeline-toggle ${timelineExpanded ? '' : 'collapsed'}`}
+                  onClick={() => setTimelineExpanded(!timelineExpanded)}
+                  aria-expanded={timelineExpanded}
+                >
+                  <span>
+                    <i className="bi bi-clock-history me-2"></i>
+                    Revision Schedule
+                  </span>
+                  <i className={`bi bi-chevron-down`}></i>
+                </button>
               </Card.Header>
-              <Card.Body>
+              <Collapse in={timelineExpanded}>
+                <Card.Body className="timeline-content">
                 {topic.revisions && topic.revisions.length > 0 ? (
                   <div className="revision-timeline">
                     {(() => {
@@ -281,11 +323,12 @@ const TopicDetailCard = ({ show, onHide, topicId }) => {
                     })()}
                   </div>
                 ) : (
-                  <p className="text-muted text-center py-3">
+                  <p className="timeline-empty">
                     No revisions scheduled
                   </p>
                 )}
-              </Card.Body>
+                </Card.Body>
+              </Collapse>
             </Card>
           </>
         ) : (
@@ -302,6 +345,16 @@ const TopicDetailCard = ({ show, onHide, topicId }) => {
         </Button>
       </Modal.Footer>
     </Modal>
+
+    {/* Flashcard Review Session Modal */}
+    <FlashcardReviewSession
+      revisions={prepareFlashcardsForReview()}
+      show={showFlashcardReview}
+      onHide={handleFlashcardReviewClose}
+      onComplete={handleFlashcardReviewClose}
+      viewMode={true}
+    />
+    </>
   );
 };
 

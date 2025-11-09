@@ -1,0 +1,318 @@
+/* ===================================
+   DESIGN TOKENS
+   Spaced Repetition App Design System
+   =================================== */
+
+:root {
+  /* ===================================
+     SPACING SCALE (8px grid system)
+     =================================== */
+  --spacing-0: 0;
+  --spacing-1: 8px;
+  --spacing-2: 16px;
+  --spacing-3: 24px;
+  --spacing-4: 32px;
+  --spacing-5: 40px;
+  --spacing-6: 48px;
+  --spacing-7: 56px;
+  --spacing-8: 64px;
+
+  /* ===================================
+     COLOR PALETTE
+     =================================== */
+
+  /* Primary (Cyan/Teal) */
+  --color-primary-50: #e0f7f4;
+  --color-primary-100: #b3ebe3;
+  --color-primary-200: #80ded1;
+  --color-primary-300: #4dd1bf;
+  --color-primary-400: #26c7b1;
+  --color-primary-500: #00d4aa;  /* Main brand color */
+  --color-primary-600: #00b894;
+  --color-primary-700: #009976;
+  --color-primary-800: #007a5e;
+  --color-primary-900: #005b46;
+
+  /* Neutral (Cool Gray) */
+  --color-gray-50: #f8fafc;
+  --color-gray-100: #f1f5f9;
+  --color-gray-200: #e2e8f0;
+  --color-gray-300: #cbd5e0;
+  --color-gray-400: #94a3b8;
+  --color-gray-500: #64748b;
+  --color-gray-600: #475569;
+  --color-gray-700: #334155;
+  --color-gray-800: #1e293b;
+  --color-gray-900: #0f172a;
+
+  /* Semantic Colors */
+  --color-success-light: #d1fae5;
+  --color-success: #10b981;
+  --color-success-dark: #047857;
+
+  --color-warning-light: #fef3c7;
+  --color-warning: #f59e0b;
+  --color-warning-dark: #d97706;
+
+  --color-danger-light: #fee2e2;
+  --color-danger: #ef4444;
+  --color-danger-dark: #dc2626;
+
+  --color-info-light: #dbeafe;
+  --color-info: #3b82f6;
+  --color-info-dark: #2563eb;
+
+  /* ===================================
+     TYPOGRAPHY SCALE
+     =================================== */
+
+  /* Font Families */
+  --font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+  --font-family-mono: 'SF Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
+
+  /* Font Sizes */
+  --font-size-xs: 0.75rem;     /* 12px */
+  --font-size-sm: 0.875rem;    /* 14px */
+  --font-size-base: 1rem;      /* 16px */
+  --font-size-lg: 1.125rem;    /* 18px */
+  --font-size-xl: 1.25rem;     /* 20px */
+  --font-size-2xl: 1.5rem;     /* 24px */
+  --font-size-3xl: 1.875rem;   /* 30px */
+  --font-size-4xl: 2.25rem;    /* 36px */
+
+  /* Font Weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Line Heights */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* ===================================
+     BORDER RADIUS
+     =================================== */
+  --radius-sm: 4px;
+  --radius-base: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* ===================================
+     SHADOWS
+     =================================== */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-base: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.15);
+
+  /* ===================================
+     TRANSITIONS
+     =================================== */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-spring: 500ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ===================================
+     Z-INDEX SCALE
+     =================================== */
+  --z-index-base: 0;
+  --z-index-dropdown: 1000;
+  --z-index-sticky: 1020;
+  --z-index-fixed: 1030;
+  --z-index-modal-backdrop: 1040;
+  --z-index-modal: 1050;
+  --z-index-popover: 1060;
+  --z-index-tooltip: 1070;
+}
+
+/* ===================================
+   LIGHT MODE THEME
+   =================================== */
+body {
+  /* Backgrounds */
+  --bg-primary: var(--color-gray-50);
+  --bg-surface: #ffffff;
+  --bg-elevated: #ffffff;
+  --bg-overlay: rgba(0, 0, 0, 0.5);
+
+  /* Text */
+  --text-primary: var(--color-gray-900);
+  --text-secondary: var(--color-gray-600);
+  --text-tertiary: var(--color-gray-500);
+  --text-disabled: var(--color-gray-400);
+  --text-inverse: #ffffff;
+
+  /* Borders */
+  --border-primary: var(--color-gray-200);
+  --border-secondary: var(--color-gray-300);
+  --border-focus: var(--color-primary-500);
+
+  /* Interactive */
+  --hover-overlay: rgba(0, 212, 170, 0.08);
+  --active-overlay: rgba(0, 212, 170, 0.12);
+  --focus-ring: 0 0 0 3px rgba(0, 212, 170, 0.3);
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, var(--color-primary-500), #1e3a8a);
+  --gradient-subtle: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.02));
+}
+
+/* ===================================
+   DARK MODE THEME
+   =================================== */
+body.dark-theme {
+  /* Backgrounds */
+  --bg-primary: var(--color-gray-900);
+  --bg-surface: var(--color-gray-800);
+  --bg-elevated: var(--color-gray-700);
+  --bg-overlay: rgba(0, 0, 0, 0.7);
+
+  /* Text */
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e0;
+  --text-tertiary: #94a3b8;
+  --text-disabled: #64748b;
+  --text-inverse: var(--color-gray-900);
+
+  /* Borders */
+  --border-primary: var(--color-gray-700);
+  --border-secondary: var(--color-gray-600);
+  --border-focus: var(--color-primary-400);
+
+  /* Interactive */
+  --hover-overlay: rgba(0, 212, 170, 0.15);
+  --active-overlay: rgba(0, 212, 170, 0.2);
+  --focus-ring: 0 0 0 3px rgba(0, 212, 170, 0.4);
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, var(--color-primary-500), #1e3a8a);
+  --gradient-subtle: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.02));
+
+  /* Adjust shadows for dark mode */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-base: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5), 0 4px 6px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.6), 0 10px 10px rgba(0, 0, 0, 0.3);
+  --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.7);
+}
+
+/* ===================================
+   UTILITY CLASSES
+   =================================== */
+
+/* Spacing Utilities */
+.p-0 { padding: var(--spacing-0); }
+.p-1 { padding: var(--spacing-1); }
+.p-2 { padding: var(--spacing-2); }
+.p-3 { padding: var(--spacing-3); }
+.p-4 { padding: var(--spacing-4); }
+.p-5 { padding: var(--spacing-5); }
+.p-6 { padding: var(--spacing-6); }
+
+.m-0 { margin: var(--spacing-0); }
+.m-1 { margin: var(--spacing-1); }
+.m-2 { margin: var(--spacing-2); }
+.m-3 { margin: var(--spacing-3); }
+.m-4 { margin: var(--spacing-4); }
+.m-5 { margin: var(--spacing-5); }
+.m-6 { margin: var(--spacing-6); }
+
+/* Gap Utilities */
+.gap-1 { gap: var(--spacing-1); }
+.gap-2 { gap: var(--spacing-2); }
+.gap-3 { gap: var(--spacing-3); }
+.gap-4 { gap: var(--spacing-4); }
+
+/* Text Utilities */
+.text-xs { font-size: var(--font-size-xs); }
+.text-sm { font-size: var(--font-size-sm); }
+.text-base { font-size: var(--font-size-base); }
+.text-lg { font-size: var(--font-size-lg); }
+.text-xl { font-size: var(--font-size-xl); }
+.text-2xl { font-size: var(--font-size-2xl); }
+
+.font-normal { font-weight: var(--font-weight-normal); }
+.font-medium { font-weight: var(--font-weight-medium); }
+.font-semibold { font-weight: var(--font-weight-semibold); }
+.font-bold { font-weight: var(--font-weight-bold); }
+
+/* Border Radius Utilities */
+.rounded-sm { border-radius: var(--radius-sm); }
+.rounded { border-radius: var(--radius-base); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-xl { border-radius: var(--radius-xl); }
+.rounded-full { border-radius: var(--radius-full); }
+
+/* Shadow Utilities */
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow { box-shadow: var(--shadow-base); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
+.shadow-xl { box-shadow: var(--shadow-xl); }
+
+/* ===================================
+   ACCESSIBILITY
+   =================================== */
+
+/* Focus Visible - Modern focus indicators */
+*:focus-visible {
+  outline: 3px solid var(--border-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Remove default focus outline */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Screen reader only text */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ===================================
+   MOBILE TOUCH TARGETS
+   =================================== */
+
+/* Ensure minimum 44x44px touch targets on mobile */
+@media (max-width: 768px) {
+  button,
+  a,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  select,
+  [role="button"],
+  [role="link"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}

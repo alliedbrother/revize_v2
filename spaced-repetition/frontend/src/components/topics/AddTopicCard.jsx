@@ -1,8 +1,10 @@
-import { useState, useContext, useRef } from 'react';
+import { useState, useContext, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { createTopic, uploadDocument, uploadImages } from '../../services/api';
+import { createTopic, uploadDocument, uploadImages, uploadLink, userService } from '../../services/api';
 import { RefreshContext } from '../dashboard/ModernDashboard';
 import { getCurrentDateString } from '../../utils/dateUtils';
+import PomodoroTimer from '../pomodoro/PomodoroTimer';
 import './AddTopicCard.css';
 
 const AddTopicCard = () => {
@@ -19,10 +21,51 @@ const AddTopicCard = () => {
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState('');
   const [isDragging, setIsDragging] = useState(false);
+  const [isPomodoroCollapsed, setIsPomodoroCollapsed] = useState(true);
+  const [credits, setCredits] = useState({ available_credits: 0, unlimited_access: false });
+  const [creditsLoading, setCreditsLoading] = useState(true);
 
   const { user } = useAuth();
   const { triggerRefresh } = useContext(RefreshContext);
+  const navigate = useNavigate();
   const fileInputRef = useRef(null);
+  const dateInputRef = useRef(null);
+
+  const handleTogglePomodoroCollapse = () => {
+    setIsPomodoroCollapsed(prev => !prev);
+  };
+
+  // Fetch credits function (can be called on mount and after flashcard generation)
+  const fetchCredits = async () => {
+    if (user) {
+      setCreditsLoading(true);
+      try {
+        const data = await userService.getUserCredits();
+        setCredits(data);
+      } catch (err) {
+        console.error('Failed to fetch credits:', err);
+        setCredits({ available_credits: 0, unlimited_access: false });
+      } finally {
+        setCreditsLoading(false);
+      }
+    }
+  };
+
+  // Fetch credits when component mounts
+  useEffect(() => {
+    fetchCredits();
+  }, [user]);
+
+  // Handle credits click - navigate to profile credits section
+  const handleCreditsClick = () => {
+    navigate('/profile');
+    setTimeout(() => {
+      const creditsSection = document.querySelector('.credits-card');
+      if (creditsSection) {
+        creditsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
+  };
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -197,6 +240,9 @@ const AddTopicCard = () => {
         // Trigger refresh in other components
         triggerRefresh();
 
+        // Refresh credits to show updated balance
+        fetchCredits();
+
         // Clear success message after 5 seconds
         setTimeout(() => {
           setSuccess('');
@@ -244,37 +290,41 @@ const AddTopicCard = () => {
         // Trigger refresh in other components
         triggerRefresh();
 
+        // Refresh credits to show updated balance
+        fetchCredits();
+
         // Clear success message after 5 seconds
         setTimeout(() => {
           setSuccess('');
         }, 5000);
-      } else {
-        // Handle other source types (manual, link)
-        const topicData = new FormData();
+      } else if (sourceType === 'link') {
+        // Handle link upload with AI flashcard generation
+        setProcessingStatus('Validating link...');
 
-        if (sourceType === 'manual') {
-          topicData.append('title', formData.title);
-          topicData.append('content', formData.content);
-          topicData.append('source_type', 'manual');
-        } else if (sourceType === 'link') {
-          topicData.append('source_type', 'link');
-          topicData.append('source_url', formData.link);
+        const linkData = {
+          url: formData.link,
+          initial_revision_date: formData.studyDate
+        };
+
+        if (formData.title.trim()) {
+          linkData.title = formData.title;
         }
 
-        topicData.append('initial_revision_date', formData.studyDate);
+        setProcessingStatus('Checking if link is accessible...');
+        await new Promise(resolve => setTimeout(resolve, 500));
 
-        // For manual and link types, use the old API
-        const topicTitle = formData.title ||
-          (sourceType === 'link' ? 'Link-based Topic' : 'Generated Topic');
+        setProcessingStatus('Extracting content from webpage...');
+        await new Promise(resolve => setTimeout(resolve, 500));
 
-        await createTopic({
-          title: topicTitle,
-          content: formData.content || `Source: ${sourceType}${formData.link ? ` - ${formData.link}` : ''}`,
-          resource_url: formData.link || null,
-          initial_revision_date: formData.studyDate
-        });
+        setProcessingStatus('Analyzing content with AI...');
+        await new Promise(resolve => setTimeout(resolve, 500));
 
-        setSuccess(`Topic added successfully! ${sourceType === 'link' ? '(AI generation coming soon)' : ''} 🎉`);
+        setProcessingStatus('Generating flashcards...');
+
+        const response = await uploadLink(linkData);
+
+        const linkTypeDisplay = response.link_type || 'web';
+        setSuccess(`✨ Successfully created ${response.flashcards_count} flashcards from ${linkTypeDisplay} link!`);
 
         // Reset form
         setFormData({
@@ -287,6 +337,55 @@ const AddTopicCard = () => {
 
         // Trigger refresh in other components
         triggerRefresh();
+
+        // Refresh credits to show updated balance
+        fetchCredits();
+
+        // Clear success message after 5 seconds
+        setTimeout(() => {
+          setSuccess('');
+        }, 5000);
+      } else if (sourceType === 'manual') {
+        // Handle manual topic creation with AI flashcard generation
+        setProcessingStatus('Creating topic...');
+
+        // Small delay to show the status
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        setProcessingStatus('Analyzing content with AI...');
+
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        setProcessingStatus('Generating flashcards...');
+
+        const response = await createTopic({
+          title: formData.title,
+          content: formData.content,
+          initial_revision_date: formData.studyDate
+        });
+
+        // Show success with flashcard count and LLM provider
+        const llmProvider = response.llm_provider
+          ? (response.llm_provider === 'gemini' ? 'Gemini' : 'OpenAI')
+          : 'AI';
+        const flashcardCount = response.flashcards_count || 5;
+
+        setSuccess(`✨ Successfully created ${flashcardCount} flashcards using ${llmProvider}!`);
+
+        // Reset form
+        setFormData({
+          title: '',
+          content: '',
+          link: '',
+          studyDate: getCurrentDateString()
+        });
+        setFiles([]);
+
+        // Trigger refresh in other components
+        triggerRefresh();
+
+        // Refresh credits to show updated balance
+        fetchCredits();
 
         // Clear success message after 5 seconds
         setTimeout(() => {
@@ -303,10 +402,16 @@ const AddTopicCard = () => {
 
   return (
     <div className="add-topic-card">
-      <div className="add-topic-header">
-        <h3 className="add-topic-title">Add New Learning Material</h3>
-        <p className="add-topic-subtitle">Choose how you want to add content</p>
-      </div>
+      <div className="add-topic-split-layout">
+        {/* Top Section: Add Topic Form */}
+        <div className="add-topic-top-section">
+          <div className="add-topic-header">
+            <div className="header-content">
+              <h3 className="add-topic-title">Add New Learning Material</h3>
+            </div>
+          </div>
+
+          <div className="add-topic-content">
 
       {success && (
         <div className="success-message">
@@ -366,11 +471,11 @@ const AddTopicCard = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="add-topic-form">
-        {/* Topic Title - Common for all types */}
+        {/* Topic Name */}
         <div className="form-group">
           <label htmlFor="title" className="form-label">
             <i className="bi bi-card-text"></i>
-            Topic Title {sourceType !== 'manual' && <span className="optional-label">(Optional)</span>}
+            <span>Topic Name</span>
           </label>
           <input
             type="text"
@@ -378,18 +483,36 @@ const AddTopicCard = () => {
             className={`form-input ${errors.title ? 'error' : ''}`}
             placeholder={
               sourceType === 'manual'
-                ? "Enter your topic title..."
+                ? "Enter your topic name..."
                 : sourceType === 'link'
-                ? "e.g., React Hooks Tutorial (leave blank for auto-generated title)"
+                ? "e.g., React Hooks Tutorial"
                 : sourceType === 'image'
-                ? "e.g., Biology Diagrams (leave blank for auto-generated title)"
-                : "e.g., Machine Learning Notes (leave blank for auto-generated title)"
+                ? "e.g., Biology Diagrams"
+                : "e.g., Machine Learning Notes"
             }
             value={formData.title}
             onChange={(e) => handleInputChange('title', e.target.value)}
             disabled={loading}
           />
           {errors.title && <span className="error-text">{errors.title}</span>}
+        </div>
+
+        {/* Start Date */}
+        <div className="form-group">
+          <label htmlFor="studyDate" className="form-label">
+            <i className="bi bi-calendar-check"></i>
+            <span>Start Date</span>
+          </label>
+          <input
+            type="date"
+            id="studyDate"
+            ref={dateInputRef}
+            className={`form-input date-picker-input ${errors.studyDate ? 'error' : ''}`}
+            value={formData.studyDate}
+            onChange={(e) => handleInputChange('studyDate', e.target.value)}
+            disabled={loading}
+          />
+          {errors.studyDate && <span className="error-text">{errors.studyDate}</span>}
         </div>
 
         {/* Manual Input - Description */}
@@ -406,7 +529,7 @@ const AddTopicCard = () => {
               value={formData.content}
               onChange={(e) => handleInputChange('content', e.target.value)}
               disabled={loading}
-              rows={4}
+              rows={2}
             />
             {errors.content && <span className="error-text">{errors.content}</span>}
           </div>
@@ -429,10 +552,6 @@ const AddTopicCard = () => {
               disabled={loading}
             />
             {errors.link && <span className="error-text">{errors.link}</span>}
-            <div className="input-hint">
-              <i className="bi bi-info-circle"></i>
-              AI will extract key concepts and create flashcards automatically
-            </div>
           </div>
         )}
 
@@ -534,34 +653,6 @@ const AddTopicCard = () => {
           </div>
         )}
 
-        {/* Start Date (Common for all types) */}
-        <div className="form-group">
-          <label htmlFor="studyDate" className="form-label">
-            <i className="bi bi-calendar3"></i>
-            Start Date
-          </label>
-          <div className="date-input-container">
-            <input
-              type="date"
-              id="studyDate"
-              className={`form-input date-input ${errors.studyDate ? 'error' : ''}`}
-              value={formData.studyDate}
-              onChange={(e) => handleInputChange('studyDate', e.target.value)}
-              disabled={loading}
-            />
-            <i className="bi bi-calendar3 date-icon"></i>
-          </div>
-          {errors.studyDate && <span className="error-text">{errors.studyDate}</span>}
-          {formData.studyDate && (
-            <div className="date-info">
-              <small>
-                <i className="bi bi-info-circle"></i>
-                Your first revision will be on {new Date(new Date(formData.studyDate).getTime() + 24 * 60 * 60 * 1000).toLocaleDateString()}
-              </small>
-            </div>
-          )}
-        </div>
-
         <button
           type="submit"
           className="add-topic-button"
@@ -575,11 +666,52 @@ const AddTopicCard = () => {
           ) : (
             <>
               <i className="bi bi-plus-lg"></i>
-              {sourceType === 'manual' ? 'Add Topic' : 'Generate Flashcards'}
+              Generate Flashcards
+            </>
+          )}
+        </button>
+
+        {/* Credits Display Button */}
+        <button
+          type="button"
+          className="credits-display-button"
+          onClick={handleCreditsClick}
+          disabled={creditsLoading}
+        >
+          {creditsLoading ? (
+            <>
+              <div className="spinner-small"></div>
+              Loading...
+            </>
+          ) : (
+            <>
+              {credits.unlimited_access ? (
+                <>
+                  <i className="bi bi-infinity"></i>
+                  Unlimited Credits
+                </>
+              ) : (
+                <>
+                  <i className="bi bi-lightning-charge-fill"></i>
+                  {credits.available_credits} {credits.available_credits === 1 ? 'Credit' : 'Credits'} Available
+                </>
+              )}
             </>
           )}
         </button>
       </form>
+          </div>
+        </div>
+
+        {/* Bottom Section: Pomodoro Timer */}
+        <div className={`add-topic-bottom-section ${isPomodoroCollapsed ? 'collapsed' : ''}`}>
+          <PomodoroTimer
+            compact={true}
+            collapsed={isPomodoroCollapsed}
+            onToggleCollapse={handleTogglePomodoroCollapse}
+          />
+        </div>
+      </div>
     </div>
   );
 };

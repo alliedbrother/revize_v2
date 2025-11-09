@@ -8,4 +8,8 @@ venv
 **/.env.local
 **/.env.*.local
 spaced-repetition/backend/.env
-spaced-repetition/frontend/.env    
+spaced-repetition/frontend/.env
+
+# Logs
+spaced-repetition/backend/logs/
+*.log    

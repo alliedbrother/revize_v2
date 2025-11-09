@@ -82,6 +82,20 @@
   color: white;
 }
 
+.brand-icon-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sidebar-brand:hover .brand-icon-img {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 212, 170, 0.3);
+}
+
 .brand-text {
   font-size: 24px;
   font-weight: 700;

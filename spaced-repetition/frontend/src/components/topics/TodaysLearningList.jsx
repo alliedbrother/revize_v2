@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { Card, ListGroup, Badge, Spinner, Alert } from 'react-bootstrap';
 import { useAuth } from '../../context/AuthContext';
 import { getTodaysRevisions } from '../../services/api';
-import { RefreshContext } from '../dashboard/ModernDashboard';
+import { RefreshContext } from '../../context/RefreshContext';
 import { formatDate } from '../../utils/dateUtils';
 
 const TodaysRevisionsList = () => {

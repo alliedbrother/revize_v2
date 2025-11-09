@@ -84,6 +84,11 @@ export const uploadImages = async (formData) => {
   return response.data;
 };
 
+export const uploadLink = async (linkData) => {
+  const response = await api.post('/topics/upload-link/', linkData);
+  return response.data;
+};
+
 // Revisions
 export const getTodaysRevisions = async () => {
   // We're using the server's endpoint which determines "today" based on server time
@@ -134,6 +139,62 @@ export const getStatistics = async () => {
   return response.data;
 };
 
+// Gamification API
+export const getGamificationStats = async () => {
+  const response = await api.get('/gamification/stats/');
+  return response.data;
+};
+
+export const getUserStreak = async () => {
+  const response = await api.get('/gamification/streak/');
+  return response.data;
+};
+
+export const updateUserStreak = async () => {
+  const response = await api.post('/gamification/streak/');
+  return response.data;
+};
+
+export const getUserLevel = async () => {
+  const response = await api.get('/gamification/level/');
+  return response.data;
+};
+
+export const awardXP = async (xpAmount) => {
+  const response = await api.post('/gamification/level/', { xp_amount: xpAmount });
+  return response.data;
+};
+
+export const getAllAchievements = async () => {
+  const response = await api.get('/gamification/achievements/');
+  return response.data;
+};
+
+export const getMyAchievements = async () => {
+  const response = await api.get('/gamification/achievements/my_achievements/');
+  return response.data;
+};
+
+export const getAchievementProgress = async () => {
+  const response = await api.get('/gamification/achievements/progress/');
+  return response.data;
+};
+
+export const getTodayGoals = async () => {
+  const response = await api.get('/gamification/goals/today/');
+  return response.data;
+};
+
+export const updateGoalProgress = async (goalId, value = 1) => {
+  const response = await api.post(`/gamification/goals/${goalId}/update_progress/`, { value });
+  return response.data;
+};
+
+export const getGoalsHistory = async (days = 7) => {
+  const response = await api.get(`/gamification/goals/history/?days=${days}`);
+  return response.data;
+};
+
 // Auth Service
 export const authService = {
   login: async (credentials) => {
@@ -177,9 +238,59 @@ export const userService = {
     const response = await api.get('/profile/');
     return response.data;
   },
-  
+
   updateProfile: async (profileData) => {
     const response = await api.put('/profile/', profileData);
+    return response.data;
+  },
+
+  // ==============================
+  // CREDIT SYSTEM API
+  // ==============================
+
+  /**
+   * Get user's current credit balance
+   * @returns {Promise<{available_credits: number, total_credits_earned: number, total_credits_used: number, unlimited_access: boolean}>}
+   */
+  getUserCredits: async () => {
+    const response = await api.get('/credits/');
+    return response.data;
+  },
+
+  /**
+   * Redeem a promo code
+   * @param {string} promoCode - The promo code to redeem
+   * @returns {Promise<{message: string, credits_granted: number, unlimited_granted: boolean, available_credits: number, unlimited_access: boolean, tier: string}>}
+   */
+  redeemPromoCode: async (promoCode) => {
+    const response = await api.post('/credits/redeem/', {
+      promo_code: promoCode
+    });
+    return response.data;
+  },
+
+  /**
+   * Get credit usage history
+   * @returns {Promise<Array<{action: string, action_display: string, credits_changed: number, credits_after: number, description: string, created_at: string}>>}
+   */
+  getCreditHistory: async () => {
+    const response = await api.get('/credits/history/');
+    return response.data;
+  },
+
+  /**
+   * Upload profile picture
+   * @param {File} file - The image file to upload
+   * @returns {Promise<{message: string, profile_picture: string, user: object}>}
+   */
+  uploadProfilePicture: async (file) => {
+    const formData = new FormData();
+    formData.append('profile_picture', file);
+    const response = await api.post('/profile/upload-picture/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return response.data;
   }
 };

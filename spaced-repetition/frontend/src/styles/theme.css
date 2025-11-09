@@ -142,8 +142,8 @@ body.dark-theme {
   --main-gradient: linear-gradient(135deg, var(--gradient-cyan), var(--gradient-navy));
 }
 
-/* Apply theme transitions to all elements */
-* {
+/* Apply theme transitions selectively to interactive elements only */
+a, button, .btn, .card, .nav-link, .nav-tab, .modal, .form-input, .form-textarea {
   transition: var(--theme-transition);
 }
 
@@ -309,73 +309,336 @@ body.dark-theme {
   margin-bottom: var(--spacing-xs);
 }
 
-/* Professional Button Styling */
+/* Unified Button System - Using Design Tokens */
+.btn, .btn-primary, .btn-success, .btn-warning, .btn-danger, .btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-1);
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--radius-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  white-space: nowrap;
+  min-height: 44px;
+  line-height: 1.5;
+}
+
+.btn:focus,
+.btn-primary:focus,
+.btn-success:focus,
+.btn-warning:focus,
+.btn-danger:focus,
+.btn-secondary:focus {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* Primary Button */
 .btn-primary {
-  background-color: var(--btn-primary);
-  border-color: var(--btn-primary);
+  background-color: var(--color-primary-500);
   color: #ffffff;
-  border-radius: var(--border-radius-sm);
-  padding: var(--spacing-sm) var(--spacing-md);
-  font-weight: 500;
-  transition: var(--hover-transition);
 }
 
 .btn-primary:hover {
-  background-color: var(--btn-primary-hover);
-  border-color: var(--btn-primary-hover);
-  transform: translateY(-1px);
-  box-shadow: var(--card-shadow);
+  background-color: var(--color-primary-600);
+  box-shadow: var(--shadow-md);
 }
 
+.btn-primary:active {
+  background-color: var(--color-primary-700);
+}
+
+/* Success Button */
 .btn-success {
-  background-color: var(--btn-success);
-  border-color: var(--btn-success);
+  background-color: var(--color-success);
   color: #ffffff;
-  border-radius: var(--border-radius-sm);
-  padding: var(--spacing-sm) var(--spacing-md);
-  font-weight: 500;
-  transition: var(--hover-transition);
 }
 
 .btn-success:hover {
-  background-color: var(--btn-success-hover);
-  border-color: var(--btn-success-hover);
-  transform: translateY(-1px);
-  box-shadow: var(--card-shadow);
+  background-color: var(--color-success-dark);
+  box-shadow: var(--shadow-md);
 }
 
+.btn-success:active {
+  background-color: var(--color-success-dark);
+  filter: brightness(0.9);
+}
+
+/* Warning Button */
 .btn-warning {
-  background-color: var(--btn-warning);
-  border-color: var(--btn-warning);
+  background-color: var(--color-warning);
   color: #ffffff;
-  border-radius: var(--border-radius-sm);
-  padding: var(--spacing-sm) var(--spacing-md);
-  font-weight: 500;
-  transition: var(--hover-transition);
 }
 
 .btn-warning:hover {
-  background-color: var(--btn-warning-hover);
-  border-color: var(--btn-warning-hover);
-  transform: translateY(-1px);
-  box-shadow: var(--card-shadow);
+  background-color: var(--color-warning-dark);
+  box-shadow: var(--shadow-md);
 }
 
+.btn-warning:active {
+  background-color: var(--color-warning-dark);
+  filter: brightness(0.9);
+}
+
+/* Danger Button */
 .btn-danger {
-  background-color: var(--btn-danger);
-  border-color: var(--btn-danger);
+  background-color: var(--color-danger);
   color: #ffffff;
-  border-radius: var(--border-radius-sm);
-  padding: var(--spacing-sm) var(--spacing-md);
-  font-weight: 500;
-  transition: var(--hover-transition);
 }
 
 .btn-danger:hover {
-  background-color: var(--btn-danger-hover);
-  border-color: var(--btn-danger-hover);
-  transform: translateY(-1px);
-  box-shadow: var(--card-shadow);
+  background-color: var(--color-danger-dark);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-danger:active {
+  background-color: var(--color-danger-dark);
+  filter: brightness(0.9);
+}
+
+/* Secondary Button */
+.btn-secondary {
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  border-color: var(--border-primary);
+}
+
+.btn-secondary:hover {
+  background-color: var(--hover-overlay);
+  border-color: var(--border-secondary);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:active {
+  background-color: var(--active-overlay);
+}
+
+/* Button Sizes */
+.btn-sm {
+  padding: calc(var(--spacing-1) + 2px) var(--spacing-2);
+  font-size: var(--font-size-xs);
+  min-height: 36px;
+}
+
+.btn-lg {
+  padding: var(--spacing-3) var(--spacing-4);
+  font-size: var(--font-size-base);
+  min-height: 52px;
+}
+
+/* Disabled State */
+.btn:disabled,
+.btn-primary:disabled,
+.btn-success:disabled,
+.btn-warning:disabled,
+.btn-danger:disabled,
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Loading State */
+.btn-loading {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.btn-loading::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  margin-left: 8px;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: button-spin 0.6s linear infinite;
+}
+
+@keyframes button-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Unified Form Input System - Using Design Tokens */
+.form-input,
+.form-textarea,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="search"],
+input[type="url"],
+input[type="tel"],
+input[type="date"],
+input[type="time"],
+textarea,
+select {
+  display: block;
+  width: 100%;
+  padding: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+  color: var(--text-primary);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-base);
+  transition: all var(--transition-base);
+  font-family: var(--font-family-base);
+}
+
+.form-textarea,
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Focus State */
+.form-input:focus,
+.form-textarea:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: var(--focus-ring);
+  background-color: var(--bg-surface);
+}
+
+/* Placeholder */
+.form-input::placeholder,
+.form-textarea::placeholder,
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-tertiary);
+  opacity: 1;
+}
+
+/* Hover State */
+.form-input:hover:not(:focus):not(:disabled),
+.form-textarea:hover:not(:focus):not(:disabled),
+input:hover:not(:focus):not(:disabled),
+textarea:hover:not(:focus):not(:disabled),
+select:hover:not(:focus):not(:disabled) {
+  border-color: var(--border-secondary);
+}
+
+/* Disabled State */
+.form-input:disabled,
+.form-textarea:disabled,
+input:disabled,
+textarea:disabled,
+select:disabled {
+  background-color: var(--color-gray-100);
+  color: var(--text-disabled);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Error State */
+.form-input.error,
+.form-textarea.error,
+input.error,
+textarea.error,
+select.error {
+  border-color: var(--color-danger);
+}
+
+.form-input.error:focus,
+.form-textarea.error:focus,
+input.error:focus,
+textarea.error:focus,
+select.error:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3);
+}
+
+/* Success State */
+.form-input.success,
+.form-textarea.success,
+input.success,
+textarea.success,
+select.success {
+  border-color: var(--color-success);
+}
+
+.form-input.success:focus,
+.form-textarea.success:focus,
+input.success:focus,
+textarea.success:focus,
+select.success:focus {
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+}
+
+/* Form Labels */
+label,
+.form-label {
+  display: block;
+  margin-bottom: var(--spacing-1);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+}
+
+/* Form Groups */
+.form-group {
+  margin-bottom: var(--spacing-3);
+}
+
+/* Helper Text */
+.form-helper,
+.form-error {
+  display: block;
+  margin-top: var(--spacing-1);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+}
+
+.form-helper {
+  color: var(--text-secondary);
+}
+
+.form-error {
+  color: var(--color-danger);
+}
+
+/* Input Sizes */
+.form-input-sm,
+input.form-input-sm,
+select.form-input-sm {
+  padding: var(--spacing-1) var(--spacing-2);
+  font-size: var(--font-size-xs);
+}
+
+.form-input-lg,
+input.form-input-lg,
+select.form-input-lg {
+  padding: var(--spacing-3);
+  font-size: var(--font-size-base);
+}
+
+/* Select Dropdown */
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23334155' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--spacing-2) center;
+  padding-right: var(--spacing-5);
+}
+
+/* Checkbox and Radio */
+input[type="checkbox"],
+input[type="radio"] {
+  width: auto;
+  margin-right: var(--spacing-1);
+  cursor: pointer;
 }
 
 /* Timer Section - Removed, now using single pomodoro card */
@@ -438,73 +701,69 @@ body.dark-theme {
   fill: var(--main-bg);
 }
 
-/* Dark mode specific overrides for sidebar color background */
+/* Dark mode specific overrides - Using design tokens for better contrast */
 body.dark-theme .dashboard-wrapper {
-  background-color: #1e293b;
+  background-color: var(--bg-surface);
 }
 
 body.dark-theme .dashboard-content {
-  background-color: #1e293b;
+  background-color: var(--bg-surface);
 }
 
 body.dark-theme .tab-content {
-  background-color: #1e293b;
+  background-color: var(--bg-surface);
 }
 
 body.dark-theme .left-section,
 body.dark-theme .right-section {
-  background-color: #1e293b;
+  background-color: var(--bg-surface);
 }
 
 body.dark-theme .progress-section {
-  background-color: #1e293b;
+  background-color: var(--bg-surface);
 }
 
-/* Ensure cards have proper contrast on sidebar background */
+/* Ensure cards have proper contrast - Using design tokens */
 body.dark-theme .card {
-  background-color: #334155;
-  border-color: #475569;
+  background-color: var(--bg-elevated);
+  border-color: var(--border-primary);
+  color: var(--text-primary);
 }
 
 body.dark-theme .card-body {
-  background-color: #334155;
+  background-color: var(--bg-elevated);
+  color: var(--text-primary);
 }
 
-/* Today's Learning sections - sidebar background */
+/* Today's Learning sections */
 body.dark-theme .todays-learning-content {
-  background-color: #1e293b;
+  background-color: var(--bg-surface);
 }
 
 body.dark-theme .learning-section {
-  background-color: #1e293b;
+  background-color: var(--bg-surface);
 }
 
 body.dark-theme .section-wrapper {
-  background-color: #1e293b;
+  background-color: var(--bg-surface);
 }
 
-/* Navigation tabs container - Fix white background in dark mode */
+/* Navigation tabs container - Using design tokens */
 body.dark-theme .dashboard-nav {
-  background: #1e293b !important;
-  border-bottom-color: #475569;
+  background: var(--bg-surface) !important;
+  border-bottom-color: var(--border-primary);
 }
 
 body.dark-theme .navigation-tabs-container {
-  background: #1e293b !important;
+  background: var(--bg-surface) !important;
 }
 
 body.dark-theme .nav-tabs-section {
-  background: #1e293b !important;
+  background: var(--bg-surface) !important;
 }
 
 body.dark-theme .tabs-wrapper {
-  background: #1e293b !important;
-}
-
-/* Ensure all text is white in dark mode */
-body.dark-theme,
-body.dark-theme * {
-  color: #ffffff !important;
+  background: var(--bg-surface) !important;
 }
 
 /* Preserve special colors for buttons and interactive elements */
@@ -540,19 +799,56 @@ body.dark-theme .dashboard-main {
   color: #ffffff !important;
 }
 
-/* Ensure form inputs have proper colors */
+/* Dark Mode Form Inputs */
 body.dark-theme .form-input,
 body.dark-theme .form-textarea,
-body.dark-theme select,
-body.dark-theme input {
-  background-color: #334155 !important;
-  color: #ffffff !important;
-  border-color: #475569 !important;
+body.dark-theme input[type="text"],
+body.dark-theme input[type="email"],
+body.dark-theme input[type="password"],
+body.dark-theme input[type="number"],
+body.dark-theme input[type="search"],
+body.dark-theme input[type="url"],
+body.dark-theme input[type="tel"],
+body.dark-theme input[type="date"],
+body.dark-theme input[type="time"],
+body.dark-theme textarea,
+body.dark-theme select {
+  background-color: var(--bg-elevated);
+  color: var(--text-primary);
+  border-color: var(--border-primary);
 }
 
-/* Placeholder text should be lighter */
+body.dark-theme .form-input:focus,
+body.dark-theme .form-textarea:focus,
+body.dark-theme input:focus,
+body.dark-theme textarea:focus,
+body.dark-theme select:focus {
+  border-color: var(--border-focus);
+  box-shadow: var(--focus-ring);
+  background-color: var(--bg-elevated);
+}
+
 body.dark-theme .form-input::placeholder,
 body.dark-theme .form-textarea::placeholder,
-body.dark-theme input::placeholder {
-  color: #94a3b8 !important;
+body.dark-theme input::placeholder,
+body.dark-theme textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+body.dark-theme .form-input:disabled,
+body.dark-theme .form-textarea:disabled,
+body.dark-theme input:disabled,
+body.dark-theme textarea:disabled,
+body.dark-theme select:disabled {
+  background-color: var(--color-gray-800);
+  color: var(--text-disabled);
+}
+
+body.dark-theme select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23cbd5e0' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+}
+
+body.dark-theme label,
+body.dark-theme .form-label {
+  color: var(--text-primary);
 }

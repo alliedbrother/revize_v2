@@ -1,11 +1,11 @@
 import { useState, useEffect, useContext } from 'react';
 import { Card, Button, Modal, Form, Alert, Badge, Spinner, ListGroup } from 'react-bootstrap';
 import { useAuth } from '../../context/AuthContext';
-import { getAllTopics, createTopic, deleteTopic, updateTopic } from '../../services/api';
+import { getAllTopics, createTopic, deleteTopic, updateTopic, getTopic } from '../../services/api';
 import { RefreshContext } from '../dashboard/ModernDashboard';
 import { formatDateTime, formatDateFromTimestamp } from '../../utils/dateUtils';
 import TopicDetailCard from './TopicDetailCard';
-import './Topics.css';
+import FlashcardReviewSession from '../flashcards/FlashcardReviewSession';
 import './AllTopics.css';
 
 const AllTopics = () => {
@@ -23,6 +23,15 @@ const AllTopics = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [showTopicDetail, setShowTopicDetail] = useState(false);
   const [selectedTopicId, setSelectedTopicId] = useState(null);
+  const [showReviewSession, setShowReviewSession] = useState(false);
+  const [sessionRevisions, setSessionRevisions] = useState([]);
+  const [reviewLoading, setReviewLoading] = useState(new Set());
+
+  // Search and filter states
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedType, setSelectedType] = useState('all');
+  const [dateSort, setDateSort] = useState('newest');
+
   const { user } = useAuth();
   const { refreshTrigger, triggerRefresh } = useContext(RefreshContext);
 
@@ -154,6 +163,90 @@ const AllTopics = () => {
     setSelectedTopicId(null);
   };
 
+  const handleStartReview = async (topicId) => {
+    try {
+      setReviewLoading(prev => new Set(prev).add(topicId));
+      const topicData = await getTopic(topicId);
+
+      if (topicData.flashcards && topicData.flashcards.length > 0) {
+        // Format flashcards to match the structure expected by FlashcardReviewSession
+        const formattedFlashcards = topicData.flashcards.map((flashcard) => ({
+          id: null, // No revision ID since this is practice mode
+          flashcard: {
+            id: flashcard.id,
+            title: flashcard.title,
+            content: flashcard.content,
+          },
+          isPracticeMode: true // Mark as practice mode
+        }));
+
+        setSessionRevisions(formattedFlashcards);
+        setShowReviewSession(true);
+      } else {
+        setError('No flashcards available for this topic');
+        setTimeout(() => setError(''), 3000);
+      }
+    } catch (err) {
+      setError('Failed to load flashcards for review');
+      console.error('Error loading flashcards:', err);
+      setTimeout(() => setError(''), 3000);
+    } finally {
+      setReviewLoading(prev => {
+        const next = new Set(prev);
+        next.delete(topicId);
+        return next;
+      });
+    }
+  };
+
+  const handleCloseReviewSession = () => {
+    setShowReviewSession(false);
+    setSessionRevisions([]);
+  };
+
+  // Get source type display name and badge variant
+  const getSourceTypeInfo = (sourceType) => {
+    const typeMap = {
+      'manual': { label: 'Manual', variant: 'primary' },
+      'document': { label: 'Doc', variant: 'success' },
+      'image': { label: 'Image', variant: 'info' },
+      'link': { label: 'Link', variant: 'warning' }
+    };
+    return typeMap[sourceType?.toLowerCase()] || { label: 'Manual', variant: 'primary' };
+  };
+
+  // Filter and sort topics
+  const getFilteredTopics = () => {
+    let filtered = [...topics];
+
+    // Filter by search query
+    if (searchQuery.trim()) {
+      filtered = filtered.filter(topic =>
+        topic.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        topic.content.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // Filter by type
+    if (selectedType !== 'all') {
+      filtered = filtered.filter(topic => {
+        const topicType = topic.source_type?.toLowerCase() || 'manual';
+        return topicType === selectedType;
+      });
+    }
+
+    // Sort by date
+    filtered.sort((a, b) => {
+      const dateA = new Date(a.created_at);
+      const dateB = new Date(b.created_at);
+      return dateSort === 'newest' ? dateB - dateA : dateA - dateB;
+    });
+
+    return filtered;
+  };
+
+  const filteredTopics = getFilteredTopics();
+
   return (
     <div className="all-topics-list">
       <Card className="topics-card shadow-sm">
@@ -176,6 +269,90 @@ const AllTopics = () => {
           </Button>
         </Card.Header>
         <Card.Body className="topics-card-body">
+          {/* Search and Filter Bar */}
+          <div className="filter-bar mb-3">
+            <div className="search-box-container">
+              <i className="bi bi-search search-icon"></i>
+              <Form.Control
+                type="text"
+                placeholder="Search topics by name or content..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="search-input"
+              />
+              {searchQuery && (
+                <button
+                  className="clear-search-btn"
+                  onClick={() => setSearchQuery('')}
+                  title="Clear search"
+                >
+                  <i className="bi bi-x-lg"></i>
+                </button>
+              )}
+            </div>
+
+            <div className="filter-controls">
+              <Form.Select
+                value={selectedType}
+                onChange={(e) => setSelectedType(e.target.value)}
+                className="filter-select"
+              >
+                <option value="all">All Types</option>
+                <option value="manual">Manual</option>
+                <option value="document">Document</option>
+                <option value="image">Image</option>
+                <option value="link">Link</option>
+              </Form.Select>
+
+              <Form.Select
+                value={dateSort}
+                onChange={(e) => setDateSort(e.target.value)}
+                className="filter-select"
+              >
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+              </Form.Select>
+            </div>
+          </div>
+
+          {/* Active Filters Display */}
+          {(searchQuery || selectedType !== 'all') && (
+            <div className="active-filters mb-3">
+              <span className="filter-label">Active Filters:</span>
+              {searchQuery && (
+                <Badge bg="secondary" className="filter-badge">
+                  Search: "{searchQuery}"
+                  <button
+                    className="badge-close"
+                    onClick={() => setSearchQuery('')}
+                  >
+                    <i className="bi bi-x"></i>
+                  </button>
+                </Badge>
+              )}
+              {selectedType !== 'all' && (
+                <Badge bg="secondary" className="filter-badge">
+                  Type: {getSourceTypeInfo(selectedType).label}
+                  <button
+                    className="badge-close"
+                    onClick={() => setSelectedType('all')}
+                  >
+                    <i className="bi bi-x"></i>
+                  </button>
+                </Badge>
+              )}
+              <button
+                className="clear-all-filters"
+                onClick={() => {
+                  setSearchQuery('');
+                  setSelectedType('all');
+                }}
+              >
+                Clear All
+              </button>
+            </div>
+          )}
+
           {error && <Alert variant="danger" className="mb-3 alert-animated">{error}</Alert>}
           {success && <Alert variant="success" className="mb-3 alert-animated">{success}</Alert>}
           
@@ -189,8 +366,8 @@ const AllTopics = () => {
               <i className="bi bi-journal-text display-1 text-muted"></i>
               <h5 className="mt-3">No topics yet</h5>
               <p className="text-muted">Create your first topic to start learning!</p>
-              <Button 
-                variant="primary" 
+              <Button
+                variant="primary"
                 onClick={() => setShowAddModal(true)}
                 className="mt-2"
               >
@@ -198,54 +375,74 @@ const AllTopics = () => {
                 Add New Topic
               </Button>
             </div>
+          ) : filteredTopics.length === 0 ? (
+            <div className="text-center py-5">
+              <i className="bi bi-search display-1 text-muted"></i>
+              <h5 className="mt-3">No topics found</h5>
+              <p className="text-muted">Try adjusting your search or filters</p>
+              <Button
+                variant="outline-primary"
+                onClick={() => {
+                  setSearchQuery('');
+                  setSelectedType('all');
+                }}
+                className="mt-2"
+              >
+                <i className="bi bi-arrow-counterclockwise me-1"></i>
+                Clear Filters
+              </Button>
+            </div>
           ) : (
             <ListGroup variant="flush" className="topics-list scrollable-list">
-              {topics.map((topic) => (
-                <ListGroup.Item 
-                  key={topic.id} 
+              {filteredTopics.map((topic) => (
+                <ListGroup.Item
+                  key={topic.id}
                   className="topic-item"
                 >
                   <div className="topic-content">
-                    <h5 className="topic-title clickable" onClick={() => handleTopicClick(topic.id)}>
-                      {topic.title}
-                    </h5>
-                    <p className="topic-description">
-                      {topic.content.length > 150 
-                        ? `${topic.content.substring(0, 150)}...` 
-                        : topic.content}
-                    </p>
-                  </div>
-                  <div className="topic-meta-center">
-                    <Badge bg="light" text="dark" className="date-badge" title={`Created: ${formatDateTime(topic.created_at)}`}>
-                      <i className="bi bi-calendar me-1"></i>
-                      {formatDateFromTimestamp(topic.created_at)}
-                    </Badge>
-                    <div className="text-muted small mt-1">
-                      <i className="bi bi-clock me-1"></i>
-                      {formatDateTime(topic.created_at)}
+                    <div className="topic-text">
+                      <h5 className="topic-title clickable" onClick={() => handleTopicClick(topic.id)}>
+                        {topic.title}
+                      </h5>
+                      <p className="topic-description">
+                        {topic.content.length > 150
+                          ? `${topic.content.substring(0, 150)}...`
+                          : topic.content}
+                      </p>
                     </div>
-                  </div>
-                  <div className="topic-actions">
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      onClick={() => openEditModal(topic)}
-                      className="action-button-sm"
-                      title="Edit Topic"
-                    >
-                      <i className="bi bi-pencil me-1"></i>
-                      Edit
-                    </Button>
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={() => setDeleteConfirm(topic.id)}
-                      className="action-button-sm"
-                      title="Delete Topic"
-                    >
-                      <i className="bi bi-trash me-1"></i>
-                      Delete
-                    </Button>
+                    <div className="topic-actions">
+                      <Button
+                        variant="success"
+                        size="sm"
+                        onClick={() => handleStartReview(topic.id)}
+                        className="action-button-sm"
+                        title="Review Flashcards"
+                        disabled={reviewLoading.has(topic.id)}
+                      >
+                        <i className="bi bi-card-checklist me-1"></i>
+                        Review
+                      </Button>
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={() => openEditModal(topic)}
+                        className="action-button-sm"
+                        title="Edit Topic"
+                      >
+                        <i className="bi bi-pencil me-1"></i>
+                        Edit
+                      </Button>
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() => setDeleteConfirm(topic.id)}
+                        className="action-button-sm"
+                        title="Delete Topic"
+                      >
+                        <i className="bi bi-trash me-1"></i>
+                        Delete
+                      </Button>
+                    </div>
                   </div>
                 </ListGroup.Item>
               ))}
@@ -400,6 +597,14 @@ const AllTopics = () => {
         show={showTopicDetail}
         onHide={handleCloseTopicDetail}
         topicId={selectedTopicId}
+      />
+
+      {/* Flashcard Review Session */}
+      <FlashcardReviewSession
+        revisions={sessionRevisions}
+        show={showReviewSession}
+        onHide={handleCloseReviewSession}
+        onComplete={handleCloseReviewSession}
       />
     </div>
   );

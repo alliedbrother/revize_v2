@@ -1,0 +1,237 @@
+/* Skeleton Loader - Using Design Tokens */
+
+/* Base Skeleton Styles */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-gray-200) 0%,
+    var(--color-gray-100) 50%,
+    var(--color-gray-200) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Dark Mode */
+body.dark-theme .skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-gray-700) 0%,
+    var(--color-gray-800) 50%,
+    var(--color-gray-700) 100%
+  );
+  background-size: 200% 100%;
+}
+
+/* Skeleton Line */
+.skeleton-line {
+  margin-bottom: var(--spacing-1);
+}
+
+/* Skeleton Text Block */
+.skeleton-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+/* Skeleton Circle */
+.skeleton-circle {
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+/* Skeleton Rectangle */
+.skeleton-rectangle {
+  border-radius: var(--radius-base);
+}
+
+/* Skeleton Card */
+.skeleton-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.skeleton-card-content {
+  padding: var(--spacing-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.skeleton-card-footer {
+  display: flex;
+  gap: var(--spacing-2);
+  justify-content: space-between;
+  margin-top: var(--spacing-2);
+}
+
+/* Skeleton Topic Card */
+.skeleton-topic-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-3);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.skeleton-topic-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-1);
+}
+
+.skeleton-topic-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--spacing-2);
+}
+
+.skeleton-topic-actions {
+  display: flex;
+  gap: var(--spacing-1);
+}
+
+/* Skeleton List Item */
+.skeleton-list-item {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-base);
+  padding: var(--spacing-2) var(--spacing-3);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-2);
+}
+
+.skeleton-list-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+/* Skeleton Table Row */
+.skeleton-table-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-primary);
+}
+
+/* Skeleton Page */
+.skeleton-page {
+  padding: var(--spacing-4);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.skeleton-page-header {
+  margin-bottom: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.skeleton-page-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--spacing-3);
+}
+
+/* Skeleton Grid */
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--spacing-3);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .skeleton-page-content,
+  .skeleton-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .skeleton-card-content {
+    padding: var(--spacing-2);
+  }
+
+  .skeleton-topic-card {
+    padding: var(--spacing-2);
+  }
+}
+
+/* Accessibility - Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: skeleton-loading 3s linear infinite;
+  }
+}
+
+/* Loading State Container */
+.loading-container {
+  width: 100%;
+  padding: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+/* Inline Skeleton for Buttons */
+.skeleton-button {
+  display: inline-block;
+  min-width: 80px;
+  height: 36px;
+  border-radius: var(--radius-base);
+}
+
+/* Skeleton for Input Fields */
+.skeleton-input {
+  height: 44px;
+  width: 100%;
+  border-radius: var(--radius-base);
+  margin-bottom: var(--spacing-2);
+}
+
+/* Skeleton Badge */
+.skeleton-badge {
+  display: inline-block;
+  width: 60px;
+  height: 24px;
+  border-radius: var(--radius-full);
+}
+
+/* Pulse Animation Variant */
+.skeleton-pulse {
+  animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

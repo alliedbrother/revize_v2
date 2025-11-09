@@ -1,0 +1,89 @@
+/* CreditDisplay Component Styles */
+
+.credit-badge {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.credit-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.credit-badge i {
+  font-size: 1em;
+}
+
+/* Size variants */
+.credit-badge-sm {
+  padding: 0.35em 0.65em;
+  font-size: 0.875rem;
+}
+
+.credit-badge-md {
+  padding: 0.5em 0.85em;
+  font-size: 1rem;
+}
+
+.credit-badge-lg {
+  padding: 0.65em 1em;
+  font-size: 1.125rem;
+}
+
+/* Color variants (enhanced) */
+.credit-badge.bg-success {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+}
+
+.credit-badge.bg-primary {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%) !important;
+}
+
+.credit-badge.bg-warning {
+  background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%) !important;
+  color: #000 !important;
+}
+
+.credit-badge.bg-danger {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Pulse animation for low credits */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Dark mode adjustments */
+body.dark-theme .credit-badge {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .credit-badge:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Accessibility */
+.credit-badge:focus {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .credit-badge {
+    animation: none !important;
+    transition: none;
+  }
+
+  .credit-badge:hover {
+    transform: none;
+  }
+}

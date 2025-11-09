@@ -36,7 +36,7 @@ const Sidebar = ({ isCollapsed, toggleSidebar, isMobile, isMobileMenuOpen }) => 
         </button>
         {!isCollapsed && (
           <div className="sidebar-brand">
-            <div className="brand-icon">R</div>
+            <img src="/icon-192.png" alt="Revize" className="brand-icon-img" />
             <span className="brand-text">Revize</span>
           </div>
         )}

@@ -17,6 +17,7 @@ const Navbar = () => {
       <Container fluid className="navbar-container">
         <BootstrapNavbar.Brand as={Link} to={user ? "/dashboard" : "/"} className="modern-brand">
           <div className="brand-content">
+            <img src="/icon-192.png" alt="Revize Logo" className="brand-logo" />
             <span className="brand-text">Revize</span>
           </div>
         </BootstrapNavbar.Brand>
@@ -27,19 +28,27 @@ const Navbar = () => {
           <Nav className="ms-auto navbar-nav-modern">
             {user ? (
               <>
-                <Nav.Link 
-                  as={Link} 
-                  to="/dashboard" 
+                <Nav.Link
+                  as={Link}
+                  to="/dashboard"
                   className="nav-link-modern dashboard-link"
                 >
                   <i className="bi bi-grid-3x3-gap me-2"></i>
                   Dashboard
                 </Nav.Link>
-                <NavDropdown 
+                <NavDropdown
                   title={
                     <span className="user-dropdown-title">
-                      <i className="bi bi-person-circle me-2"></i>
-                      {user.username}
+                      {user.profile_picture ? (
+                        <img
+                          src={user.profile_picture}
+                          alt="Profile"
+                          className="navbar-profile-picture me-2"
+                        />
+                      ) : (
+                        <i className="bi bi-person-circle me-2"></i>
+                      )}
+                      {user.first_name || user.username}
                     </span>
                   }
                   id="user-dropdown"

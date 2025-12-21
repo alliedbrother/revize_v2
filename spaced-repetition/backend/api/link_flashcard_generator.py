@@ -678,8 +678,9 @@ def check_accessibility_node(state: LinkFlashcardState) -> LinkFlashcardState:
 
     url = state['normalized_url']
 
-    # YouTube URLs don't need HTTP accessibility/paywall check
-    # They will be validated during transcript extraction
+    # YouTube and Wikipedia URLs don't need HTTP accessibility/paywall check
+    # YouTube: validated during transcript extraction
+    # Wikipedia: uses official Wikipedia API which has proper access
     link_type = detect_link_type(url)
     if link_type == 'youtube':
         return {
@@ -692,7 +693,18 @@ def check_accessibility_node(state: LinkFlashcardState) -> LinkFlashcardState:
             'current_step': 'accessible'
         }
 
-    # Check robots.txt
+    if link_type == 'wikipedia':
+        return {
+            **state,
+            'accessible': True,
+            'html_content': '',
+            'status_code': 200,
+            'content_type': 'text/html',
+            'link_type': 'wikipedia',
+            'current_step': 'accessible'
+        }
+
+    # Check robots.txt for other sites
     if not check_robots_txt(url):
         return {
             **state,

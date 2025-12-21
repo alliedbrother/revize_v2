@@ -1,0 +1,51 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+*.egg-info/
+.eggs/
+
+# Environment files (use Docker env vars instead)
+.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Database
+*.sqlite3
+db.sqlite3
+
+# Logs
+*.log
+logs/
+
+# Media (mounted as volume)
+media/
+
+# Documentation
+*.md
+
+# Tests
+tests/
+test/
+coverage/
+.coverage
+htmlcov/
+
+# AWS deployment files
+.ebextensions/

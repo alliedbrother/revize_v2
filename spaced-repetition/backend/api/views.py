@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.models import User
 from .models import (
     Topic, RevisionSchedule, FlashCard, FlashCardRevisionSchedule,
@@ -356,7 +357,9 @@ class RegisterUser(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            token, created = Token.objects.get_or_create(user=user)
+
+            # Generate JWT tokens
+            refresh = RefreshToken.for_user(user)
 
             # Get profile picture URL if exists
             profile_picture_url = None
@@ -364,7 +367,8 @@ class RegisterUser(generics.CreateAPIView):
                 profile_picture_url = request.build_absolute_uri(user.profile.profile_picture.url)
 
             return Response({
-                'token': token.key,
+                'access': str(refresh.access_token),
+                'refresh': str(refresh),
                 'user_id': user.pk,
                 'username': user.username,
                 'email': user.email,
@@ -379,12 +383,14 @@ class CustomObtainAuthToken(ObtainAuthToken):
     API endpoint for user login.
     """
     permission_classes = [permissions.AllowAny]
-    
+
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
-        token, created = Token.objects.get_or_create(user=user)
+
+        # Generate JWT tokens
+        refresh = RefreshToken.for_user(user)
 
         # Get profile picture URL if exists
         profile_picture_url = None
@@ -392,7 +398,8 @@ class CustomObtainAuthToken(ObtainAuthToken):
             profile_picture_url = request.build_absolute_uri(user.profile.profile_picture.url)
 
         return Response({
-            'token': token.key,
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
             'user_id': user.pk,
             'username': user.username,
             'email': user.email,
@@ -767,8 +774,8 @@ class GoogleLoginView(APIView):
                     last_name=last_name
                 )
             
-            # Create or get auth token
-            token, created = Token.objects.get_or_create(user=user)
+            # Generate JWT tokens
+            refresh = RefreshToken.for_user(user)
 
             # Get profile picture URL if exists
             profile_picture_url = None
@@ -776,7 +783,8 @@ class GoogleLoginView(APIView):
                 profile_picture_url = request.build_absolute_uri(user.profile.profile_picture.url)
 
             return Response({
-                'token': token.key,
+                'access': str(refresh.access_token),
+                'refresh': str(refresh),
                 'user_id': user.pk,
                 'username': user.username,
                 'email': user.email,

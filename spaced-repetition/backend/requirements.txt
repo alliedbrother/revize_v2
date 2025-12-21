@@ -25,6 +25,7 @@ django-storages==1.14.2  # Storage backends
 # Security
 django-environ==0.11.2  # Environment variable handling
 python-dotenv==1.0.0  # Load environment variables from .env file
+djangorestframework-simplejwt==5.5.1  # JWT authentication
 
 # Social Authentication
 django-allauth==0.57.0  # Social authentication

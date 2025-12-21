@@ -1,0 +1,61 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+.env
+*.egg-info/
+.eggs/
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+dist/
+build/
+
+# Database
+*.sqlite3
+db.sqlite3
+
+# Logs
+*.log
+logs/
+
+# Media (will be mounted as volume)
+media/
+
+# Docker
+Dockerfile*
+docker-compose*
+.docker/
+
+# Documentation
+*.md
+docs/
+
+# Tests
+tests/
+test/
+coverage/
+.coverage
+htmlcov/

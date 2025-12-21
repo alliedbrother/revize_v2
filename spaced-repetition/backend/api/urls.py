@@ -1,5 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+from rest_framework_simplejwt.views import TokenRefreshView
 from .views import (
     CustomObtainAuthToken,
     TopicViewSet,
@@ -41,6 +42,7 @@ urlpatterns = [
     # Authentication endpoints
     path('login/', CustomObtainAuthToken.as_view(), name='api_token_auth'),
     path('register/', RegisterUser.as_view(), name='register'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('profile/', UserProfileView.as_view(), name='profile'),
     path('profile/upload-picture/', ProfilePictureUploadView.as_view(), name='profile-picture-upload'),
     path('auth/google/', GoogleLoginView.as_view(), name='google_login'),

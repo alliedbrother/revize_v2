@@ -12,14 +12,15 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const initAuth = async () => {
-      const token = localStorage.getItem('token');
-      if (token) {
+      const accessToken = localStorage.getItem('accessToken');
+      if (accessToken) {
         try {
           const userData = await userService.getProfile();
           setUser(userData);
         } catch (err) {
           console.error('Failed to fetch user profile:', err);
-          localStorage.removeItem('token');
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
         }
       }
       setLoading(false);
@@ -36,8 +37,9 @@ export const AuthProvider = ({ children }) => {
       const response = await authService.login(credentials);
       console.log('AuthContext: Login response:', response);
 
-      if (response && response.token) {
-        localStorage.setItem('token', response.token);
+      if (response && response.access) {
+        localStorage.setItem('accessToken', response.access);
+        localStorage.setItem('refreshToken', response.refresh);
         setUser({
           id: response.user_id,
           username: response.username,
@@ -76,8 +78,9 @@ export const AuthProvider = ({ children }) => {
       const response = await authService.register(userData);
       console.log('AuthContext: Registration response:', response);
 
-      if (response && response.token) {
-        localStorage.setItem('token', response.token);
+      if (response && response.access) {
+        localStorage.setItem('accessToken', response.access);
+        localStorage.setItem('refreshToken', response.refresh);
         setUser({
           id: response.user_id,
           username: response.username,
@@ -127,7 +130,8 @@ export const AuthProvider = ({ children }) => {
       console.error('Logout error:', err);
     } finally {
       setUser(null);
-      localStorage.removeItem('token');
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
     }
   };
 
@@ -151,8 +155,9 @@ export const AuthProvider = ({ children }) => {
       const response = await authService.googleLogin(credential);
       console.log('AuthContext: Google login response:', response);
       
-      if (response && response.token) {
-        localStorage.setItem('token', response.token);
+      if (response && response.access) {
+        localStorage.setItem('accessToken', response.access);
+        localStorage.setItem('refreshToken', response.refresh);
         setUser({
           id: response.user_id,
           username: response.username,

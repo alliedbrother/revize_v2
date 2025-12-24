@@ -310,10 +310,11 @@ Revize reviews content just before you're about to forget it, strengthening memo
 - ✅ **Pomodoro Timer** - Focus sessions
 - ✅ **Progress Analytics** - Track your learning
 - ✅ **Google OAuth** - Easy sign-in
-
+- ✅ **Web Link Processing** - Articles and Blog Posts
+ 
 ### Coming Soon 🔄
 
-- 🔄 **Web Link Processing** - YouTube videos and articles
+- 🔄 **Video Link Processing** - Youtube and other multimedia
 - 🔄 **Mobile App** - iOS and Android native apps
 - 🔄 **Collaborative Learning** - Share flashcard decks with friends
 - 🔄 **Voice Input** - Create flashcards by speaking

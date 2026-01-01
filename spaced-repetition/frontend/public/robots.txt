@@ -1,0 +1,9 @@
+# robots.txt for Revize.io
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://revize.io/sitemap.xml
+
+# Crawl-delay for politeness
+Crawl-delay: 1

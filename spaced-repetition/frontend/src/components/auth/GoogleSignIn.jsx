@@ -42,7 +42,7 @@ const GoogleSignIn = ({ onError }) => {
           {
             theme: isDarkMode ? 'filled_black' : 'outline',
             size: 'large',
-            width: '100%',
+            width: 320, // Use fixed pixel width instead of percentage
             text: 'signin_with',
             shape: 'rectangular',
           }
@@ -73,42 +73,17 @@ const GoogleSignIn = ({ onError }) => {
 
   return (
     <div className="google-signin-container">
-      <div className="divider-container">
-        <div className="divider-line"></div>
-        <span className="divider-text">or</span>
-        <div className="divider-line"></div>
-      </div>
-      <div 
+      <div
         ref={googleButtonRef}
         className="google-signin-button"
-        style={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          marginTop: '1rem' 
+        style={{
+          display: 'flex',
+          justifyContent: 'center'
         }}
       />
       <style jsx>{`
         .google-signin-container {
-          margin: 1rem 0;
-        }
-
-        .divider-container {
-          display: flex;
-          align-items: center;
-          margin: 1.5rem 0 1rem 0;
-        }
-
-        .divider-line {
-          flex: 1;
-          height: 1px;
-          background-color: ${isDarkMode ? '#4a5568' : '#e9ecef'};
-        }
-
-        .divider-text {
-          margin: 0 1rem;
-          color: ${isDarkMode ? '#cbd5e1' : '#6c757d'};
-          font-size: 0.9rem;
-          font-weight: 500;
+          margin: 0.5rem 0;
         }
 
         .google-signin-button {

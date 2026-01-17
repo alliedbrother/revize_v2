@@ -100,6 +100,10 @@ class FlashCard(models.Model):
     title = models.CharField(max_length=300)
     content = models.TextField()
     order = models.IntegerField(default=0)  # Order within the topic
+    # Analytics fields for passive tracking
+    times_reviewed = models.IntegerField(default=0)  # Count of completed reviews
+    times_postponed = models.IntegerField(default=0)  # Count of postponements
+    total_time_spent_seconds = models.IntegerField(default=0)  # Cumulative study time
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -109,6 +113,12 @@ class FlashCard(models.Model):
     def __str__(self):
         return f"{self.topic.title} - Card {self.order}"
 
+    def get_average_time_seconds(self):
+        """Get average time spent per review for this card"""
+        if self.times_reviewed > 0:
+            return self.total_time_spent_seconds / self.times_reviewed
+        return 0
+
 
 class FlashCardRevisionSchedule(models.Model):
     """Revision schedule for individual flashcards"""
@@ -116,6 +126,9 @@ class FlashCardRevisionSchedule(models.Model):
     scheduled_date = models.DateField()
     completed = models.BooleanField(default=False)
     postponed = models.BooleanField(default=False)
+    # Timing fields for passive tracking
+    completed_at = models.DateTimeField(null=True, blank=True)  # When actually completed
+    time_spent_seconds = models.IntegerField(null=True, blank=True)  # Auto-tracked per card
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -126,15 +139,26 @@ class FlashCardRevisionSchedule(models.Model):
         return f"{self.flashcard.title} - {self.scheduled_date}"
 
     def postpone(self):
-        """Postpone the revision by one day"""
+        """Postpone the revision by one day and update flashcard analytics"""
         self.scheduled_date = self.scheduled_date + timezone.timedelta(days=1)
         self.postponed = True
         self.save()
+        # Update flashcard analytics
+        self.flashcard.times_postponed += 1
+        self.flashcard.save()
 
-    def complete(self):
-        """Mark the revision as completed"""
+    def complete(self, time_spent_seconds=None):
+        """Mark the revision as completed and update flashcard analytics"""
         self.completed = True
+        self.completed_at = timezone.now()
+        if time_spent_seconds is not None:
+            self.time_spent_seconds = time_spent_seconds
         self.save()
+        # Update flashcard analytics
+        self.flashcard.times_reviewed += 1
+        if time_spent_seconds:
+            self.flashcard.total_time_spent_seconds += time_spent_seconds
+        self.flashcard.save()
 
     @staticmethod
     def create_schedule(flashcard, base_date=None):
@@ -442,6 +466,79 @@ class CreditUsageLog(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.get_action_display()} ({self.credits_changed:+d})"
+
+
+# ==============================
+# STUDY SESSION TRACKING
+# ==============================
+
+class StudySession(models.Model):
+    """Track complete study sessions automatically for analytics"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='study_sessions')
+    started_at = models.DateTimeField(auto_now_add=True)
+    ended_at = models.DateTimeField(null=True, blank=True)
+    cards_reviewed = models.IntegerField(default=0)  # Cards marked as "Got it"
+    cards_postponed = models.IntegerField(default=0)  # Cards marked as "Review Later"
+    total_time_seconds = models.IntegerField(default=0)  # Total session duration
+    is_active = models.BooleanField(default=True)  # Whether session is still in progress
+
+    class Meta:
+        ordering = ['-started_at']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.started_at.strftime('%Y-%m-%d %H:%M')}"
+
+    def end_session(self):
+        """End the study session and calculate total time"""
+        self.ended_at = timezone.now()
+        self.is_active = False
+        if self.started_at:
+            duration = self.ended_at - self.started_at
+            self.total_time_seconds = int(duration.total_seconds())
+        self.save()
+
+    def add_reviewed_card(self, time_spent_seconds=0):
+        """Increment reviewed card count"""
+        self.cards_reviewed += 1
+        self.total_time_seconds += time_spent_seconds
+        self.save()
+
+    def add_postponed_card(self, time_spent_seconds=0):
+        """Increment postponed card count"""
+        self.cards_postponed += 1
+        self.total_time_seconds += time_spent_seconds
+        self.save()
+
+    @property
+    def completion_rate(self):
+        """Calculate completion rate (reviewed / total)"""
+        total = self.cards_reviewed + self.cards_postponed
+        if total > 0:
+            return round((self.cards_reviewed / total) * 100, 1)
+        return 0
+
+    @classmethod
+    def get_or_create_active_session(cls, user):
+        """Get active session or create new one"""
+        # Check for recent active session (within last 30 minutes)
+        thirty_minutes_ago = timezone.now() - datetime.timedelta(minutes=30)
+        active_session = cls.objects.filter(
+            user=user,
+            is_active=True,
+            started_at__gte=thirty_minutes_ago
+        ).first()
+
+        if active_session:
+            return active_session, False
+
+        # End any stale active sessions
+        cls.objects.filter(user=user, is_active=True).update(
+            is_active=False,
+            ended_at=timezone.now()
+        )
+
+        # Create new session
+        return cls.objects.create(user=user), True
 
 
 # ==============================

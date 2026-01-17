@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Modal } from 'react-bootstrap';
-import { completeFlashcardRevision, postponeFlashcardRevision } from '../../services/api';
+import { completeFlashcardRevision, postponeFlashcardRevision, startStudySession, endStudySession } from '../../services/api';
 import MarkdownRenderer from './MarkdownRenderer';
 import './FlashcardReviewSession.css';
 
@@ -10,6 +10,15 @@ const FlashcardReviewSession = ({ revisions, show, onHide, onComplete, viewMode 
   const [processing, setProcessing] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
+
+  // Time tracking state
+  const [cardStartTime, setCardStartTime] = useState(Date.now());
+  const [sessionId, setSessionId] = useState(null);
+  const [sessionStats, setSessionStats] = useState({
+    totalTimeSeconds: 0,
+    cardsReviewed: 0,
+    cardsPostponed: 0
+  });
 
   const cardRef = useRef(null);
 
@@ -21,8 +30,30 @@ const FlashcardReviewSession = ({ revisions, show, onHide, onComplete, viewMode 
       // Reset state when modal opens
       setCurrentIndex(0);
       setSessionEnded(false);
+      setCardStartTime(Date.now());
+      setSessionStats({
+        totalTimeSeconds: 0,
+        cardsReviewed: 0,
+        cardsPostponed: 0
+      });
+
+      // Start a new study session (only if not in view mode)
+      if (!viewMode) {
+        startStudySession()
+          .then(response => {
+            setSessionId(response.session?.id || null);
+          })
+          .catch(err => {
+            console.warn('Could not start study session:', err);
+          });
+      }
     }
-  }, [show]);
+  }, [show, viewMode]);
+
+  // Reset card start time when navigating to a new card
+  useEffect(() => {
+    setCardStartTime(Date.now());
+  }, [currentIndex]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -89,7 +120,7 @@ const FlashcardReviewSession = ({ revisions, show, onHide, onComplete, viewMode 
     if (currentIndex < revisions.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
-      endSession();
+      handleEndSession();
     }
   };
 
@@ -100,16 +131,29 @@ const FlashcardReviewSession = ({ revisions, show, onHide, onComplete, viewMode 
     try {
       const currentCard = revisions[currentIndex];
 
+      // Calculate time spent on this card (auto-tracked)
+      const timeSpentSeconds = Math.round((Date.now() - cardStartTime) / 1000);
+
       // Only call API if not in practice mode
       if (!currentCard.isPracticeMode) {
-        await completeFlashcardRevision(currentCard.id);
+        await completeFlashcardRevision(currentCard.id, {
+          time_spent_seconds: timeSpentSeconds,
+          session_id: sessionId
+        });
       }
+
+      // Update session stats
+      setSessionStats(prev => ({
+        ...prev,
+        totalTimeSeconds: prev.totalTimeSeconds + timeSpentSeconds,
+        cardsReviewed: prev.cardsReviewed + 1
+      }));
 
       // Move to next card
       if (currentIndex < revisions.length - 1) {
         setCurrentIndex(currentIndex + 1);
       } else {
-        endSession();
+        handleEndSession();
       }
     } catch (error) {
       console.error('Error completing revision:', error);
@@ -125,16 +169,29 @@ const FlashcardReviewSession = ({ revisions, show, onHide, onComplete, viewMode 
     try {
       const currentCard = revisions[currentIndex];
 
+      // Calculate time spent on this card before postponing (auto-tracked)
+      const timeSpentSeconds = Math.round((Date.now() - cardStartTime) / 1000);
+
       // Only call API if not in practice mode
       if (!currentCard.isPracticeMode) {
-        await postponeFlashcardRevision(currentCard.id);
+        await postponeFlashcardRevision(currentCard.id, {
+          time_spent_seconds: timeSpentSeconds,
+          session_id: sessionId
+        });
       }
+
+      // Update session stats
+      setSessionStats(prev => ({
+        ...prev,
+        totalTimeSeconds: prev.totalTimeSeconds + timeSpentSeconds,
+        cardsPostponed: prev.cardsPostponed + 1
+      }));
 
       // Move to next card
       if (currentIndex < revisions.length - 1) {
         setCurrentIndex(currentIndex + 1);
       } else {
-        endSession();
+        handleEndSession();
       }
     } catch (error) {
       console.error('Error postponing revision:', error);
@@ -144,11 +201,33 @@ const FlashcardReviewSession = ({ revisions, show, onHide, onComplete, viewMode 
   };
 
   const handleExit = () => {
-    endSession();
+    handleEndSession();
   };
 
-  const endSession = () => {
+  const handleEndSession = async () => {
+    // End the study session on the backend
+    if (sessionId && !viewMode) {
+      try {
+        await endStudySession(sessionId);
+      } catch (error) {
+        console.warn('Could not end study session:', error);
+      }
+    }
     setSessionEnded(true);
+  };
+
+  // Helper to format time for display
+  const formatTime = (seconds) => {
+    if (seconds < 60) {
+      return `${seconds}s`;
+    } else if (seconds < 3600) {
+      const mins = Math.floor(seconds / 60);
+      return `${mins}m`;
+    } else {
+      const hours = Math.floor(seconds / 3600);
+      const mins = Math.floor((seconds % 3600) / 60);
+      return `${hours}h ${mins}m`;
+    }
   };
 
   const handleCloseSession = () => {
@@ -233,14 +312,15 @@ const FlashcardReviewSession = ({ revisions, show, onHide, onComplete, viewMode 
           <>
             {/* Progress Bar */}
             <div className="flashcard-progress-container">
+              {/* Practice Mode Banner - Always visible at top */}
+              {currentCard.isPracticeMode && (
+                <div className="practice-mode-banner">
+                  <i className="bi bi-arrow-repeat"></i>
+                  <span>Practice Mode</span>
+                </div>
+              )}
               <div className="flashcard-progress-info">
                 <span className="progress-text">
-                  {currentCard.isPracticeMode && (
-                    <span className="badge-practice">
-                      <i className="bi bi-arrow-repeat"></i>
-                      Practice
-                    </span>
-                  )}
                   Card {currentIndex + 1} of {revisions.length}
                 </span>
                 <div className="progress-right">
@@ -271,6 +351,10 @@ const FlashcardReviewSession = ({ revisions, show, onHide, onComplete, viewMode 
               >
                 <div className="flashcard-header">
                   <h3 className="flashcard-title">{cardTitle}</h3>
+                  <span className="flashcard-topic-badge">
+                    <i className="bi bi-folder2"></i>
+                    {topicTitle}
+                  </span>
                 </div>
 
                 <div className="flashcard-content-wrapper">
@@ -289,20 +373,6 @@ const FlashcardReviewSession = ({ revisions, show, onHide, onComplete, viewMode 
                     </div>
                   )}
                 </div>
-
-                <div className="flashcard-meta">
-                  <span className="meta-item">
-                    <i className="bi bi-folder2"></i>
-                    {topicTitle}
-                  </span>
-                  <span className="meta-divider">•</span>
-                  <span className="meta-item">
-                    <i className="bi bi-calendar3"></i>
-                    {currentCard.scheduled_date
-                      ? new Date(currentCard.scheduled_date).toLocaleDateString()
-                      : 'N/A'}
-                  </span>
-                </div>
               </div>
             </div>
 
@@ -320,7 +390,7 @@ const FlashcardReviewSession = ({ revisions, show, onHide, onComplete, viewMode 
 
               <button
                 className="action-btn btn-next"
-                onClick={currentIndex === revisions.length - 1 ? endSession : handleNext}
+                onClick={currentIndex === revisions.length - 1 ? handleEndSession : handleNext}
                 disabled={processing}
                 title={currentIndex === revisions.length - 1 ? "Close" : "Next (→)"}
               >
@@ -341,8 +411,26 @@ const FlashcardReviewSession = ({ revisions, show, onHide, onComplete, viewMode 
             <div className="session-stats">
               <div className="stat-item">
                 <div className="stat-number">{revisions.length}</div>
-                <div className="stat-label">Total Cards Reviewed</div>
+                <div className="stat-label">Total Cards</div>
               </div>
+              {sessionStats.totalTimeSeconds > 0 && (
+                <div className="stat-item">
+                  <div className="stat-number">{formatTime(sessionStats.totalTimeSeconds)}</div>
+                  <div className="stat-label">Study Time</div>
+                </div>
+              )}
+              {sessionStats.cardsReviewed > 0 && (
+                <div className="stat-item">
+                  <div className="stat-number">{sessionStats.cardsReviewed}</div>
+                  <div className="stat-label">Mastered</div>
+                </div>
+              )}
+              {sessionStats.cardsPostponed > 0 && (
+                <div className="stat-item">
+                  <div className="stat-number">{sessionStats.cardsPostponed}</div>
+                  <div className="stat-label">To Review</div>
+                </div>
+              )}
             </div>
 
             <button className="btn-close-session" onClick={handleCloseSession}>

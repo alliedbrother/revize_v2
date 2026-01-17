@@ -1,34 +1,47 @@
 import { useState, useEffect, useContext } from 'react';
 import { Card, Row, Col, Alert, Spinner } from 'react-bootstrap';
 import { useAuth } from '../../context/AuthContext';
-import { getGamificationStats } from '../../services/api';
+import { getGamificationStats, getStudyStats } from '../../services/api';
 import { RefreshContext } from './ModernDashboard';
 import StreakTracker from './StreakTracker';
 import LevelProgress from './LevelProgress';
 import AchievementGrid from './AchievementGrid';
 import DailyGoals from './DailyGoals';
+import StudyTimeCard from './StudyTimeCard';
+import WeeklyHeatmap from './WeeklyHeatmap';
+import CompletionRateCard from './CompletionRateCard';
+import NeedsAttentionCard from './NeedsAttentionCard';
 import './Statistics.css';
 
 const Statistics = () => {
   const [gamificationData, setGamificationData] = useState(null);
+  const [studyStats, setStudyStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const { user } = useAuth();
   const { refreshTrigger } = useContext(RefreshContext);
 
   useEffect(() => {
-    loadGamificationStats();
+    loadAllStats();
   }, [refreshTrigger]);
 
-  const loadGamificationStats = async () => {
+  const loadAllStats = async () => {
     try {
       setLoading(true);
-      const data = await getGamificationStats();
-      setGamificationData(data);
+      // Fetch both gamification stats and study analytics in parallel
+      const [gamificationResponse, studyResponse] = await Promise.all([
+        getGamificationStats(),
+        getStudyStats().catch(err => {
+          console.warn('Study stats not available:', err);
+          return null;
+        })
+      ]);
+      setGamificationData(gamificationResponse);
+      setStudyStats(studyResponse);
       setError('');
     } catch (err) {
-      setError('Failed to load gamification statistics');
-      console.error("Error loading gamification stats:", err);
+      setError('Failed to load statistics');
+      console.error("Error loading stats:", err);
     } finally {
       setLoading(false);
     }
@@ -144,6 +157,41 @@ const Statistics = () => {
           </div>
         </Col>
       </Row>
+
+      {/* Study Analytics Section */}
+      <div className="study-analytics-section">
+        <div className="section-header">
+          <h2 className="section-title">
+            <i className="bi bi-bar-chart-line-fill"></i>
+            Study Analytics
+          </h2>
+          <p className="section-subtitle">Insights from your learning sessions</p>
+        </div>
+
+        <Row className="g-2 mb-3">
+          {/* Study Time Card */}
+          <Col lg={6}>
+            <StudyTimeCard studyStats={studyStats} />
+          </Col>
+
+          {/* Weekly Heatmap */}
+          <Col lg={6}>
+            <WeeklyHeatmap weeklyActivity={studyStats?.weekly_activity} />
+          </Col>
+        </Row>
+
+        <Row className="g-2">
+          {/* Completion Rate Card */}
+          <Col lg={6}>
+            <CompletionRateCard studyStats={studyStats} />
+          </Col>
+
+          {/* Needs Attention Card */}
+          <Col lg={6}>
+            <NeedsAttentionCard cards={studyStats?.needs_attention_cards} />
+          </Col>
+        </Row>
+      </div>
     </div>
   );
 };

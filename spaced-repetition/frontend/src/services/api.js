@@ -165,13 +165,35 @@ export const postponeRevision = async (revisionId) => {
 };
 
 // Flashcard Revisions
-export const completeFlashcardRevision = async (revisionId) => {
-  const response = await api.post(`/flashcard-revisions/${revisionId}/complete/`);
+export const completeFlashcardRevision = async (revisionId, data = {}) => {
+  const response = await api.post(`/flashcard-revisions/${revisionId}/complete/`, data);
   return response.data;
 };
 
-export const postponeFlashcardRevision = async (revisionId) => {
-  const response = await api.post(`/flashcard-revisions/${revisionId}/postpone/`);
+export const postponeFlashcardRevision = async (revisionId, data = {}) => {
+  const response = await api.post(`/flashcard-revisions/${revisionId}/postpone/`, data);
+  return response.data;
+};
+
+// Study Sessions
+export const startStudySession = async () => {
+  const response = await api.post('/study-sessions/start/');
+  return response.data;
+};
+
+export const endStudySession = async (sessionId) => {
+  const response = await api.post(`/study-sessions/${sessionId}/end/`);
+  return response.data;
+};
+
+export const getRecentSessions = async () => {
+  const response = await api.get('/study-sessions/recent/');
+  return response.data;
+};
+
+// Study Analytics
+export const getStudyStats = async () => {
+  const response = await api.get('/study-stats/');
   return response.data;
 };
 

@@ -1,18 +1,16 @@
 /* ===================================
    Markdown Content Renderer Styles
-   Distraction-free reading experience
+   Clean, readable typography with hierarchy
    =================================== */
 
 .md-content {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  font-size: 19px;
-  line-height: 1.9;
+  font-size: 16px;
+  line-height: 1.65;
   color: var(--text-primary);
   word-wrap: break-word;
   overflow-wrap: break-word;
   white-space: normal;
-  padding: 8px;
-  margin: 0 auto;
 }
 
 /* Empty state */
@@ -23,7 +21,7 @@
 }
 
 /* ===================================
-   Headings
+   Headings - Clear hierarchy
    =================================== */
 
 .md-h1,
@@ -32,43 +30,13 @@
 .md-h4,
 .md-h5,
 .md-h6 {
-  margin-top: 40px;
-  margin-bottom: 20px;
-  font-weight: 700;
-  line-height: 1.3;
-  color: var(--color-primary-600);
-  letter-spacing: -0.02em;
-}
-
-.md-h1 {
-  font-size: 32px;
-  font-weight: 800;
-  margin-bottom: 24px;
-}
-.md-h2 {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 22px;
-}
-.md-h3 {
-  font-size: 24px;
-  margin-bottom: 20px;
-}
-.md-h4 {
-  font-size: 20px;
-  margin-bottom: 18px;
-}
-.md-h5 {
-  font-size: 18px;
-  margin-bottom: 16px;
-}
-.md-h6 {
-  font-size: 16px;
   font-weight: 600;
-  margin-bottom: 16px;
+  line-height: 1.3;
+  color: var(--text-primary);
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
 }
 
-/* First heading has less top margin */
 .md-h1:first-child,
 .md-h2:first-child,
 .md-h3:first-child,
@@ -78,15 +46,46 @@
   margin-top: 0;
 }
 
+.md-h1 {
+  font-size: 1.5em;
+  font-weight: 700;
+  color: var(--color-primary-700);
+}
+
+.md-h2 {
+  font-size: 1.3em;
+  font-weight: 600;
+  color: var(--color-primary-600);
+}
+
+.md-h3 {
+  font-size: 1.15em;
+  font-weight: 600;
+}
+
+.md-h4 {
+  font-size: 1.05em;
+  font-weight: 600;
+}
+
+.md-h5 {
+  font-size: 1em;
+  font-weight: 600;
+}
+
+.md-h6 {
+  font-size: 0.95em;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
 /* ===================================
    Paragraphs
    =================================== */
 
 .md-paragraph {
-  margin-bottom: 24px;
-  line-height: 1.9;
-  white-space: normal;
-  display: block;
+  margin: 0 0 0.75em 0;
+  line-height: 1.6;
   color: var(--text-primary);
 }
 
@@ -95,32 +94,31 @@
 }
 
 /* ===================================
-   Text Formatting
+   Text Formatting - Strong emphasis
    =================================== */
 
 .md-strong {
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-primary);
 }
 
 .md-em {
   font-style: italic;
-  color: var(--text-primary);
 }
 
 /* ===================================
-   Lists
+   Lists - Compact and readable
    =================================== */
 
 .md-list,
 .md-list-ordered {
-  margin: 24px 0;
-  padding-left: 32px;
+  margin: 0.5em 0;
+  padding-left: 1.5em;
 }
 
 .md-list-item {
-  margin-bottom: 12px;
-  line-height: 1.8;
+  margin-bottom: 0.35em;
+  line-height: 1.5;
   color: var(--text-primary);
 }
 
@@ -133,32 +131,29 @@
 .md-list-ordered .md-list-ordered,
 .md-list .md-list-ordered,
 .md-list-ordered .md-list {
-  margin-top: 12px;
-  margin-bottom: 12px;
+  margin-top: 0.25em;
+  margin-bottom: 0.25em;
 }
 
 /* ===================================
-   Code
+   Code - Inline and Block
    =================================== */
 
 .md-code-inline {
-  background-color: var(--bg-elevated);
-  padding: 3px 8px;
+  background-color: var(--bg-tertiary);
+  padding: 2px 6px;
   border-radius: 4px;
-  font-family: 'SF Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
   font-size: 0.9em;
   color: var(--color-primary-700);
-  border: 1px solid var(--border-primary);
-  display: inline;
-  white-space: pre-wrap;
 }
 
 .md-pre {
-  background-color: var(--bg-elevated);
-  padding: 20px;
-  border-radius: 8px;
+  background-color: var(--bg-tertiary);
+  padding: 12px 14px;
+  border-radius: 6px;
   overflow-x: auto;
-  margin: 24px 0;
+  margin: 0.75em 0;
   border: 1px solid var(--border-primary);
 }
 
@@ -167,9 +162,9 @@
   padding: 0;
   border: none;
   color: var(--text-primary);
-  font-family: 'SF Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
-  font-size: 0.9em;
-  line-height: 1.6;
+  font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
+  font-size: 0.85em;
+  line-height: 1.5;
   display: block;
 }
 
@@ -178,17 +173,17 @@
    =================================== */
 
 .md-quote {
-  border-left: 4px solid var(--color-primary-500);
-  padding: 16px 24px;
-  margin: 24px 0;
-  background-color: var(--bg-elevated);
-  border-radius: 0 6px 6px 0;
+  border-left: 3px solid var(--color-primary-400);
+  padding: 8px 14px;
+  margin: 0.75em 0;
+  background-color: var(--bg-tertiary);
+  border-radius: 0 4px 4px 0;
   color: var(--text-secondary);
   font-style: italic;
 }
 
 .md-quote .md-paragraph {
-  margin-bottom: 12px;
+  margin-bottom: 0.5em;
 }
 
 .md-quote .md-paragraph:last-child {
@@ -201,15 +196,14 @@
 
 .md-link {
   color: var(--color-primary-600);
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 2px;
-  transition: all 0.2s ease;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.15s ease;
 }
 
 .md-link:hover {
   color: var(--color-primary-700);
-  text-decoration: none;
+  border-bottom-color: var(--color-primary-500);
 }
 
 /* ===================================
@@ -218,8 +212,8 @@
 
 .md-hr {
   border: none;
-  border-top: 2px solid var(--border-secondary);
-  margin: 40px 0;
+  border-top: 1px solid var(--border-secondary);
+  margin: 1em 0;
 }
 
 /* ===================================
@@ -228,33 +222,40 @@
 
 .md-table-wrapper {
   overflow-x: auto;
-  margin: 24px 0;
-  border-radius: 8px;
+  margin: 0.75em 0;
+  border-radius: 6px;
   border: 1px solid var(--border-primary);
 }
 
 .md-table {
   border-collapse: collapse;
   width: 100%;
-  font-size: 17px;
+  font-size: 0.9em;
 }
 
 .md-table th,
 .md-table td {
-  padding: 12px 16px;
+  padding: 8px 12px;
   border: 1px solid var(--border-primary);
   text-align: left;
-  color: var(--text-primary);
 }
 
 .md-table th {
-  background-color: var(--bg-elevated);
+  background-color: var(--bg-tertiary);
   font-weight: 600;
-  color: var(--text-primary);
 }
 
 .md-table tr:nth-child(even) {
   background-color: var(--bg-elevated);
+}
+
+/* ===================================
+   Dark Mode
+   =================================== */
+
+body.dark-theme .md-code-inline {
+  background-color: var(--bg-elevated);
+  color: var(--color-accent-400);
 }
 
 /* ===================================
@@ -263,59 +264,31 @@
 
 @media (max-width: 768px) {
   .md-content {
-    font-size: 17px;
-    max-width: 100%;
-    padding: 0 8px;
+    font-size: 13px;
   }
 
-  .md-h1 { font-size: 26px; }
-  .md-h2 { font-size: 22px; }
-  .md-h3 { font-size: 20px; }
-  .md-h4 { font-size: 18px; }
-  .md-h5 { font-size: 16px; }
-  .md-h6 { font-size: 15px; }
+  .md-h1 { font-size: 1.4em; }
+  .md-h2 { font-size: 1.2em; }
+  .md-h3 { font-size: 1.1em; }
 
   .md-pre {
-    padding: 16px;
-    font-size: 14px;
-  }
-
-  .md-table {
-    font-size: 15px;
-  }
-
-  .md-table th,
-  .md-table td {
     padding: 10px 12px;
+    font-size: 12px;
   }
 
   .md-list,
   .md-list-ordered {
-    padding-left: 24px;
+    padding-left: 1.25em;
   }
 }
 
 @media (max-width: 480px) {
   .md-content {
-    font-size: 16px;
-    line-height: 1.8;
+    font-size: 13px;
+    line-height: 1.55;
   }
 
   .md-paragraph {
-    margin-bottom: 20px;
-  }
-
-  .md-h1,
-  .md-h2,
-  .md-h3,
-  .md-h4,
-  .md-h5,
-  .md-h6 {
-    margin-top: 32px;
-    margin-bottom: 16px;
-  }
-
-  .md-pre {
-    padding: 12px;
+    margin-bottom: 0.6em;
   }
 }

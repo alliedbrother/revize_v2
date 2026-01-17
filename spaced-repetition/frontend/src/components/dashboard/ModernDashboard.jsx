@@ -1,15 +1,12 @@
-import React, { useState, createContext, useEffect } from 'react';
+import React, { useState, createContext } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useTheme } from '../../context/ThemeContext';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import './ModernDashboard.css';
 
 // Import existing components
 import AddTopicCard from '../topics/AddTopicCard';
-import TodaysRevisionsList from '../topics/TodaysRevisionsList';
 import AllTopics from '../topics/AllTopics';
 import Statistics from '../dashboard/Statistics';
-import WaveBottom from '../common/WaveBottom';
 import FlashcardReviewArea from '../flashcards/FlashcardReviewArea';
 
 // Create a context for triggering data refresh
@@ -17,7 +14,6 @@ export const RefreshContext = createContext();
 
 const ModernDashboard = () => {
   const { user, logout } = useAuth();
-  const { isDarkMode } = useTheme();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -34,60 +30,70 @@ const ModernDashboard = () => {
     setRefreshTrigger(prev => prev + 1);
   };
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
+    return 'Good evening';
+  };
+
   return (
     <RefreshContext.Provider value={{ refreshTrigger, triggerRefresh }}>
-      <div className="modern-dashboard">
+      <div className="zen-dashboard">
         {/* Header */}
-        <header className="dashboard-header">
-          <div className="header-content">
-            <div className="header-left">
-              <h1 className="welcome-message">
-                Welcome back, {user?.first_name || user?.username || 'Student'}!
+        <header className="dash-header">
+          <div className="dash-header-content">
+            <div className="dash-header-left">
+              <h1 className="dash-greeting">
+                {getGreeting()}, <span className="dash-name">{user?.first_name || user?.username || 'Scholar'}</span>
               </h1>
-              <p className="header-subtitle">Ready to continue your learning journey?</p>
+              <p className="dash-subtitle">Ready to strengthen your knowledge?</p>
             </div>
-            <div className="header-right">
-              <div className="user-menu">
-                <div className="user-avatar">
-                  <img
-                    src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.username || 'U'}&background=3b82f6&color=fff`}
-                    alt="User Avatar"
-                  />
-                </div>
-                <div className="user-info">
-                  <button className="logout-btn" onClick={handleLogout}>
-                    Logout
-                  </button>
-                </div>
-              </div>
+
+            <div className="dash-header-right">
+              {/* Profile Link */}
+              <Link to="/profile" className="dash-avatar">
+                <img
+                  src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.username || 'U'}&background=d4a853&color=1a1f36&bold=true`}
+                  alt="Profile"
+                />
+              </Link>
+
+              {/* Logout */}
+              <button className="dash-logout" onClick={handleLogout}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+                </svg>
+                <span>Sign out</span>
+              </button>
             </div>
           </div>
         </header>
 
         {/* Main Content */}
-        <main className="dashboard-main">
+        <main className="dash-main">
           {activeTab === 'today' && (
-            <div className="today-learning-layout">
-              {/* Left 70% - Flashcard Review Area */}
-              <div className="flashcard-review-section">
+            <div className="dash-today-layout">
+              {/* Left - Flashcard Review Area */}
+              <div className="dash-review-section">
                 <FlashcardReviewArea />
               </div>
 
-              {/* Right 30% - Add Topic Card */}
-              <div className="add-topic-section">
+              {/* Right - Add Topic Card */}
+              <div className="dash-sidebar-section">
                 <AddTopicCard />
               </div>
             </div>
           )}
 
           {activeTab === 'topics' && (
-            <div className="topics-view">
+            <div className="dash-topics-view">
               <AllTopics />
             </div>
           )}
 
           {activeTab === 'stats' && (
-            <div className="stats-view">
+            <div className="dash-stats-view">
               <Statistics />
             </div>
           )}
@@ -97,4 +103,4 @@ const ModernDashboard = () => {
   );
 };
 
-export default ModernDashboard; 
+export default ModernDashboard;

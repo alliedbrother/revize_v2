@@ -1,4 +1,5 @@
 from django.urls import path, include
+from django.http import JsonResponse
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenRefreshView
 from .views import (
@@ -29,16 +30,27 @@ from .views import (
     DailyGoalViewSet,
     UserCreditView,
     PromoCodeRedeemView,
-    CreditUsageLogViewSet
+    CreditUsageLogViewSet,
+    # Study Analytics
+    StudySessionViewSet,
+    StudyStatsView
 )
+
+# Health check endpoint for load balancer and Docker health checks
+def health_check(request):
+    return JsonResponse({'status': 'healthy', 'service': 'revize-backend'})
 
 router = DefaultRouter()
 router.register(r'topics', TopicViewSet, basename='topic')
 router.register(r'statistics', StatisticsViewSet, basename='statistics')
 router.register(r'gamification/achievements', AchievementViewSet, basename='achievement')
 router.register(r'gamification/goals', DailyGoalViewSet, basename='daily-goal')
+router.register(r'study-sessions', StudySessionViewSet, basename='study-session')
 
 urlpatterns = [
+    # Health check endpoint (no auth required)
+    path('health/', health_check, name='health-check'),
+
     # Authentication endpoints
     path('login/', CustomObtainAuthToken.as_view(), name='api_token_auth'),
     path('register/', RegisterUser.as_view(), name='register'),
@@ -80,6 +92,9 @@ urlpatterns = [
     path('credits/', UserCreditView.as_view(), name='user-credits'),
     path('credits/redeem/', PromoCodeRedeemView.as_view(), name='redeem-promo'),
     path('credits/history/', CreditUsageLogViewSet.as_view({'get': 'list'}), name='credit-history'),
+
+    # Study Analytics endpoints
+    path('study-stats/', StudyStatsView.as_view(), name='study-stats'),
 
     # Include routers last to avoid conflicts
     path('', include(router.urls)),

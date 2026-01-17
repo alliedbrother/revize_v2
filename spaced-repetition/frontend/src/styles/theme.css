@@ -51,12 +51,15 @@ body {
   --timer-button-text: #00d4aa;
   --timer-button-hover: #f8fafc;
   
-  /* Sidebar colors (always dark for contrast) */
-  --sidebar-bg: #1e293b;
-  --sidebar-text: #ffffff;
-  --sidebar-text-secondary: #94a3b8;
-  --sidebar-active: #00d4aa;
-  --sidebar-hover: #334155;
+  /* Sidebar colors - Modern Minimal Light Theme */
+  --sidebar-bg: #fafafa;
+  --sidebar-border: #e5e5e5;
+  --sidebar-text: #525252;
+  --sidebar-text-secondary: #737373;
+  --sidebar-text-hover: #171717;
+  --sidebar-active: #414f82;
+  --sidebar-active-bg: #f0f0f0;
+  --sidebar-hover: #f5f5f5;
   
   /* Professional spacing and borders */
   --spacing-xs: 8px;
@@ -129,12 +132,15 @@ body.dark-theme {
   --timer-button-text: #00d4aa;
   --timer-button-hover: #f8fafc;
   
-  /* Sidebar colors (same as main background) */
-  --sidebar-bg: #1e293b;
-  --sidebar-text: #ffffff;
-  --sidebar-text-secondary: #94a3b8;
+  /* Sidebar colors - Modern Minimal Dark Theme */
+  --sidebar-bg: #1a1a1a;
+  --sidebar-border: #2a2a2a;
+  --sidebar-text: #a3a3a3;
+  --sidebar-text-secondary: #737373;
+  --sidebar-text-hover: #fafafa;
   --sidebar-active: #00d4aa;
-  --sidebar-hover: #334155;
+  --sidebar-active-bg: #262626;
+  --sidebar-hover: #262626;
   
   /* Gradient variables */
   --gradient-cyan: #00d4aa;
@@ -650,28 +656,8 @@ input[type="radio"] {
   padding: var(--spacing-md);
 }
 
-/* Sidebar Styling */
-.sidebar {
-  background-color: var(--sidebar-bg);
-  color: var(--sidebar-text);
-}
-
-.sidebar .nav-item {
-  color: var(--sidebar-text-secondary);
-  transition: var(--hover-transition);
-  border-radius: var(--border-radius-sm);
-  margin: var(--spacing-xs) 0;
-}
-
-.sidebar .nav-item:hover {
-  background-color: var(--sidebar-hover) !important;
-  color: var(--sidebar-text) !important;
-}
-
-.sidebar .nav-item.active {
-  background-color: var(--sidebar-active) !important;
-  color: var(--sidebar-text) !important;
-}
+/* Sidebar Styling - Now handled in Sidebar.css with scoped variables */
+/* Minimal overrides for theme.css compatibility */
 
 /* Wave Bottom component theming */
 .wave-bottom .wave-path {
@@ -851,4 +837,104 @@ body.dark-theme select {
 body.dark-theme label,
 body.dark-theme .form-label {
   color: var(--text-primary);
+}
+
+/* ===================================
+   Bootstrap Modal Animation Fix
+   Prevents jump from top to center
+   =================================== */
+
+/* Override Bootstrap's default slide animation with scale + fade */
+.modal.fade .modal-dialog {
+  transform: scale(0.95);
+  opacity: 0;
+  transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+}
+
+.modal.show .modal-dialog {
+  transform: scale(1);
+  opacity: 1;
+}
+
+/* Ensure modal is vertically centered */
+.modal-dialog {
+  display: flex;
+  align-items: center;
+  min-height: calc(100% - 1rem);
+  margin: 0.5rem auto;
+}
+
+@media (min-width: 576px) {
+  .modal-dialog {
+    min-height: calc(100% - 3.5rem);
+    margin: 1.75rem auto;
+  }
+}
+
+/* Modal content styling */
+.modal-content {
+  width: 100%;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+}
+
+.modal-header {
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-primary);
+  padding: var(--spacing-3) var(--spacing-4);
+}
+
+.modal-header .modal-title {
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+
+.modal-header .btn-close {
+  opacity: 0.6;
+  transition: opacity var(--transition-base);
+}
+
+.modal-header .btn-close:hover {
+  opacity: 1;
+}
+
+.modal-body {
+  padding: var(--spacing-4);
+  color: var(--text-primary);
+}
+
+.modal-footer {
+  padding: var(--spacing-3) var(--spacing-4);
+  border-top: 1px solid var(--border-primary);
+}
+
+/* Modal backdrop */
+.modal-backdrop.show {
+  opacity: 0.5;
+}
+
+/* Dark mode modal */
+body.dark-theme .modal-content {
+  background-color: var(--bg-elevated);
+  border-color: var(--border-primary);
+}
+
+body.dark-theme .modal-header {
+  background-color: var(--bg-elevated);
+  border-bottom-color: var(--border-primary);
+}
+
+body.dark-theme .modal-body {
+  background-color: var(--bg-elevated);
+}
+
+body.dark-theme .modal-footer {
+  background-color: var(--bg-elevated);
+  border-top-color: var(--border-primary);
+}
+
+body.dark-theme .modal-header .btn-close {
+  filter: invert(1);
 }

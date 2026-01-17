@@ -47,7 +47,7 @@ const MainLayout = ({ children }) => {
     if (isMobile) {
       return '100%';
     }
-    return isSidebarCollapsed ? 'calc(100% - 80px)' : 'calc(100% - 280px)';
+    return isSidebarCollapsed ? 'calc(100% - 64px)' : 'calc(100% - 240px)';
   };
 
   // Calculate content margin based on sidebar state
@@ -55,7 +55,7 @@ const MainLayout = ({ children }) => {
     if (isMobile) {
       return '0';
     }
-    return isSidebarCollapsed ? '80px' : '280px';
+    return isSidebarCollapsed ? '64px' : '240px';
   };
 
   return (

@@ -28,8 +28,9 @@ RUN mkdir -p /app/logs
 # Create media directory
 RUN mkdir -p /app/media
 
-# Collect static files
-RUN python manage.py collectstatic --noinput --clear || true
+# Copy and setup entrypoint script
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 
 # Create non-root user for security
 RUN adduser --disabled-password --gecos '' appuser && \
@@ -40,8 +41,11 @@ USER appuser
 EXPOSE 8000
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:8000/api/health/ || exit 1
+
+# Entrypoint runs migrations and collectstatic
+ENTRYPOINT ["/docker-entrypoint.sh"]
 
 # Run gunicorn
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "--threads", "2", "--timeout", "120", "spaced_repetition.wsgi:application"]

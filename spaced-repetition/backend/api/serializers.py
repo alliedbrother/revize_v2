@@ -2,7 +2,8 @@ from rest_framework import serializers
 from .models import (
     Topic, RevisionSchedule, FlashCard, FlashCardRevisionSchedule,
     UserStreak, Achievement, UserAchievement, UserLevel, DailyGoal,
-    UserCredit, PromoCode, PromoCodeRedemption, CreditUsageLog
+    UserCredit, PromoCode, PromoCodeRedemption, CreditUsageLog,
+    StudySession
 )
 from django.contrib.auth.models import User
 import datetime
@@ -209,8 +210,8 @@ class FlashCardRevisionScheduleSimpleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FlashCardRevisionSchedule
-        fields = ['id', 'scheduled_date', 'completed', 'postponed', 'day_number']
-        read_only_fields = ['completed', 'postponed']
+        fields = ['id', 'scheduled_date', 'completed', 'postponed', 'day_number', 'completed_at', 'time_spent_seconds']
+        read_only_fields = ['completed', 'postponed', 'completed_at', 'time_spent_seconds']
 
     def get_day_number(self, obj):
         # Get all revisions for this flashcard, ordered by scheduled date
@@ -226,11 +227,20 @@ class FlashCardRevisionScheduleSimpleSerializer(serializers.ModelSerializer):
 class FlashCardSerializer(serializers.ModelSerializer):
     """Serializer for FlashCard with nested revisions"""
     revisions = FlashCardRevisionScheduleSimpleSerializer(many=True, read_only=True)
+    average_time_seconds = serializers.SerializerMethodField()
 
     class Meta:
         model = FlashCard
-        fields = ['id', 'topic', 'title', 'content', 'order', 'revisions', 'created_at', 'updated_at']
-        read_only_fields = ['created_at', 'updated_at']
+        fields = [
+            'id', 'topic', 'title', 'content', 'order', 'revisions',
+            'times_reviewed', 'times_postponed', 'total_time_spent_seconds',
+            'average_time_seconds', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['created_at', 'updated_at', 'times_reviewed', 'times_postponed', 'total_time_spent_seconds']
+
+    def get_average_time_seconds(self, obj):
+        """Get average time spent per review"""
+        return obj.get_average_time_seconds()
 
 
 class FlashCardRevisionScheduleSerializer(serializers.ModelSerializer):
@@ -240,8 +250,8 @@ class FlashCardRevisionScheduleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FlashCardRevisionSchedule
-        fields = ['id', 'flashcard', 'scheduled_date', 'completed', 'postponed', 'day_number']
-        read_only_fields = ['completed', 'postponed']
+        fields = ['id', 'flashcard', 'scheduled_date', 'completed', 'postponed', 'day_number', 'completed_at', 'time_spent_seconds']
+        read_only_fields = ['completed', 'postponed', 'completed_at', 'time_spent_seconds']
 
     def get_day_number(self, obj):
         revisions = FlashCardRevisionSchedule.objects.filter(
@@ -583,3 +593,78 @@ class ProfilePictureUploadSerializer(serializers.Serializer):
             raise serializers.ValidationError("Profile picture must be JPG, PNG, or WEBP format")
 
         return value
+
+
+# ==============================
+# STUDY ANALYTICS SERIALIZERS
+# ==============================
+
+class StudySessionSerializer(serializers.ModelSerializer):
+    """Serializer for study sessions"""
+    completion_rate = serializers.ReadOnlyField()
+    duration_formatted = serializers.SerializerMethodField()
+
+    class Meta:
+        model = StudySession
+        fields = [
+            'id', 'started_at', 'ended_at', 'cards_reviewed', 'cards_postponed',
+            'total_time_seconds', 'is_active', 'completion_rate', 'duration_formatted'
+        ]
+        read_only_fields = fields
+
+    def get_duration_formatted(self, obj):
+        """Format duration as human readable string"""
+        seconds = obj.total_time_seconds
+        if seconds < 60:
+            return f"{seconds}s"
+        elif seconds < 3600:
+            minutes = seconds // 60
+            return f"{minutes}m"
+        else:
+            hours = seconds // 3600
+            minutes = (seconds % 3600) // 60
+            return f"{hours}h {minutes}m"
+
+
+class StudyStatsSerializer(serializers.Serializer):
+    """Serializer for comprehensive study statistics"""
+    # Time-based stats
+    study_time_today_seconds = serializers.IntegerField()
+    study_time_today_formatted = serializers.CharField()
+    study_time_week_seconds = serializers.IntegerField()
+    study_time_week_formatted = serializers.CharField()
+    avg_session_length_seconds = serializers.IntegerField()
+    avg_session_length_formatted = serializers.CharField()
+    avg_time_per_card_seconds = serializers.FloatField()
+
+    # Card-based stats
+    cards_reviewed_today = serializers.IntegerField()
+    cards_postponed_today = serializers.IntegerField()
+    cards_reviewed_week = serializers.IntegerField()
+    cards_postponed_week = serializers.IntegerField()
+    total_cards_reviewed = serializers.IntegerField()
+    total_cards_postponed = serializers.IntegerField()
+
+    # Completion rate
+    completion_rate_today = serializers.FloatField()
+    completion_rate_week = serializers.FloatField()
+    completion_rate_all_time = serializers.FloatField()
+
+    # Weekly heatmap data (activity by day)
+    weekly_activity = serializers.ListField()
+
+    # Cards needing attention (frequently postponed)
+    needs_attention_cards = serializers.ListField()
+
+    # Recent sessions
+    recent_sessions = StudySessionSerializer(many=True)
+
+
+class NeedsAttentionCardSerializer(serializers.Serializer):
+    """Serializer for cards that need attention"""
+    id = serializers.IntegerField()
+    title = serializers.CharField()
+    topic_title = serializers.CharField()
+    times_postponed = serializers.IntegerField()
+    times_reviewed = serializers.IntegerField()
+    postpone_rate = serializers.FloatField()

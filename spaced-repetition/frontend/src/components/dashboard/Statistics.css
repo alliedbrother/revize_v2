@@ -5,6 +5,29 @@
 .statistics-container {
   padding: 0;
   animation: fadeIn 0.4s ease-out;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* Prevent Bootstrap row negative margins from causing overflow */
+.statistics-container .row {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.statistics-container .row > [class*="col-"] {
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.statistics-container .row > [class*="col-"]:first-child {
+  padding-left: 0;
+}
+
+.statistics-container .row > [class*="col-"]:last-child {
+  padding-right: 0;
 }
 
 /* Hero Banner with Gradient Background */
@@ -74,6 +97,8 @@
   line-height: 1.2;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   letter-spacing: -0.5px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .stats-hero-subtitle {
@@ -379,5 +404,62 @@ body.dark-theme .quick-stat:hover {
 
   .quick-stat:hover {
     transform: none;
+  }
+}
+
+/* ================================================
+   Study Analytics Section
+   ================================================ */
+
+.study-analytics-section {
+  margin-top: var(--spacing-xl, 32px);
+  padding-top: var(--spacing-xl, 32px);
+  border-top: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.1));
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.section-header {
+  margin-bottom: var(--spacing-lg, 24px);
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm, 8px);
+  font-size: var(--font-size-xl, 1.25rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-xs, 4px) 0;
+}
+
+.section-title i {
+  font-size: 1.25rem;
+  color: var(--accent-primary, #6366f1);
+}
+
+.section-subtitle {
+  font-size: var(--font-size-sm, 0.875rem);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Dark Mode Support for Analytics Section */
+body.dark-theme .study-analytics-section {
+  border-top-color: var(--border-subtle, rgba(255, 255, 255, 0.1));
+}
+
+/* Responsive adjustments for analytics section */
+@media (max-width: 768px) {
+  .study-analytics-section {
+    margin-top: var(--spacing-lg, 24px);
+    padding-top: var(--spacing-lg, 24px);
+  }
+
+  .section-title {
+    font-size: var(--font-size-lg, 1.125rem);
+  }
+
+  .section-subtitle {
+    font-size: var(--font-size-xs, 0.75rem);
   }
 }

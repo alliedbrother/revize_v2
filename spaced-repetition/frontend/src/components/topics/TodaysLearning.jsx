@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Container, Button } from 'react-bootstrap';
 import AddTopicModal from './AddTopicModal';
-import PomodoroTimer from '../pomodoro/PomodoroTimer';
 import './TodaysLearning.css';
 
 const TodaysLearning = () => {
@@ -11,9 +10,7 @@ const TodaysLearning = () => {
     <div className="todays-learning-container">
       {/* Timer Container */}
       <Container fluid className="timer-container">
-        <PomodoroTimer />
-        
-        {/* Add Topic Button on Timer */}
+        {/* Add Topic Button */}
             <Button 
           className="timer-add-btn"
               variant="primary" 

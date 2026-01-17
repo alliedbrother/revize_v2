@@ -4,7 +4,6 @@ import { useAuth } from '../../context/AuthContext';
 import { createTopic, uploadDocument, uploadImages, uploadLink, userService } from '../../services/api';
 import { RefreshContext } from '../dashboard/ModernDashboard';
 import { getCurrentDateString } from '../../utils/dateUtils';
-import PomodoroTimer from '../pomodoro/PomodoroTimer';
 import './AddTopicCard.css';
 
 const AddTopicCard = () => {
@@ -21,7 +20,6 @@ const AddTopicCard = () => {
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState('');
   const [isDragging, setIsDragging] = useState(false);
-  const [isPomodoroCollapsed, setIsPomodoroCollapsed] = useState(true);
   const [credits, setCredits] = useState({ available_credits: 0, unlimited_access: false });
   const [creditsLoading, setCreditsLoading] = useState(true);
 
@@ -30,10 +28,6 @@ const AddTopicCard = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
   const dateInputRef = useRef(null);
-
-  const handleTogglePomodoroCollapse = () => {
-    setIsPomodoroCollapsed(prev => !prev);
-  };
 
   // Fetch credits function (can be called on mount and after flashcard generation)
   const fetchCredits = async () => {
@@ -701,15 +695,6 @@ const AddTopicCard = () => {
         </button>
       </form>
           </div>
-        </div>
-
-        {/* Bottom Section: Pomodoro Timer */}
-        <div className={`add-topic-bottom-section ${isPomodoroCollapsed ? 'collapsed' : ''}`}>
-          <PomodoroTimer
-            compact={true}
-            collapsed={isPomodoroCollapsed}
-            onToggleCollapse={handleTogglePomodoroCollapse}
-          />
         </div>
       </div>
     </div>

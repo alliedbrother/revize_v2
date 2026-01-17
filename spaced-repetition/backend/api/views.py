@@ -9,7 +9,8 @@ from django.contrib.auth.models import User
 from .models import (
     Topic, RevisionSchedule, FlashCard, FlashCardRevisionSchedule,
     UserStreak, Achievement, UserAchievement, UserLevel, DailyGoal,
-    UserCredit, PromoCode, PromoCodeRedemption, CreditUsageLog
+    UserCredit, PromoCode, PromoCodeRedemption, CreditUsageLog,
+    StudySession
 )
 from .serializers import (
     TopicSerializer, TopicCreateSerializer, UserSerializer,
@@ -19,7 +20,7 @@ from .serializers import (
     LinkUploadSerializer, UserStreakSerializer, AchievementSerializer,
     UserAchievementSerializer, UserLevelSerializer, DailyGoalSerializer,
     GamificationStatsSerializer, UserCreditSerializer, PromoCodeRedeemSerializer,
-    CreditUsageLogSerializer
+    CreditUsageLogSerializer, StudySessionSerializer, StudyStatsSerializer
 )
 from django.utils import timezone
 import datetime
@@ -582,9 +583,35 @@ class FlashCardRevisionScheduleViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'])
     def complete(self, request, pk=None):
-        """Mark a flashcard revision as completed and trigger gamification updates"""
+        """Mark a flashcard revision as completed and trigger gamification updates
+
+        Accepts optional JSON body:
+        {
+            "time_spent_seconds": 15,  // Time spent on this card (auto-tracked by frontend)
+            "session_id": 123          // Optional session ID to update
+        }
+        """
         revision = self.get_object()
-        revision.complete()
+
+        # Get time spent from request body (auto-tracked by frontend)
+        time_spent_seconds = request.data.get('time_spent_seconds')
+        if time_spent_seconds is not None:
+            try:
+                time_spent_seconds = int(time_spent_seconds)
+            except (ValueError, TypeError):
+                time_spent_seconds = None
+
+        # Complete the revision with timing data
+        revision.complete(time_spent_seconds=time_spent_seconds)
+
+        # Update study session if provided
+        session_id = request.data.get('session_id')
+        if session_id:
+            try:
+                session = StudySession.objects.get(id=session_id, user=request.user, is_active=True)
+                session.add_reviewed_card(time_spent_seconds or 0)
+            except StudySession.DoesNotExist:
+                pass  # Session not found or not active, ignore
 
         # Trigger gamification updates
         from .gamification_service import process_revision_completion
@@ -598,9 +625,28 @@ class FlashCardRevisionScheduleViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'])
     def postpone(self, request, pk=None):
-        """Postpone a flashcard revision"""
+        """Postpone a flashcard revision
+
+        Accepts optional JSON body:
+        {
+            "time_spent_seconds": 5,   // Time spent before postponing (auto-tracked)
+            "session_id": 123          // Optional session ID to update
+        }
+        """
         revision = self.get_object()
         revision.postpone()
+
+        # Update study session if provided
+        session_id = request.data.get('session_id')
+        time_spent_seconds = request.data.get('time_spent_seconds', 0)
+        if session_id:
+            try:
+                time_spent = int(time_spent_seconds) if time_spent_seconds else 0
+                session = StudySession.objects.get(id=session_id, user=request.user, is_active=True)
+                session.add_postponed_card(time_spent)
+            except (StudySession.DoesNotExist, ValueError, TypeError):
+                pass  # Session not found or invalid data, ignore
+
         serializer = self.get_serializer(revision)
         return Response(serializer.data)
 
@@ -1411,6 +1457,239 @@ class DailyGoalViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(goals, many=True)
         return Response(serializer.data)
+
+
+# ==============================
+# STUDY ANALYTICS VIEWS
+# ==============================
+
+class StudySessionViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for managing study sessions.
+    Sessions are automatically created when users start reviewing flashcards.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = StudySessionSerializer
+
+    def get_queryset(self):
+        return StudySession.objects.filter(user=self.request.user)
+
+    @action(detail=False, methods=['post'])
+    def start(self, request):
+        """Start a new study session or get existing active session"""
+        session, created = StudySession.get_or_create_active_session(request.user)
+        serializer = self.get_serializer(session)
+        return Response({
+            'session': serializer.data,
+            'created': created
+        }, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+
+    @action(detail=True, methods=['post'])
+    def end(self, request, pk=None):
+        """End a study session"""
+        session = self.get_object()
+        if session.is_active:
+            session.end_session()
+        serializer = self.get_serializer(session)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'])
+    def recent(self, request):
+        """Get recent study sessions (last 7 days)"""
+        week_ago = timezone.now() - timedelta(days=7)
+        sessions = StudySession.objects.filter(
+            user=request.user,
+            started_at__gte=week_ago
+        ).order_by('-started_at')[:10]
+        serializer = self.get_serializer(sessions, many=True)
+        return Response(serializer.data)
+
+
+class StudyStatsView(APIView):
+    """
+    API endpoint that returns comprehensive study statistics.
+    All data is passively tracked - no additional user input required.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        today = timezone.now().date()
+        week_ago = today - timedelta(days=7)
+
+        # Helper function to format time
+        def format_time(seconds):
+            if seconds < 60:
+                return f"{int(seconds)}s"
+            elif seconds < 3600:
+                minutes = seconds // 60
+                return f"{int(minutes)}m"
+            else:
+                hours = seconds // 3600
+                minutes = (seconds % 3600) // 60
+                return f"{int(hours)}h {int(minutes)}m"
+
+        # Get flashcard revision data
+        all_revisions = FlashCardRevisionSchedule.objects.filter(
+            flashcard__topic__user=user
+        )
+
+        # Today's stats
+        today_revisions = all_revisions.filter(completed_at__date=today)
+        today_completed = today_revisions.filter(completed=True)
+        today_postponed = all_revisions.filter(
+            postponed=True,
+            updated_at__date=today
+        )
+
+        study_time_today = sum(
+            r.time_spent_seconds or 0 for r in today_completed
+        )
+        cards_reviewed_today = today_completed.count()
+        cards_postponed_today = today_postponed.count()
+
+        # Week's stats
+        week_completed = all_revisions.filter(
+            completed=True,
+            completed_at__date__gte=week_ago
+        )
+        week_postponed = all_revisions.filter(
+            postponed=True,
+            updated_at__date__gte=week_ago
+        )
+
+        study_time_week = sum(
+            r.time_spent_seconds or 0 for r in week_completed
+        )
+        cards_reviewed_week = week_completed.count()
+        cards_postponed_week = week_postponed.count()
+
+        # All-time stats
+        total_completed = all_revisions.filter(completed=True)
+        total_postponed = all_revisions.filter(postponed=True)
+        total_cards_reviewed = total_completed.count()
+        total_cards_postponed = total_postponed.count()
+        total_study_time = sum(
+            r.time_spent_seconds or 0 for r in total_completed
+        )
+
+        # Average time per card
+        avg_time_per_card = (
+            total_study_time / total_cards_reviewed
+            if total_cards_reviewed > 0 else 0
+        )
+
+        # Session stats
+        week_sessions = StudySession.objects.filter(
+            user=user,
+            started_at__date__gte=week_ago,
+            is_active=False
+        )
+        total_session_time = sum(s.total_time_seconds for s in week_sessions)
+        session_count = week_sessions.count()
+        avg_session_length = (
+            total_session_time // session_count if session_count > 0 else 0
+        )
+
+        # Completion rates
+        def calc_completion_rate(completed, postponed):
+            total = completed + postponed
+            return round((completed / total) * 100, 1) if total > 0 else 0
+
+        completion_rate_today = calc_completion_rate(
+            cards_reviewed_today, cards_postponed_today
+        )
+        completion_rate_week = calc_completion_rate(
+            cards_reviewed_week, cards_postponed_week
+        )
+        completion_rate_all_time = calc_completion_rate(
+            total_cards_reviewed, total_cards_postponed
+        )
+
+        # Weekly activity (last 7 days heatmap data)
+        weekly_activity = []
+        for i in range(7):
+            day = today - timedelta(days=6-i)
+            day_completed = all_revisions.filter(
+                completed=True,
+                completed_at__date=day
+            ).count()
+            day_time = sum(
+                r.time_spent_seconds or 0
+                for r in all_revisions.filter(
+                    completed=True,
+                    completed_at__date=day
+                )
+            )
+            weekly_activity.append({
+                'date': day.isoformat(),
+                'day_name': day.strftime('%a'),
+                'cards_reviewed': day_completed,
+                'time_spent_seconds': day_time,
+                'time_spent_formatted': format_time(day_time)
+            })
+
+        # Cards needing attention (frequently postponed)
+        needs_attention = FlashCard.objects.filter(
+            topic__user=user,
+            times_postponed__gt=0
+        ).order_by('-times_postponed')[:5]
+
+        needs_attention_cards = []
+        for card in needs_attention:
+            total_actions = card.times_reviewed + card.times_postponed
+            postpone_rate = (
+                round((card.times_postponed / total_actions) * 100, 1)
+                if total_actions > 0 else 0
+            )
+            if postpone_rate >= 30:  # Only show cards with 30%+ postpone rate
+                needs_attention_cards.append({
+                    'id': card.id,
+                    'title': card.title,
+                    'topic_title': card.topic.title,
+                    'times_postponed': card.times_postponed,
+                    'times_reviewed': card.times_reviewed,
+                    'postpone_rate': postpone_rate
+                })
+
+        # Recent sessions
+        recent_sessions = StudySession.objects.filter(
+            user=user,
+            is_active=False
+        ).order_by('-started_at')[:5]
+
+        stats_data = {
+            # Time-based stats
+            'study_time_today_seconds': study_time_today,
+            'study_time_today_formatted': format_time(study_time_today),
+            'study_time_week_seconds': study_time_week,
+            'study_time_week_formatted': format_time(study_time_week),
+            'avg_session_length_seconds': avg_session_length,
+            'avg_session_length_formatted': format_time(avg_session_length),
+            'avg_time_per_card_seconds': round(avg_time_per_card, 1),
+
+            # Card-based stats
+            'cards_reviewed_today': cards_reviewed_today,
+            'cards_postponed_today': cards_postponed_today,
+            'cards_reviewed_week': cards_reviewed_week,
+            'cards_postponed_week': cards_postponed_week,
+            'total_cards_reviewed': total_cards_reviewed,
+            'total_cards_postponed': total_cards_postponed,
+
+            # Completion rates
+            'completion_rate_today': completion_rate_today,
+            'completion_rate_week': completion_rate_week,
+            'completion_rate_all_time': completion_rate_all_time,
+
+            # Activity data
+            'weekly_activity': weekly_activity,
+            'needs_attention_cards': needs_attention_cards,
+
+            # Sessions
+            'recent_sessions': StudySessionSerializer(recent_sessions, many=True).data
+        }
+
+        return Response(stats_data)
 
 
 # ==============================

@@ -48,21 +48,6 @@
   background: var(--text-tertiary);
 }
 
-.add-topic-bottom-section {
-  flex: 0 0 auto;
-  min-height: 250px;
-  overflow: hidden;
-  display: flex;
-  align-items: stretch;
-  justify-content: stretch;
-  transition: min-height 0.3s ease, max-height 0.3s ease;
-}
-
-.add-topic-bottom-section.collapsed {
-  min-height: 90px;
-  max-height: 90px;
-}
-
 /* Content Wrapper */
 .add-topic-content {
   flex: 1;
@@ -75,19 +60,22 @@
 /* Header Section - Simplified */
 .add-topic-header {
   text-align: center;
-  padding: var(--spacing-2) var(--spacing-3);
-  background: var(--gradient-primary);
-  border-bottom: 1px solid var(--border-primary);
-  min-height: 46px;
+  padding: 0 var(--spacing-3);
+  background: var(--bg-surface);
+  border-bottom: 2px solid var(--border-primary);
+  height: 61px;
+  min-height: 61px;
+  max-height:61px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .add-topic-title {
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
-  color: #ffffff;
+  color: var(--text-primary);
   margin: 0;
   line-height: var(--line-height-tight);
 }
@@ -488,20 +476,23 @@
 } 
 
 body.dark-theme .add-topic-header {
-  background: linear-gradient(135deg, #00d4aa, #1e3a8a);
+  background: var(--bg-surface);
 }
 
-body.dark-theme .add-topic-title,
+body.dark-theme .add-topic-title {
+  color: var(--text-primary);
+}
+
 body.dark-theme .add-topic-subtitle {
-  color: #fff;
+  color: var(--text-secondary);
 }
 
 body.dark-theme .form-label {
-  color: #fff;
+  color: var(--text-primary);
 }
 
 body.dark-theme .date-info small {
-  color: #fff;
+  color: var(--text-secondary);
 }
 
 body.dark-theme .success-message {
@@ -891,18 +882,21 @@ body.dark-theme .add-topic-button {
 
 /* Dark mode adjustments */
 body.dark-theme .source-type-btn {
-  background: var(--card-bg);
-  border-color: var(--input-border);
-  color: var(--main-text-primary);
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--text-secondary);
 }
 
 body.dark-theme .source-type-btn:hover {
-  background: rgba(0, 212, 170, 0.1);
+  background: var(--hover-overlay);
+  border-bottom-color: var(--color-primary-300);
 }
 
 body.dark-theme .source-type-btn.active {
-  background: linear-gradient(135deg, #00d4aa, #1e3a8a);
-  color: #ffffff;
+  background: transparent;
+  color: var(--color-accent-400);
+  border-bottom: 3px solid var(--color-accent-500);
 }
 
 body.dark-theme .file-upload-zone {

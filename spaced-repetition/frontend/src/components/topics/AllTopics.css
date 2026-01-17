@@ -289,7 +289,7 @@
 
 .topic-content {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: var(--spacing-3);
   width: 100%;
@@ -331,7 +331,7 @@
 .topic-actions {
   display: flex;
   gap: var(--spacing-2);
-  align-items: flex-start;
+  align-items: center;
   flex-shrink: 0;
   padding-top: 0;
 }
@@ -343,13 +343,22 @@
   gap: var(--spacing-1);
   font-weight: var(--font-weight-medium);
   transition: all var(--transition-base);
-  min-width: auto;
-  padding: var(--spacing-1) var(--spacing-3);
-  border-radius: var(--radius-base);
+  min-width: 95px !important;
+  max-width: 95px !important;
+  width: 95px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  padding: 0 14px !important;
+  border-radius: var(--radius-full);
   font-size: var(--font-size-sm);
-  border: 1px solid var(--border-primary);
-  background-color: transparent;
-  color: var(--text-secondary);
+  line-height: 1;
+  box-sizing: border-box;
+}
+
+.action-button-sm i {
+  font-size: 14px;
+  width: 14px;
 }
 
 .action-button-sm:hover {
@@ -372,24 +381,27 @@
 }
 
 /* ===================================
-   Modal Styling
+   Modal Styling (Global styles in theme.css)
    =================================== */
-
-.modal-header {
-  background-color: var(--bg-surface);
-  border-bottom: 1px solid var(--border-primary);
-}
 
 .form-input {
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-base);
   padding: var(--spacing-2) var(--spacing-3);
   transition: border-color var(--transition-base);
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
 }
 
 .form-input:focus {
   border-color: var(--border-focus);
   box-shadow: var(--focus-ring);
+  background-color: var(--bg-surface);
+}
+
+body.dark-theme .form-input {
+  background-color: var(--bg-elevated);
+  border-color: var(--border-primary);
 }
 
 /* ===================================
@@ -533,6 +545,7 @@ body.dark-theme .filter-bar {
   .action-button-sm {
     flex: 1;
     min-width: 80px;
+    width: auto;
   }
 }
 

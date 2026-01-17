@@ -1,52 +1,64 @@
 """
 Django management command to create initial promo codes
 Usage: python manage.py create_promo_codes
+
+Promo codes are read from environment variables in .env file.
+Format: PROMO_CODE_N="CODE:TIER:CREDITS:UNLIMITED:MAX_REDEMPTIONS:DESCRIPTION"
 """
 from django.core.management.base import BaseCommand
 from api.models import PromoCode
 import hashlib
+import os
 
 
 class Command(BaseCommand):
-    help = 'Creates initial promo codes for the credit system'
+    help = 'Creates initial promo codes for the credit system (reads from .env)'
+
+    def parse_promo_code_env(self, env_value):
+        """
+        Parse promo code from environment variable.
+        Format: CODE:TIER:CREDITS:UNLIMITED:MAX_REDEMPTIONS:DESCRIPTION
+        """
+        try:
+            parts = env_value.split(':')
+            if len(parts) >= 6:
+                return {
+                    'code': parts[0],
+                    'tier': parts[1],
+                    'credits_granted': int(parts[2]),
+                    'grants_unlimited': parts[3].lower() == 'true',
+                    'max_redemptions': int(parts[4]),
+                    'description': ':'.join(parts[5:])  # Description may contain colons
+                }
+        except (ValueError, IndexError) as e:
+            self.stdout.write(self.style.ERROR(f"   ❌ Error parsing promo code: {env_value} - {e}"))
+        return None
 
     def handle(self, *args, **options):
-        self.stdout.write(self.style.WARNING('\nCreating promo codes...\n'))
+        self.stdout.write(self.style.WARNING('\nCreating promo codes from environment variables...\n'))
 
-        promo_codes_data = [
-            {
-                'code': 'WELCOME25',
-                'tier': 'tier1',
-                'credits_granted': 25,
-                'grants_unlimited': False,
-                'max_redemptions': 100,  # Can be used by 100 users
-                'description': '+25 Credits - Welcome bonus'
-            },
-            {
-                'code': 'image.png',
-                'tier': 'tier2',
-                'credits_granted': 50,
-                'grants_unlimited': False,
-                'max_redemptions': 50,  # Can be used by 50 users
-                'description': '+50 Credits - Power user bonus'
-            },
-            {
-                'code': 'PREMIUM100',
-                'tier': 'tier3',
-                'credits_granted': 100,
-                'grants_unlimited': False,
-                'max_redemptions': 20,  # Can be used by 20 users
-                'description': '+100 Credits - Premium access'
-            },
-            {
-                'code': 'UNLIMITED2024',
-                'tier': 'unlimited',
-                'credits_granted': 0,  # Unused when unlimited is granted
-                'grants_unlimited': True,
-                'max_redemptions': 10,  # Can be used by 10 users
-                'description': 'Unlimited Credits - VIP access'
-            },
-        ]
+        # Read promo codes from environment variables
+        promo_codes_data = []
+        i = 1
+        while True:
+            env_key = f'PROMO_CODE_{i}'
+            env_value = os.environ.get(env_key)
+            if not env_value:
+                break
+
+            promo_data = self.parse_promo_code_env(env_value)
+            if promo_data:
+                promo_codes_data.append(promo_data)
+                self.stdout.write(f"   📋 Loaded: {promo_data['code']} from {env_key}")
+            i += 1
+
+        if not promo_codes_data:
+            self.stdout.write(self.style.WARNING(
+                '\n⚠️  No promo codes found in environment variables.\n'
+                '   Add PROMO_CODE_1, PROMO_CODE_2, etc. to your .env file.\n'
+                '   Format: CODE:TIER:CREDITS:UNLIMITED:MAX_REDEMPTIONS:DESCRIPTION\n'
+            ))
+            return
 
         created_count = 0
         skipped_count = 0

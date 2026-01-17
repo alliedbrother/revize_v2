@@ -250,7 +250,7 @@ const AllTopics = () => {
   return (
     <div className="all-topics-list">
       <Card className="topics-card shadow-sm">
-        <Card.Header className="d-flex justify-content-center align-items-center topics-header position-relative">
+        <Card.Header className="d-flex justify-content-center align-items-center topics-header">
           <h4 className="mb-0 fw-bold text-center">
             <i className="bi bi-collection me-2"></i>
             All Topics
@@ -258,15 +258,6 @@ const AllTopics = () => {
               <Badge bg="primary" pill className="ms-2 badge-count">{topics.length}</Badge>
             )}
           </h4>
-          <Button 
-            variant="primary" 
-            onClick={() => setShowAddModal(true)}
-            className="add-button position-absolute"
-            style={{ right: '1.25rem' }}
-          >
-            <i className="bi bi-plus-lg me-1"></i>
-            Add New Topic
-          </Button>
         </Card.Header>
         <Card.Body className="topics-card-body">
           {/* Search and Filter Bar */}

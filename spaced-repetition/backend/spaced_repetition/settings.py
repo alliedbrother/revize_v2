@@ -220,13 +220,17 @@ CORS_ALLOW_HEADERS = [
 if not DEBUG:
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_SECONDS = 31536000
-    SECURE_REDIRECT_EXEMPT = []
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
     X_FRAME_OPTIONS = 'DENY'
+
+    # SSL/HTTPS settings - only enable when HTTPS is configured
+    # Set USE_HTTPS=TRUE in environment when SSL is ready
+    if os.environ.get('USE_HTTPS', 'FALSE').upper() == 'TRUE':
+        SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+        SECURE_HSTS_SECONDS = 31536000
+        SECURE_REDIRECT_EXEMPT = []
+        SECURE_SSL_REDIRECT = True
+        SESSION_COOKIE_SECURE = True
+        CSRF_COOKIE_SECURE = True
 
 # Sites framework
 SITE_ID = 1

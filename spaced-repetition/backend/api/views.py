@@ -351,6 +351,7 @@ class RegisterUser(generics.CreateAPIView):
     """
     API endpoint for registering a new user.
     """
+    authentication_classes = []  # No auth required, bypasses CSRF
     permission_classes = [permissions.AllowAny]
     serializer_class = UserSerializer
 
@@ -383,6 +384,7 @@ class CustomObtainAuthToken(ObtainAuthToken):
     """
     API endpoint for user login.
     """
+    authentication_classes = []  # No auth required, bypasses CSRF
     permission_classes = [permissions.AllowAny]
 
     def post(self, request, *args, **kwargs):
@@ -776,6 +778,7 @@ class GoogleLoginView(APIView):
     """
     API endpoint for Google OAuth login.
     """
+    authentication_classes = []  # No auth required, bypasses CSRF
     permission_classes = [permissions.AllowAny]
     
     def post(self, request):

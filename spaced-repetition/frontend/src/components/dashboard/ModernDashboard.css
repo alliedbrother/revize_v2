@@ -34,8 +34,6 @@
 
 .dash-header-content {
   width: 100%;
-  max-width: 1600px;
-  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -158,16 +156,14 @@
 
 .dash-main {
   flex: 1;
-  max-width: 1600px;
   width: 100%;
-  margin: 0 auto;
   padding: 0;
 }
 
 /* Today's Learning Layout - Side by Side */
 .dash-today-layout {
   display: grid;
-  grid-template-columns: 1fr 420px;
+  grid-template-columns: 1fr minmax(380px, 25%);
   height: calc(100vh - 90px);
   overflow: hidden;
 }
@@ -353,17 +349,24 @@
    RESPONSIVE DESIGN
    =================================== */
 
+/* Extra Large Desktop (2K+) */
+@media (min-width: 1920px) {
+  .dash-today-layout {
+    grid-template-columns: 1fr minmax(400px, 22%);
+  }
+}
+
 /* Large Desktop */
 @media (max-width: 1599px) {
   .dash-today-layout {
-    grid-template-columns: 1fr 380px;
+    grid-template-columns: 1fr minmax(360px, 26%);
   }
 }
 
 /* Desktop */
 @media (max-width: 1399px) {
   .dash-today-layout {
-    grid-template-columns: 1fr 360px;
+    grid-template-columns: 1fr minmax(340px, 28%);
   }
 
   .dash-header {

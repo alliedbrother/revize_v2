@@ -71,23 +71,37 @@ jobs:
             echo "📊 Container status:"
             docker compose --env-file .env.prod -f docker-compose.prod.yml ps
 
-            # Health check
-            echo "🏥 Running health check..."
-            curl -f http://localhost:8000/api/health/ && echo "✅ Backend healthy" || echo "⚠️ Backend health check pending"
-            curl -f http://localhost:80/ && echo "✅ Frontend healthy" || echo "⚠️ Frontend health check pending"
+            # Health checks with detailed output
+            echo "🏥 Running health checks..."
+            echo ""
+            echo "Backend health check:"
+            if curl -sf http://localhost:8000/api/health/ > /dev/null; then
+              echo "  ✅ Backend is healthy"
+            else
+              echo "  ⚠️ Backend health check failed (may still be starting)"
+            fi
+            echo ""
+            echo "Frontend health check:"
+            if curl -sf http://localhost:80/health > /dev/null; then
+              echo "  ✅ Frontend is healthy"
+            else
+              echo "  ⚠️ Frontend health check failed (may still be starting)"
+            fi
+            echo ""
 
             # Clean up old images
             echo "🧹 Cleaning up old images..."
             docker image prune -f
 
+            echo ""
+            echo "========================================"
             echo "✅ Deployment completed successfully!"
-
-      - name: Notify deployment status
-        if: always()
-        uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          channel: '#deployments'
-          fields: repo,message,commit,author,action,eventName,ref,workflow
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+            echo "========================================"
+            echo ""
+            echo "🌐 Application URLs:"
+            echo "   https://revize.live"
+            echo "   http://3.13.130.32"
+            echo ""
+            echo "📊 Running containers:"
+            docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" | grep revize || true
+            echo "========================================"

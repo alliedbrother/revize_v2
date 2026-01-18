@@ -203,6 +203,13 @@ CORS_ALLOWED_ORIGINS = [
     origin.strip() for origin in os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000').split(',')
 ]
 CORS_ALLOW_CREDENTIALS = True
+
+# CSRF Trusted Origins - Required for Django Admin behind HTTPS proxy
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip() for origin in os.environ.get('CSRF_TRUSTED_ORIGINS', 'http://localhost:5173,http://127.0.0.1:5173').split(',')
+]
+# Add CORS origins to CSRF trusted origins as well
+CSRF_TRUSTED_ORIGINS.extend([origin for origin in CORS_ALLOWED_ORIGINS if origin not in CSRF_TRUSTED_ORIGINS])
 CORS_ALLOW_HEADERS = [
     'accept',
     'accept-encoding',

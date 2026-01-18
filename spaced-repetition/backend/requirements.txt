@@ -19,7 +19,7 @@ whitenoise==6.6.0  # Static file serving
 dj-database-url==2.1.0  # Database URL configuration
 
 # AWS specific
-boto3==1.33.0  # For AWS S3 integration
+boto3>=1.35.0  # For AWS S3 integration (updated for urllib3 compatibility)
 django-storages==1.14.2  # Storage backends
 
 # Security
@@ -58,4 +58,4 @@ lxml==5.1.0
 youtube-transcript-api>=1.2.0
 Wikipedia-API==0.8.1
 validators==0.22.0
-urllib3==2.2.0
+# urllib3 version managed by pip to avoid conflicts with boto3/botocore

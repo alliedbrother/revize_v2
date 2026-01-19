@@ -58,104 +58,106 @@ const CompletionRateCard = ({ studyStats }) => {
         <div className="completion-content">
           {/* Main Circular Progress */}
           <div className="main-progress">
-            <svg className="progress-ring" viewBox="0 0 100 100">
-              <circle
-                className="progress-ring-bg"
-                cx="50"
-                cy="50"
-                r={radius}
-                strokeWidth="8"
-              />
-              <circle
-                className="progress-ring-fill"
-                cx="50"
-                cy="50"
-                r={radius}
-                strokeWidth="8"
-                strokeDasharray={circumference}
-                strokeDashoffset={offset}
-                style={{ stroke: getRateColor(rate) }}
-              />
-            </svg>
-            <div className="progress-text">
-              <span className="rate-value">{Math.round(rate)}%</span>
-              <span className="rate-label">{getRateLabel(rate)}</span>
+            <div className="progress-ring-wrapper">
+              <svg className="progress-ring" viewBox="0 0 100 100">
+                <circle
+                  className="progress-ring-bg"
+                  cx="50"
+                  cy="50"
+                  r={radius}
+                  strokeWidth="8"
+                />
+                <circle
+                  className="progress-ring-fill"
+                  cx="50"
+                  cy="50"
+                  r={radius}
+                  strokeWidth="8"
+                  strokeDasharray={circumference}
+                  strokeDashoffset={offset}
+                  style={{ stroke: getRateColor(rate) }}
+                />
+              </svg>
+              <div className="progress-text">
+                <span className="rate-value">{Math.round(rate)}%</span>
+              </div>
             </div>
+            <span className="rate-label">{getRateLabel(rate)}</span>
           </div>
 
           {/* Breakdown Stats */}
           <div className="completion-breakdown">
-            <div className="breakdown-item">
-              <div className="breakdown-header">
+            <div className="breakdown-item today">
+              <div className="breakdown-icon">
+                <i className="bi bi-sun"></i>
+              </div>
+              <div className="breakdown-content">
                 <span className="breakdown-label">Today</span>
-                <span className="breakdown-value" style={{ color: getRateColor(completion_rate_today) }}>
-                  {Math.round(completion_rate_today || 0)}%
-                </span>
-              </div>
-              <div className="breakdown-bar">
-                <div
-                  className="breakdown-fill"
-                  style={{
-                    width: `${completion_rate_today || 0}%`,
-                    background: getRateColor(completion_rate_today)
-                  }}
-                />
-              </div>
-              <div className="breakdown-counts">
-                <span className="count completed">
-                  <i className="bi bi-check-circle-fill"></i>
-                  {cards_reviewed_today || 0}
-                </span>
-                <span className="count postponed">
-                  <i className="bi bi-arrow-repeat"></i>
-                  {cards_postponed_today || 0}
-                </span>
+                <div className="breakdown-stats">
+                  <span className="breakdown-value">{Math.round(completion_rate_today || 0)}%</span>
+                  <div className="breakdown-bar">
+                    <div
+                      className="breakdown-fill"
+                      style={{ width: `${completion_rate_today || 0}%` }}
+                    />
+                  </div>
+                </div>
+                <div className="breakdown-counts">
+                  <span className="count completed">
+                    <i className="bi bi-check-circle-fill"></i>
+                    {cards_reviewed_today || 0}
+                  </span>
+                  <span className="count postponed">
+                    <i className="bi bi-arrow-repeat"></i>
+                    {cards_postponed_today || 0}
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className="breakdown-item">
-              <div className="breakdown-header">
+            <div className="breakdown-item week">
+              <div className="breakdown-icon">
+                <i className="bi bi-calendar-week"></i>
+              </div>
+              <div className="breakdown-content">
                 <span className="breakdown-label">This Week</span>
-                <span className="breakdown-value" style={{ color: getRateColor(completion_rate_week) }}>
-                  {Math.round(completion_rate_week || 0)}%
-                </span>
-              </div>
-              <div className="breakdown-bar">
-                <div
-                  className="breakdown-fill"
-                  style={{
-                    width: `${completion_rate_week || 0}%`,
-                    background: getRateColor(completion_rate_week)
-                  }}
-                />
+                <div className="breakdown-stats">
+                  <span className="breakdown-value">{Math.round(completion_rate_week || 0)}%</span>
+                  <div className="breakdown-bar">
+                    <div
+                      className="breakdown-fill"
+                      style={{ width: `${completion_rate_week || 0}%` }}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div className="breakdown-item">
-              <div className="breakdown-header">
+            <div className="breakdown-item alltime">
+              <div className="breakdown-icon">
+                <i className="bi bi-trophy"></i>
+              </div>
+              <div className="breakdown-content">
                 <span className="breakdown-label">All Time</span>
-                <span className="breakdown-value" style={{ color: getRateColor(completion_rate_all_time) }}>
-                  {Math.round(completion_rate_all_time || 0)}%
-                </span>
-              </div>
-              <div className="breakdown-bar">
-                <div
-                  className="breakdown-fill"
-                  style={{
-                    width: `${completion_rate_all_time || 0}%`,
-                    background: getRateColor(completion_rate_all_time)
-                  }}
-                />
-              </div>
-              <div className="breakdown-counts">
-                <span className="count completed">
-                  <i className="bi bi-check-circle-fill"></i>
-                  {total_cards_reviewed || 0} mastered
-                </span>
-                <span className="count postponed">
-                  <i className="bi bi-arrow-repeat"></i>
-                  {total_cards_postponed || 0} to review
-                </span>
+                <div className="breakdown-stats">
+                  <span className="breakdown-value">{Math.round(completion_rate_all_time || 0)}%</span>
+                  <div className="breakdown-bar">
+                    <div
+                      className="breakdown-fill"
+                      style={{ width: `${completion_rate_all_time || 0}%` }}
+                    />
+                  </div>
+                </div>
+                <div className="breakdown-counts">
+                  <span className="count completed">
+                    <i className="bi bi-check-circle-fill"></i>
+                    {total_cards_reviewed || 0}
+                  </span>
+                  <span className="count postponed">
+                    <i className="bi bi-arrow-repeat"></i>
+                    {total_cards_postponed || 0}
+                  </span>
+                </div>
               </div>
             </div>
           </div>

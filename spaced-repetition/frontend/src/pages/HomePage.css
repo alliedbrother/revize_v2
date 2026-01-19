@@ -392,7 +392,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
 }
 
 .card-icon {
@@ -418,6 +421,13 @@
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-medium);
   color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.card-body {
+  background: var(--bg-elevated);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
   margin-bottom: 8px;
 }
 
@@ -674,17 +684,18 @@
 
 .principle-number {
   font-family: var(--font-family-display);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-semibold);
   color: var(--color-accent-500);
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  letter-spacing: -0.02em;
 }
 
 .principle-icon {
   width: 56px;
   height: 56px;
   margin: 0 auto 24px;
-  color: var(--brand-primary);
+  color: var(--text-primary);
 }
 
 .principle-icon svg {

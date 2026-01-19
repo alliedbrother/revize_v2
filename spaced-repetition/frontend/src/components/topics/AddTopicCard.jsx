@@ -80,12 +80,12 @@ const AddTopicCard = () => {
     setSourceType(type);
     setFiles([]);
     setErrors({});
-    setFormData({
-      title: '',
+    // Preserve title and studyDate, only clear tab-specific fields
+    setFormData(prev => ({
+      ...prev,
       content: '',
       link: '',
-      studyDate: getCurrentDateString()
-    });
+    }));
   };
 
   const handleFileSelect = (selectedFiles) => {

@@ -1,107 +1,133 @@
-name: Deploy to AWS EC2
+name: Deploy to AWS ECS
 
 on:
   push:
     branches: [main]
   workflow_dispatch:
 
+env:
+  AWS_REGION: us-east-2
+  ECR_REGISTRY: 827164363578.dkr.ecr.us-east-2.amazonaws.com
+  ECS_CLUSTER: revize-cluster
+  BACKEND_ECR_REPO: revize/backend
+  FRONTEND_ECR_REPO: revize/frontend
+  BACKEND_SERVICE: revize-backend
+  FRONTEND_SERVICE: revize-frontend
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy to EC2
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script_stop: true
-          script: |
-            set -e
-            echo "🚀 Starting deployment..."
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
 
-            # Navigate to project directory
-            cd /home/ubuntu/revize_v2
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
 
-            # Pull latest changes
-            echo "📥 Pulling latest code..."
-            git pull origin main
+      - name: Set up Node.js for frontend build
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: spaced-repetition/frontend/package-lock.json
 
-            # Create production environment file
-            echo "📝 Creating environment file..."
-            echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" > spaced-repetition/.env.prod
-            echo "DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" >> spaced-repetition/.env.prod
-            echo "ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}" >> spaced-repetition/.env.prod
-            echo "CORS_ALLOWED_ORIGINS=${{ secrets.CORS_ALLOWED_ORIGINS }}" >> spaced-repetition/.env.prod
-            echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" >> spaced-repetition/.env.prod
-            echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> spaced-repetition/.env.prod
-            echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> spaced-repetition/.env.prod
-            echo "GOOGLE_OAUTH2_CLIENT_ID=${{ secrets.GOOGLE_OAUTH2_CLIENT_ID }}" >> spaced-repetition/.env.prod
-            echo "GOOGLE_OAUTH2_CLIENT_SECRET=${{ secrets.GOOGLE_OAUTH2_CLIENT_SECRET }}" >> spaced-repetition/.env.prod
-            echo "USE_S3=${{ secrets.USE_S3 }}" >> spaced-repetition/.env.prod
-            echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> spaced-repetition/.env.prod
-            echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> spaced-repetition/.env.prod
-            echo "AWS_STORAGE_BUCKET_NAME=${{ secrets.AWS_STORAGE_BUCKET_NAME }}" >> spaced-repetition/.env.prod
-            echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> spaced-repetition/.env.prod
-            echo "LANGSMITH_TRACING=${{ secrets.LANGSMITH_TRACING }}" >> spaced-repetition/.env.prod
-            echo "LANGSMITH_API_KEY=${{ secrets.LANGSMITH_API_KEY }}" >> spaced-repetition/.env.prod
-            echo "LANGSMITH_PROJECT=${{ secrets.LANGSMITH_PROJECT }}" >> spaced-repetition/.env.prod
+      - name: Build frontend
+        working-directory: spaced-repetition/frontend
+        run: |
+          npm ci
+          npm run build
 
-            # Navigate to spaced-repetition directory
-            cd spaced-repetition
+      - name: Build and push backend image
+        working-directory: spaced-repetition/backend
+        run: |
+          IMAGE_TAG="${{ github.sha }}"
+          docker build -t ${{ env.ECR_REGISTRY }}/${{ env.BACKEND_ECR_REPO }}:$IMAGE_TAG .
+          docker build -t ${{ env.ECR_REGISTRY }}/${{ env.BACKEND_ECR_REPO }}:latest .
+          docker push ${{ env.ECR_REGISTRY }}/${{ env.BACKEND_ECR_REPO }}:$IMAGE_TAG
+          docker push ${{ env.ECR_REGISTRY }}/${{ env.BACKEND_ECR_REPO }}:latest
+          echo "BACKEND_IMAGE=${{ env.ECR_REGISTRY }}/${{ env.BACKEND_ECR_REPO }}:$IMAGE_TAG" >> $GITHUB_ENV
 
-            # Build Docker images (using --env-file to pass variables)
-            echo "🔨 Building Docker images..."
-            docker compose --env-file .env.prod -f docker-compose.prod.yml build --no-cache
+      - name: Build and push frontend image
+        working-directory: spaced-repetition/frontend
+        run: |
+          IMAGE_TAG="${{ github.sha }}"
+          docker build -f Dockerfile.prod -t ${{ env.ECR_REGISTRY }}/${{ env.FRONTEND_ECR_REPO }}:$IMAGE_TAG .
+          docker build -f Dockerfile.prod -t ${{ env.ECR_REGISTRY }}/${{ env.FRONTEND_ECR_REPO }}:latest .
+          docker push ${{ env.ECR_REGISTRY }}/${{ env.FRONTEND_ECR_REPO }}:$IMAGE_TAG
+          docker push ${{ env.ECR_REGISTRY }}/${{ env.FRONTEND_ECR_REPO }}:latest
+          echo "FRONTEND_IMAGE=${{ env.ECR_REGISTRY }}/${{ env.FRONTEND_ECR_REPO }}:$IMAGE_TAG" >> $GITHUB_ENV
 
-            # Stop existing containers
-            echo "🛑 Stopping existing containers..."
-            docker compose --env-file .env.prod -f docker-compose.prod.yml down || true
+      - name: Update backend ECS service
+        run: |
+          # Get current task definition
+          TASK_DEF=$(aws ecs describe-task-definition --task-definition revize-backend --query 'taskDefinition' --output json)
 
-            # Start new containers
-            echo "🚀 Starting new containers..."
-            docker compose --env-file .env.prod -f docker-compose.prod.yml up -d
+          # Update image in task definition
+          NEW_TASK_DEF=$(echo $TASK_DEF | jq --arg IMAGE "${{ env.BACKEND_IMAGE }}" \
+            '.containerDefinitions[0].image = $IMAGE | del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)')
 
-            # Wait for services to be healthy
-            echo "⏳ Waiting for services to be healthy..."
-            sleep 30
+          # Register new task definition
+          NEW_REVISION=$(aws ecs register-task-definition --cli-input-json "$NEW_TASK_DEF" --query 'taskDefinition.revision' --output text)
+          echo "Registered backend task definition revision: $NEW_REVISION"
 
-            # Check container status
-            echo "📊 Container status:"
-            docker compose --env-file .env.prod -f docker-compose.prod.yml ps
+          # Update service
+          aws ecs update-service --cluster ${{ env.ECS_CLUSTER }} --service ${{ env.BACKEND_SERVICE }} \
+            --task-definition revize-backend:$NEW_REVISION --force-new-deployment
 
-            # Health checks with detailed output
-            echo "🏥 Running health checks..."
-            echo ""
-            echo "Backend health check:"
-            if curl -sf http://localhost:8000/api/health/ > /dev/null; then
-              echo "  ✅ Backend is healthy"
-            else
-              echo "  ⚠️ Backend health check failed (may still be starting)"
-            fi
-            echo ""
-            echo "Frontend health check:"
-            if curl -sf http://localhost:80/health > /dev/null; then
-              echo "  ✅ Frontend is healthy"
-            else
-              echo "  ⚠️ Frontend health check failed (may still be starting)"
-            fi
-            echo ""
+      - name: Update frontend ECS service
+        run: |
+          # Get current task definition
+          TASK_DEF=$(aws ecs describe-task-definition --task-definition revize-frontend --query 'taskDefinition' --output json)
 
-            # Clean up old images
-            echo "🧹 Cleaning up old images..."
-            docker image prune -f
+          # Update image in task definition
+          NEW_TASK_DEF=$(echo $TASK_DEF | jq --arg IMAGE "${{ env.FRONTEND_IMAGE }}" \
+            '.containerDefinitions[0].image = $IMAGE | del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)')
 
-            echo ""
-            echo "========================================"
-            echo "✅ Deployment completed successfully!"
-            echo "========================================"
-            echo ""
-            echo "🌐 Application URLs:"
-            echo "   https://revize.live"
-            echo "   http://3.13.130.32"
-            echo ""
-            echo "📊 Running containers:"
-            docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" | grep revize || true
-            echo "========================================"
+          # Register new task definition
+          NEW_REVISION=$(aws ecs register-task-definition --cli-input-json "$NEW_TASK_DEF" --query 'taskDefinition.revision' --output text)
+          echo "Registered frontend task definition revision: $NEW_REVISION"
+
+          # Update service
+          aws ecs update-service --cluster ${{ env.ECS_CLUSTER }} --service ${{ env.FRONTEND_SERVICE }} \
+            --task-definition revize-frontend:$NEW_REVISION --force-new-deployment
+
+      - name: Wait for backend deployment
+        run: |
+          echo "Waiting for backend service to stabilize..."
+          aws ecs wait services-stable --cluster ${{ env.ECS_CLUSTER }} --services ${{ env.BACKEND_SERVICE }}
+          echo "Backend deployment complete!"
+
+      - name: Wait for frontend deployment
+        run: |
+          echo "Waiting for frontend service to stabilize..."
+          aws ecs wait services-stable --cluster ${{ env.ECS_CLUSTER }} --services ${{ env.FRONTEND_SERVICE }}
+          echo "Frontend deployment complete!"
+
+      - name: Verify deployment
+        run: |
+          echo "========================================"
+          echo "Deployment Summary"
+          echo "========================================"
+          echo ""
+          echo "Backend Image: ${{ env.BACKEND_IMAGE }}"
+          echo "Frontend Image: ${{ env.FRONTEND_IMAGE }}"
+          echo ""
+          echo "Service Status:"
+          aws ecs describe-services --cluster ${{ env.ECS_CLUSTER }} \
+            --services ${{ env.BACKEND_SERVICE }} ${{ env.FRONTEND_SERVICE }} \
+            --query 'services[*].{Service:serviceName,Running:runningCount,Desired:desiredCount,Status:status}' \
+            --output table
+          echo ""
+          echo "========================================"
+          echo "Deployment completed successfully!"
+          echo "Application URL: https://revize.live"
+          echo "========================================"

@@ -8,7 +8,7 @@ yarn-error.log
 .gitignore
 
 # Build output
-dist/
+# dist/ # Needed for Dockerfile.prod
 build/
 
 # IDE

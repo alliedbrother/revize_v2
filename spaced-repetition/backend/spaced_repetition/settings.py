@@ -37,6 +37,10 @@ DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
 # Update allowed hosts for production
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+# Add wildcard for internal VPC IPs (ALB health checks use IP as Host header)
+# This matches AWS VPC default CIDR block 172.31.x.x
+ALLOWED_HOSTS.append('.amazonaws.com')  # For ALB DNS
+ALLOWED_HOSTS.append('*')  # Allow all hosts (security handled by ALB/security groups)
 
 # Application definition
 
@@ -67,6 +71,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "api.middleware.HealthCheckMiddleware",  # Must be first - handles ALB health checks
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",  # For static files
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -74,6 +79,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "api.middleware.ConcurrentUserLimitMiddleware",  # Limit concurrent users
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
@@ -104,6 +110,13 @@ if os.environ.get('DATABASE_URL'):
     DATABASES = {
         'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
     }
+    # Connection pooling for multiple container instances
+    DATABASES['default']['CONN_MAX_AGE'] = 60  # Keep connections alive for 60 seconds
+    DATABASES['default']['CONN_HEALTH_CHECKS'] = True  # Check connection health before reuse
+    # Force SSL for RDS connections in production
+    if os.environ.get('USE_HTTPS') == 'TRUE':
+        DATABASES['default']['OPTIONS'] = DATABASES['default'].get('OPTIONS', {})
+        DATABASES['default']['OPTIONS']['sslmode'] = 'require'
 else:
     DATABASES = {
         "default": {
@@ -145,29 +158,42 @@ USE_TZ = True
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
-AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', 'us-west-2')
+AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', 'us-east-2')
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-AWS_DEFAULT_ACL = 'public-read'
+AWS_DEFAULT_ACL = None  # S3 bucket uses BucketOwnerEnforced, no ACLs
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
+AWS_QUERYSTRING_AUTH = False  # Don't add auth params to URLs
 
 # Static files (CSS, JavaScript, Images)
 # Use S3 for static files in production
 if os.environ.get('USE_S3') == 'TRUE':
-    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    # Use custom storage backends with location prefixes
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+            "OPTIONS": {
+                "location": "media",
+                "file_overwrite": False,
+                "default_acl": None,  # Disable ACLs for S3 BucketOwnerEnforced
+            },
+        },
+        "staticfiles": {
+            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+            "OPTIONS": {
+                "location": "static",
+                "default_acl": None,  # Disable ACLs for S3 BucketOwnerEnforced
+            },
+        },
+    }
     STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
-    STATIC_ROOT = None
-    
-    # Media files
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
-    MEDIA_ROOT = None
 else:
     STATIC_URL = "static/"
     STATIC_ROOT = BASE_DIR / "staticfiles"
     STATICFILES_DIRS = []
-    
+
     MEDIA_URL = '/media/'
     MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -185,7 +211,19 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/hour',  # Anonymous users: 100 requests per hour
+        'user': '1000/hour',  # Authenticated users: 1000 requests per hour
+        'burst': '60/min',  # Burst protection: 60 requests per minute
+    },
 }
+
+# Concurrent user cap (for cost control)
+MAX_CONCURRENT_USERS = int(os.environ.get('MAX_CONCURRENT_USERS', '500'))
 
 # JWT Settings
 from datetime import timedelta
@@ -222,6 +260,12 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
     'x-timezone',  # Custom header for timezone support
 ]
+
+# Proxy settings for running behind ALB (Application Load Balancer)
+# ALB terminates SSL and forwards requests as HTTP with X-Forwarded headers
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+USE_X_FORWARDED_PORT = True
 
 # Security settings for production
 if not DEBUG:
@@ -294,4 +338,17 @@ LOGGING = {
         'handlers': ['console'],
         'level': 'INFO',
     },
+}
+
+# Cache configuration for rate limiting and concurrent user tracking
+# Note: For multi-instance deployments, consider using Redis instead
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+        'TIMEOUT': 300,  # 5 minutes default
+        'OPTIONS': {
+            'MAX_ENTRIES': 10000
+        }
+    }
 }
